@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ona AI | The Future of African Vision</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Rounded" rel="stylesheet"/>
+    <style>
+        :root {
+            --primary: #C5A059;
+            --dark: #0A0A0A;
+            --surface: #121212;
+            --text-dim: #A0A0A0;
+            --white: #FFFFFF;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--dark);
+            color: var(--white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- Navigation --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 5%;
+            position: absolute;
+            width: 100%;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .vynix-badge {
+            font-size: 0.6rem;
+            background: var(--primary);
+            color: var(--dark);
+            padding: 2px 8px;
+            border-radius: 4px;
+            vertical-align: middle;
+        }
+
+        .btn-launch {
+            background: var(--white);
+            color: var(--dark);
+            padding: 12px 24px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn-launch:hover { background: var(--primary); }
+
+        /* --- Hero Section --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle at center, #1a140a 0%, #0a0a0a 100%);
+            padding: 0 10%;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to bottom, #fff, #C5A059);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            color: var(--text-dim);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        /* --- Features --- */
+        .features {
+            padding: 100px 5%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: var(--surface);
+            padding: 40px;
+            border-radius: 24px;
+            border: 1px solid #222;
+            transition: 0.3s;
+        }
+
+        .feature-card:hover { border-color: var(--primary); transform: translateY(-10px); }
+
+        .feature-card .icon { color: var(--primary); font-size: 40px; margin-bottom: 20px; }
+
+        /* --- The Vynix Power Section --- */
+        .vynix-section {
+            padding: 100px 5%;
+            text-align: center;
+            background: var(--white);
+            color: var(--dark);
+        }
+
+        .vynix-section h2 { font-size: 3rem; margin-bottom: 1rem; }
+
+        /* --- Footer --- */
+        footer {
+            padding: 50px 5%;
+            border-top: 1px solid #222;
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        .glow {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: var(--primary);
+            filter: blur(150px);
+            opacity: 0.1;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glow" style="top: 10%; left: -10%;"></div>
+    <div class="glow" style="bottom: 10%; right: -10%;"></div>
+
+    <nav>
+        <div class="logo">
+            ONA <span class="vynix-badge">BY VYNIX</span>
+        </div>
+        <a href="#app" class="btn-launch">Launch Vision</a>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>See the Africa <br> of Tomorrow.</h1>
+            <p>The world's first AI art engine dedicated to African aesthetics, futurism, and storytelling. Powered by the Vynix Intelligence Layer.</p>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <a href="#app" class="btn-launch" style="background: var(--primary);">Start Creating</a>
+                <a href="#" class="btn-launch" style="background: transparent; color: white; border: 1px solid white;">View Gallery</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="feature-card">
+            <span class="material-symbols-rounded icon">auto_awesome</span>
+            <h3>Cultural Precision</h3>
+            <p>Unlike generic AI, Ona understands the nuances of African patterns, architecture, and skin tones.</p>
+        </div>
+        <div class="feature-card">
+            <span class="material-symbols-rounded icon">bolt</span>
+            <h3>Vynix Engine</h3>
+            <p>Ultra-fast generation powered by the Vynix core, delivering 4K renders in seconds.</p>
+        </div>
+        <div class="feature-card">
+            <span class="material-symbols-rounded icon">movie</span>
+            <h3>Vision in Motion</h3>
+            <p>Go beyond stills. Coming soon: Generate cinematic African-themed videos with a single prompt.</p>
+        </div>
+    </section>
+
+    <section class="vynix-section">
+        <p style="text-transform: uppercase; letter-spacing: 2px; font-weight: 600; color: var(--primary);">Architecture</p>
+        <h2>Driven by Vynix </h2>
+        <p style="max-width: 700px; margin: 0 auto;">Ona isn't just a wrapper. It's an expression of the Vynix neural network, specifically tuned to recognize and celebrate the rich diversity of the African continent.</p>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Ona AI • Developed by RareGrade Tech • All Rights Reserved</p>
+    </footer>
+
+</body>
+</html>
