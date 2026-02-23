@@ -9,6 +9,7 @@
     <style>
         :root {
             --primary: #C5A059;
+            --primary-glow: rgba(197, 160, 89, 0.3);
             --dark: #0A0A0A;
             --surface: #121212;
             --text-dim: #A0A0A0;
@@ -25,174 +26,182 @@
             overflow-x: hidden;
         }
 
+        /* --- Animations --- */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        @keyframes kenburns {
+            0% { transform: scale(1) translate(0, 0); }
+            50% { transform: scale(1.1) translate(-1%, -1%); }
+            100% { transform: scale(1) translate(0, 0); }
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0px var(--primary-glow); }
+            50% { box-shadow: 0 0 30px var(--primary-glow); }
+            100% { box-shadow: 0 0 0px var(--primary-glow); }
+        }
+
+        /* --- Background Tech Graphics --- */
+        .bg-grid {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(197, 160, 89, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(197, 160, 89, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+        }
+
         /* --- Navigation --- */
         nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 2rem 5%;
-            position: absolute;
-            width: 100%;
-            z-index: 100;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 2rem 5%; position: fixed; width: 100%; z-index: 100;
+            background: linear-gradient(to bottom, rgba(10,10,10,0.8), transparent);
+            backdrop-filter: blur(10px);
         }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 800;
-            letter-spacing: 2px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .vynix-badge {
-            font-size: 0.6rem;
-            background: var(--primary);
-            color: var(--dark);
-            padding: 2px 8px;
-            border-radius: 4px;
-            vertical-align: middle;
-        }
-
-        .btn-launch {
-            background: var(--white);
-            color: var(--dark);
-            padding: 12px 24px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-
-        .btn-launch:hover { background: var(--primary); }
+        .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: 2px; display: flex; align-items: center; gap: 10px; }
+        .vynix-badge { font-size: 0.6rem; background: var(--primary); color: var(--dark); padding: 2px 8px; border-radius: 4px; }
 
         /* --- Hero Section --- */
         .hero {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            background: radial-gradient(circle at center, #1a140a 0%, #0a0a0a 100%);
-            padding: 0 10%;
+            height: 100vh; display: flex; align-items: center; padding: 0 5%;
+            position: relative; overflow: hidden;
         }
 
+        .hero-content { flex: 1; z-index: 10; padding-right: 5%; }
         .hero-content h1 {
-            font-size: clamp(3rem, 8vw, 6rem);
-            font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(to bottom, #fff, #C5A059);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: clamp(3rem, 6vw, 5rem); font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem;
+            background: linear-gradient(to right, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
-        .hero-content p {
-            font-size: 1.2rem;
-            color: var(--text-dim);
-            max-width: 600px;
-            margin: 0 auto 2rem;
+        .hero-visual {
+            flex: 1; position: relative; height: 80vh; border-radius: 40px;
+            overflow: hidden; border: 1px solid rgba(197, 160, 89, 0.2);
+            display: none; /* Hidden on mobile */
         }
 
-        /* --- Features --- */
-        .features {
-            padding: 100px 5%;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
+        @media (min-width: 1024px) { .hero-visual { display: block; } }
+
+        .hero-img {
+            width: 100%; height: 100%; object-fit: cover;
+            animation: kenburns 20s infinite ease-in-out;
         }
 
-        .feature-card {
-            background: var(--surface);
-            padding: 40px;
-            border-radius: 24px;
-            border: 1px solid #222;
-            transition: 0.3s;
+        .floating-graphic {
+            position: absolute; width: 120px; height: 120px;
+            border: 2px solid var(--primary); border-radius: 20px;
+            top: 10%; right: -20px; animation: float 6s infinite ease-in-out;
+            background: rgba(10,10,10,0.5); backdrop-filter: blur(5px);
+            display: flex; align-items: center; justify-content: center;
         }
 
-        .feature-card:hover { border-color: var(--primary); transform: translateY(-10px); }
-
-        .feature-card .icon { color: var(--primary); font-size: 40px; margin-bottom: 20px; }
-
-        /* --- The Vynix Power Section --- */
-        .vynix-section {
-            padding: 100px 5%;
-            text-align: center;
-            background: var(--white);
-            color: var(--dark);
+        /* --- Scrolling Gallery Marquee --- */
+        .gallery-container {
+            padding: 60px 0; background: var(--surface);
+            border-top: 1px solid #222; border-bottom: 1px solid #222;
+            overflow: hidden; white-space: nowrap;
         }
 
-        .vynix-section h2 { font-size: 3rem; margin-bottom: 1rem; }
-
-        /* --- Footer --- */
-        footer {
-            padding: 50px 5%;
-            border-top: 1px solid #222;
-            text-align: center;
-            color: var(--text-dim);
-            font-size: 0.9rem;
+        .marquee-track {
+            display: inline-flex; gap: 20px; animation: marquee 40s linear infinite;
         }
 
-        .glow {
-            position: absolute;
-            width: 400px;
-            height: 400px;
-            background: var(--primary);
-            filter: blur(150px);
-            opacity: 0.1;
-            pointer-events: none;
+        .gallery-item {
+            width: 300px; height: 400px; border-radius: 20px; overflow: hidden;
+            flex-shrink: 0; border: 1px solid #333; transition: 0.4s;
         }
+
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(40%); transition: 0.4s; }
+        .gallery-item:hover { transform: scale(1.05); border-color: var(--primary); }
+        .gallery-item:hover img { filter: grayscale(0%); }
+
+        /* --- Launch Button --- */
+        .btn-launch {
+            background: var(--primary); color: var(--dark); padding: 16px 32px;
+            border-radius: 40px; text-decoration: none; font-weight: 700;
+            display: inline-flex; align-items: center; gap: 10px;
+            transition: 0.3s; animation: pulse-glow 3s infinite;
+        }
+
+        .btn-launch:hover { transform: translateY(-3px); filter: brightness(1.1); }
+
+        .vynix-section { padding: 100px 5%; text-align: center; background: #000; }
+        .vynix-section h2 { font-size: 3rem; margin-bottom: 1.5rem; }
+        
+        footer { padding: 40px; text-align: center; border-top: 1px solid #111; font-size: 0.8rem; color: #555; }
+
     </style>
 </head>
 <body>
 
-    <div class="glow" style="top: 10%; left: -10%;"></div>
-    <div class="glow" style="bottom: 10%; right: -10%;"></div>
+    <div class="bg-grid"></div>
 
     <nav>
-        <div class="logo">
-            ONA <span class="vynix-badge">BY VYNIX</span>
-        </div>
-        <a href="#app" class="btn-launch">Launch Vision</a>
+        <div class="logo">ONA <span class="vynix-badge">BY VYNIX</span></div>
+        <a href="#launch" class="btn-launch" style="padding: 10px 20px; font-size: 0.9rem;">Enter Ona</a>
     </nav>
 
     <section class="hero">
         <div class="hero-content">
-            <h1>See the Africa <br> of Tomorrow.</h1>
-            <p>The world's first AI art engine dedicated to African aesthetics, futurism, and storytelling. Powered by the Vynix Intelligence Layer.</p>
-            <div style="display: flex; gap: 15px; justify-content: center;">
-                <a href="#app" class="btn-launch" style="background: var(--primary);">Start Creating</a>
-                <a href="#" class="btn-launch" style="background: transparent; color: white; border: 1px solid white;">View Gallery</a>
+            <p style="color: var(--primary); font-weight: 600; letter-spacing: 3px; margin-bottom: 1rem;">VYNIX LINGUA PRESENTS</p>
+            <h1>Art that feels <br> like Home.</h1>
+            <p style="font-size: 1.2rem; color: var(--text-dim); margin-bottom: 2.5rem; max-width: 500px;">
+                Ona AI blends ancestral heritage with futuristic intelligence. Generate high-fidelity African imagery, landscapes, and visions instantly.
+            </p>
+            <a href="#launch" class="btn-launch">
+                Create with Ona <span class="material-symbols-rounded">arrow_forward</span>
+            </a>
+        </div>
+
+        <div class="hero-visual">
+            <img src="https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?auto=format&fit=crop&q=80&w=1200" class="hero-img" alt="African Digital Art">
+            <div class="floating-graphic">
+                <span class="material-symbols-rounded" style="font-size: 50px; color: var(--primary);">psychology</span>
+            </div>
+            <div class="floating-graphic" style="top: 60%; left: -30px; animation-delay: -3s; width: 80px; height: 80px; border-radius: 50%;">
+                <span class="material-symbols-rounded" style="color: var(--primary);">auto_awesome</span>
             </div>
         </div>
     </section>
 
-    <section class="features">
-        <div class="feature-card">
-            <span class="material-symbols-rounded icon">auto_awesome</span>
-            <h3>Cultural Precision</h3>
-            <p>Unlike generic AI, Ona understands the nuances of African patterns, architecture, and skin tones.</p>
+    <div class="gallery-container">
+        <div style="padding-left: 5%; margin-bottom: 20px; color: var(--text-dim); font-size: 0.8rem; letter-spacing: 2px; font-weight: 600;">AI GENERATED VISIONS</div>
+        <div class="marquee-track">
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1523805081446-ef9909b7f597?auto=format&fit=crop&q=80&w=400" alt="1"></div>
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1529243856184-fd5465488984?auto=format&fit=crop&q=80&w=400" alt="2"></div>
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?auto=format&fit=crop&q=80&w=400" alt="3"></div>
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1501139083538-0139583c060f?auto=format&fit=crop&q=80&w=400" alt="4"></div>
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1523805081446-ef9909b7f597?auto=format&fit=crop&q=80&w=400" alt="1"></div>
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1529243856184-fd5465488984?auto=format&fit=crop&q=80&w=400" alt="2"></div>
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?auto=format&fit=crop&q=80&w=400" alt="3"></div>
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1501139083538-0139583c060f?auto=format&fit=crop&q=80&w=400" alt="4"></div>
         </div>
-        <div class="feature-card">
-            <span class="material-symbols-rounded icon">bolt</span>
-            <h3>Vynix Engine</h3>
-            <p>Ultra-fast generation powered by the Vynix core, delivering 4K renders in seconds.</p>
-        </div>
-        <div class="feature-card">
-            <span class="material-symbols-rounded icon">movie</span>
-            <h3>Vision in Motion</h3>
-            <p>Go beyond stills. Coming soon: Generate cinematic African-themed videos with a single prompt.</p>
-        </div>
-    </section>
+    </div>
 
     <section class="vynix-section">
-        <p style="text-transform: uppercase; letter-spacing: 2px; font-weight: 600; color: var(--primary);">Architecture</p>
-        <h2>Driven by Vynix </h2>
-        <p style="max-width: 700px; margin: 0 auto;">Ona isn't just a wrapper. It's an expression of the Vynix neural network, specifically tuned to recognize and celebrate the rich diversity of the African continent.</p>
+        <h2 style="background: linear-gradient(white, #777); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Powered by Vynix Lingua</h2>
+        <p style="max-width: 600px; margin: 0 auto 40px; color: var(--text-dim);">
+            Ona utilizes the Vynix proprietary neural engine, specifically weighted to understand African cultural markers, history, and vibrant futuristic themes.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 40px; color: var(--primary);">
+            <div><p style="font-size: 2rem; font-weight: 800;">4K</p><p style="font-size: 0.7rem; color: #555;">RESOLUTION</p></div>
+            <div><p style="font-size: 2rem; font-weight: 800;">&lt;3s</p><p style="font-size: 0.7rem; color: #555;">LATENCY</p></div>
+            <div><p style="font-size: 2rem; font-weight: 800;">100%</p><p style="font-size: 0.7rem; color: #555;">CULTURAL FOCUS</p></div>
+        </div>
     </section>
 
     <footer>
-        <p>&copy; 2026 Ona AI • Developed by RareGrade Tech • All Rights Reserved</p>
+        <p>&copy; 2026 Ona AI • Architecture by Vynix Lingua • All Rights Reserved</p>
     </footer>
 
 </body>
