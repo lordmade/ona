@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ona Terminal | Vynix Intelligence Layer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #C5A059;
+            --primary-dim: rgba(197, 160, 89, 0.3);
+            --bg: #050505;
+            --text: #e0e0e0;
+            --error: #ff5555;
+            --success: #a3be8c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Fira Code', monospace;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        /* --- Terminal Window --- */
+        #terminal {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding-bottom: 50px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-dim) transparent;
+        }
+
+        #terminal::-webkit-scrollbar { width: 6px; }
+        #terminal::-webkit-scrollbar-thumb { background: var(--primary-dim); border-radius: 10px; }
+
+        .line { line-height: 1.5; font-size: 14px; white-space: pre-wrap; }
+        .prompt-line { color: var(--primary); font-weight: 600; }
+        .output { color: var(--text); opacity: 0.9; margin-left: 10px; }
+        .system-msg { color: var(--primary); font-style: italic; }
+
+        /* --- Input Area --- */
+        .input-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--bg);
+            padding: 15px 20px;
+            border-top: 1px solid #111;
+        }
+
+        .prefix { color: var(--primary); font-weight: 600; }
+
+        #command-input {
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            outline: none;
+            width: 100%;
+        }
+
+        /* --- Scanning/Hacker Effects --- */
+        .scanline {
+            width: 100%;
+            height: 2px;
+            background: rgba(197, 160, 89, 0.05);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            pointer-events: none;
+            animation: scan 4s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        .vynix-logo {
+            color: var(--primary);
+            font-weight: 800;
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--primary-dim);
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        /* Typing effect for AI responses */
+        .typing {
+            border-right: 2px solid var(--primary);
+            animation: blink 0.7s infinite;
+        }
+
+        @keyframes blink { 50% { border-color: transparent; } }
+
+    </style>
+</head>
+<body>
+
+    <div class="scanline"></div>
+
+    <div class="vynix-logo">ONA AI // VYNIX_OS_1.0.4</div>
+
+    <div id="terminal">
+        <div class="line system-msg">Initializing Ona Neural Engine...</div>
+        <div class="line system-msg">Region: Africa/Lagos [Node 01]</div>
+        <div class="line system-msg">Authentication Successful. Status: ONLINE</div>
+        <div class="line" style="margin-top: 10px;">Welcome, Developer. Type <span style="color: var(--primary);">help</span> to see available commands.</div>
+    </div>
+
+    <div class="input-container">
+        <span class="prefix">ona@vynix:~$</span>
+        <input type="text" id="command-input" autofocus spellcheck="false">
+    </div>
+
+    <script>
+        const terminal = document.getElementById('terminal');
+        const input = document.getElementById('command-input');
+
+        const COMMANDS = {
+            'help': 'Available commands: [status, ona --optimize, clear, whoami, build, contact]',
+            'status': 'All systems operational. Vynix Logic Layer: 99.9% uptime. Latency: 12ms.',
+            'whoami': 'You are a Developer integrated with Ona AI—the first neural code assistant built for Africa.',
+            'ona --optimize': 'Analyzing workspace... Found 3 bottlenecks in database queries. Injecting caching logic...',
+            'build': 'Compiling project... [OK]\nDeploying to edge nodes in Nairobi, Lagos, and Johannesburg... [SUCCESS]',
+            'contact': 'RareGrade Tech HQ: system@raregrade.ai'
+        };
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const cmd = input.value.trim().toLowerCase();
+                processCommand(cmd);
+                input.value = '';
+            }
+        });
+
+        function processCommand(cmd) {
+            // Add Command to Terminal
+            const line = document.createElement('div');
+            line.className = 'line';
+            line.innerHTML = `<span class="prompt-line">ona@vynix:~$</span> <span class="output">${cmd}</span>`;
+            terminal.appendChild(line);
+
+            // Add Response
+            const response = document.createElement('div');
+            response.className = 'line output';
+
+            if (cmd === 'clear') {
+                terminal.innerHTML = '<div class="vynix-logo">ONA AI // VYNIX_OS_1.0.4</div>';
+            } else if (COMMANDS[cmd]) {
+                typeEffect(response, COMMANDS[cmd]);
+            } else if (cmd !== '') {
+                response.style.color = 'var(--error)';
+                response.textContent = `Command not found: ${cmd}. Type 'help' for options.`;
+                terminal.appendChild(response);
+            }
+
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        function typeEffect(element, text) {
+            terminal.appendChild(element);
+            let i = 0;
+            const interval = setInterval(() => {
+                element.textContent += text.charAt(i);
+                i++;
+                if (i > text.length) {
+                    clearInterval(interval);
+                    terminal.scrollTop = terminal.scrollHeight;
+                }
+            }, 20);
+        }
+    </script>
+
+</body>
+</html>
