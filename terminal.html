@@ -1,193 +1,284 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ona Terminal | Vynix Intelligence Layer</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Ona AI // Terminal Core</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Rounded" rel="stylesheet"/>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-remote-config-compat.js"></script>
+
     <style>
         :root {
-            --primary: #C5A059;
-            --primary-dim: rgba(197, 160, 89, 0.3);
-            --bg: #050505;
-            --text: #e0e0e0;
-            --error: #ff5555;
-            --success: #a3be8c;
+            --bg-dark: #050505;
+            --bg-sidebar: #0A0A0A;
+            --primary: #C5A059; /* Your Brand Gold */
+            --primary-dim: rgba(197, 160, 89, 0.2);
+            --text-main: #E0E0E0;
+            --text-dim: #707070;
+            --border: #1A1A1A;
+            --font-mono: 'Fira Code', monospace;
         }
-
+        
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
+        
         body {
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: 'Fira Code', monospace;
-            height: 100vh;
+            font-family: var(--font-mono);
+            background: var(--bg-dark);
+            color: var(--text-main);
+            height: 100svh;
             display: flex;
-            flex-direction: column;
-            padding: 20px;
             overflow: hidden;
         }
 
-        /* --- Terminal Window --- */
-        #terminal {
-            flex: 1;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding-bottom: 50px;
-            scrollbar-width: thin;
-            scrollbar-color: var(--primary-dim) transparent;
+        /* --- AUTH OVERLAY --- */
+        #authOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); display: none; z-index: 1000;
+            align-items: center; justify-content: center;
+            backdrop-filter: blur(10px);
         }
 
-        #terminal::-webkit-scrollbar { width: 6px; }
-        #terminal::-webkit-scrollbar-thumb { background: var(--primary-dim); border-radius: 10px; }
-
-        .line { line-height: 1.5; font-size: 14px; white-space: pre-wrap; }
-        .prompt-line { color: var(--primary); font-weight: 600; }
-        .output { color: var(--text); opacity: 0.9; margin-left: 10px; }
-        .system-msg { color: var(--primary); font-style: italic; }
-
-        /* --- Input Area --- */
-        .input-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: var(--bg);
-            padding: 15px 20px;
-            border-top: 1px solid #111;
+        .auth-container {
+            background: #111; width: 90%; max-width: 400px; padding: 40px;
+            border-radius: 4px; border: 1px solid var(--primary);
+            text-align: center;
         }
 
-        .prefix { color: var(--primary); font-weight: 600; }
+        .google-btn {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            width: 100%; margin-top: 20px; padding: 12px;
+            border: 1px solid var(--primary); background: transparent;
+            color: var(--primary); font-family: var(--font-mono); font-weight: 600;
+            cursor: pointer; transition: 0.3s;
+        }
+        .google-btn:hover { background: var(--primary); color: #000; }
 
-        #command-input {
-            background: transparent;
-            border: none;
-            color: var(--text);
-            font-family: 'Fira Code', monospace;
-            font-size: 14px;
-            outline: none;
-            width: 100%;
+        /* --- TERMINAL CORE --- */
+        .terminal-wrapper {
+            flex: 1; display: flex; flex-direction: column; height: 100%;
+            padding: 20px; position: relative;
         }
 
-        /* --- Scanning/Hacker Effects --- */
-        .scanline {
-            width: 100%;
-            height: 2px;
-            background: rgba(197, 160, 89, 0.05);
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 10;
-            pointer-events: none;
-            animation: scan 4s linear infinite;
+        /* Scanline effect */
+        .terminal-wrapper::before {
+            content: " "; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2; background-size: 100% 2px, 3px 100%; pointer-events: none;
         }
 
-        @keyframes scan {
-            0% { top: 0; }
-            100% { top: 100%; }
+        .terminal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding-bottom: 20px; border-bottom: 1px solid var(--border);
+            margin-bottom: 20px; font-family: 'Outfit', sans-serif;
         }
 
-        .vynix-logo {
-            color: var(--primary);
-            font-weight: 800;
-            letter-spacing: 4px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--primary-dim);
-            padding-bottom: 10px;
-            display: inline-block;
+        #terminalOutput {
+            flex: 1; overflow-y: auto; display: flex; flex-direction: column;
+            gap: 15px; scroll-behavior: smooth; z-index: 1;
         }
 
-        /* Typing effect for AI responses */
-        .typing {
-            border-right: 2px solid var(--primary);
-            animation: blink 0.7s infinite;
+        .line { line-height: 1.6; font-size: 0.9rem; }
+        .prompt-prefix { color: var(--primary); font-weight: bold; }
+        
+        /* Expert Code Styling */
+        .code-block-wrapper {
+            margin: 15px 0; border: 1px solid var(--border);
+            background: #0D0D0D; border-left: 3px solid var(--primary);
+        }
+        .code-header {
+            padding: 5px 15px; background: #151515; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-dim);
+        }
+        pre { padding: 15px; overflow-x: auto; color: #A3BE8C; } /* Greenish code output */
+
+        /* --- INPUT AREA --- */
+        .input-line {
+            display: flex; align-items: center; gap: 10px;
+            padding: 20px 0; border-top: 1px solid var(--border); background: var(--bg-dark);
+        }
+        .input-line.disabled { opacity: 0.3; pointer-events: none; }
+        
+        #userInput {
+            flex: 1; background: transparent; border: none; outline: none;
+            color: var(--text-main); font-family: var(--font-mono); font-size: 0.9rem;
         }
 
-        @keyframes blink { 50% { border-color: transparent; } }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #4CAF50; display: inline-block; margin-right: 5px; }
 
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: var(--border); }
     </style>
 </head>
 <body>
 
-    <div class="scanline"></div>
-
-    <div class="vynix-logo">ONA AI // VYNIX_OS_1.0.4</div>
-
-    <div id="terminal">
-        <div class="line system-msg">Initializing Ona Neural Engine...</div>
-        <div class="line system-msg">Region: Africa/Lagos [Node 01]</div>
-        <div class="line system-msg">Authentication Successful. Status: ONLINE</div>
-        <div class="line" style="margin-top: 10px;">Welcome, Developer. Type <span style="color: var(--primary);">help</span> to see available commands.</div>
+    <div id="authOverlay">
+        <div class="auth-container">
+            <h2 style="color: var(--primary); letter-spacing: 2px;">ONA_SYSTEM_LOGIN</h2>
+            <p style="color: var(--text-dim); margin-top: 10px; font-size: 0.8rem;">Vynix Intelligence Layer v4.0.2</p>
+            <button class="google-btn" onclick="login()">
+                AUTHENTICATE_VIA_GOOGLE
+            </button>
+        </div>
     </div>
 
-    <div class="input-container">
-        <span class="prefix">ona@vynix:~$</span>
-        <input type="text" id="command-input" autofocus spellcheck="false">
+    <div class="terminal-wrapper">
+        <header class="terminal-header">
+            <div>
+                <span class="status-dot"></span>
+                <span style="font-size: 0.8rem; letter-spacing: 1px; color: var(--text-dim);">SYSTEM: ONLINE // SESSION: <span id="userNameDisplay">GUEST</span></span>
+            </div>
+            <div style="cursor: pointer; color: var(--primary); font-size: 0.8rem;" onclick="logout()">[ LOGOUT ]</div>
+        </header>
+
+        <main id="terminalOutput">
+            <div class="line">Initializing Ona Expert Coder...</div>
+            <div class="line" style="color: var(--primary);">Welcome. I am Ona AI. Your expert architecture and coding assistant.</div>
+            <div class="line" style="color: var(--text-dim);">Ready for instructions. Type 'help' for core commands.</div>
+        </main>
+
+        <div class="input-line disabled" id="inputLine">
+            <span class="prompt-prefix">ona@vynix:~$</span>
+            <input type="text" id="userInput" placeholder="Awaiting syntax..." autocomplete="off" />
+        </div>
     </div>
 
     <script>
-        const terminal = document.getElementById('terminal');
-        const input = document.getElementById('command-input');
-
-        const COMMANDS = {
-            'help': 'Available commands: [status, ona --optimize, clear, whoami, build, contact]',
-            'status': 'All systems operational. Vynix Logic Layer: 99.9% uptime. Latency: 12ms.',
-            'whoami': 'You are a Developer integrated with Ona AI—the first neural code assistant built for Africa.',
-            'ona --optimize': 'Analyzing workspace... Found 3 bottlenecks in database queries. Injecting caching logic...',
-            'build': 'Compiling project... [OK]\nDeploying to edge nodes in Nairobi, Lagos, and Johannesburg... [SUCCESS]',
-            'contact': 'RareGrade Tech HQ: system@raregrade.ai'
+        // --- FIREBASE CONFIG (Kept from your original) ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBOyZ3As4GTuNvjemvPF_SpsC6m6vqtNhc",
+            authDomain: "fire-b-a8878.firebaseapp.com",
+            projectId: "fire-b-a8878",
+            databaseURL: "https://fire-b-a8878-default-rtdb.firebaseio.com",
+            appId: "1:658673187627:web:6e4c29af661785f0afa36e"
         };
+        firebase.initializeApp(firebaseConfig);
 
-        input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                const cmd = input.value.trim().toLowerCase();
-                processCommand(cmd);
-                input.value = '';
+        const auth = firebase.auth();
+        const remoteConfig = firebase.remoteConfig();
+        let XAI_API_KEY = "";
+        
+        // System Prompt ensures the AI acts as an expert
+        let chatHistory = [{ 
+            role: "system", 
+            content: "You are Ona AI, an elite software architect and expert coder. Your responses should be technically precise, concise, and prioritize best practices (SOLID, DRY). Always use markdown code blocks for code snippets." 
+        }];
+
+        // --- AUTH ---
+        function login() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider);
+        }
+
+        function logout() {
+            if (confirm("Terminate Session?")) auth.signOut();
+        }
+
+        auth.onAuthStateChanged(user => {
+            const overlay = document.getElementById('authOverlay');
+            const inputLine = document.getElementById('inputLine');
+            const nameDisplay = document.getElementById('userNameDisplay');
+
+            if (user) {
+                overlay.style.display = 'none';
+                inputLine.classList.remove('disabled');
+                nameDisplay.innerText = user.displayName.toUpperCase().split(' ')[0];
+                document.getElementById('userInput').focus();
+            } else {
+                overlay.style.display = 'flex';
+                inputLine.classList.add('disabled');
+                nameDisplay.innerText = "GUEST";
             }
         });
 
-        function processCommand(cmd) {
-            // Add Command to Terminal
+        // --- API LOAD ---
+        async function loadKey() {
+            try {
+                await remoteConfig.fetchAndActivate();
+                XAI_API_KEY = remoteConfig.getValue('xai_api_key').asString();
+            } catch (e) {
+                printToTerminal("System Error: Unable to fetch API security layer.", "error");
+            }
+        }
+        loadKey();
+
+        // --- TERMINAL ENGINE ---
+        const userInput = document.getElementById('userInput');
+        const outputArea = document.getElementById('terminalOutput');
+
+        userInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const val = userInput.value.trim();
+                if (val) handleCommand(val);
+                userInput.value = '';
+            }
+        });
+
+        function printToTerminal(text, type = "normal") {
             const line = document.createElement('div');
             line.className = 'line';
-            line.innerHTML = `<span class="prompt-line">ona@vynix:~$</span> <span class="output">${cmd}</span>`;
-            terminal.appendChild(line);
+            
+            if (type === "user") {
+                line.innerHTML = `<span class="prompt-prefix">ona@vynix:~$</span> ${text}`;
+            } else {
+                line.innerHTML = formatAIResponse(text);
+            }
+            
+            outputArea.appendChild(line);
+            outputArea.scrollTop = outputArea.scrollHeight;
+        }
 
-            // Add Response
-            const response = document.createElement('div');
-            response.className = 'line output';
+        function formatAIResponse(text) {
+            // Basic Markdown Code Block detection
+            let formatted = text.replace(/```(\w+)?\n([\s\S]*?)```/g, (m, lang, code) => {
+                return `<div class="code-block-wrapper">
+                            <div class="code-header">
+                                <span>${lang || 'SOURCE'}</span>
+                                <span style="cursor:pointer" onclick="navigator.clipboard.writeText(\`${code.replace(/`/g, '\\`')}\`)">COPY</span>
+                            </div>
+                            <pre><code>${code.trim()}</code></pre>
+                        </div>`;
+            });
+            return formatted.replace(/\n/g, '<br>');
+        }
 
-            if (cmd === 'clear') {
-                terminal.innerHTML = '<div class="vynix-logo">ONA AI // VYNIX_OS_1.0.4</div>';
-            } else if (COMMANDS[cmd]) {
-                typeEffect(response, COMMANDS[cmd]);
-            } else if (cmd !== '') {
-                response.style.color = 'var(--error)';
-                response.textContent = `Command not found: ${cmd}. Type 'help' for options.`;
-                terminal.appendChild(response);
+        async function handleCommand(cmd) {
+            if (cmd.toLowerCase() === 'clear') {
+                outputArea.innerHTML = '<div class="line">Ona Terminal Cleared. Ready.</div>';
+                return;
             }
 
-            terminal.scrollTop = terminal.scrollHeight;
-        }
+            printToTerminal(cmd, "user");
+            chatHistory.push({ role: "user", content: cmd });
 
-        function typeEffect(element, text) {
-            terminal.appendChild(element);
-            let i = 0;
-            const interval = setInterval(() => {
-                element.textContent += text.charAt(i);
-                i++;
-                if (i > text.length) {
-                    clearInterval(interval);
-                    terminal.scrollTop = terminal.scrollHeight;
-                }
-            }, 20);
+            try {
+                const res = await fetch(`https://api.x.ai/v1/chat/completions`, {
+                    method: 'POST',
+                    headers: { 
+                        'Authorization': `Bearer ${XAI_API_KEY}`, 
+                        'Content-Type': 'application/json' 
+                    },
+                    body: JSON.stringify({ 
+                        model: "grok-code-fast-1", 
+                        messages: chatHistory,
+                        temperature: 0.3 // Lower temperature for more precise coding
+                    })
+                });
+
+                const data = await res.json();
+                const reply = data.choices[0].message.content;
+                chatHistory.push({ role: "assistant", content: reply });
+                printToTerminal(reply);
+
+            } catch (e) {
+                printToTerminal("Critical Error: Connection to Vynix Logic Layer timed out.", "error");
+            }
         }
     </script>
-
 </body>
 </html>
