@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ona AI | The Future of African Vision</title>
+    <title>Ona AI | The Future of African Engineering</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Rounded" rel="stylesheet"/>
     <style>
@@ -27,22 +27,15 @@
 
         /* --- Animations --- */
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .fade-in {
-            opacity: 0; /* Start hidden */
+            opacity: 0;
             animation: fadeInUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
 
-        /* Staggered delays for the fade-in elements */
         .delay-1 { animation-delay: 0.2s; }
         .delay-2 { animation-delay: 0.4s; }
 
@@ -107,6 +100,7 @@
             height: 100%;
             object-fit: cover;
             z-index: -2;
+            filter: grayscale(0.5); /* Adds a professional dev-tool feel */
         }
 
         .hero-overlay {
@@ -115,17 +109,14 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at center, rgba(26, 20, 10, 0.7) 0%, rgba(10, 10, 10, 0.9) 100%);
+            background: radial-gradient(circle at center, rgba(10, 10, 10, 0.6) 0%, rgba(10, 10, 10, 0.95) 100%);
             z-index: -1;
         }
 
-        .hero-content {
-            position: relative;
-            z-index: 1;
-        }
+        .hero-content { position: relative; z-index: 1; }
 
         .hero-content h1 {
-            font-size: clamp(3rem, 8vw, 6rem);
+            font-size: clamp(2.5rem, 8vw, 5rem);
             font-weight: 800;
             line-height: 1.1;
             margin-bottom: 1.5rem;
@@ -137,7 +128,7 @@
         .hero-content p {
             font-size: 1.2rem;
             color: var(--text-dim);
-            max-width: 600px;
+            max-width: 700px;
             margin: 0 auto 2rem;
         }
 
@@ -158,10 +149,10 @@
         }
 
         .feature-card:hover { border-color: var(--primary); transform: translateY(-10px); }
-
         .feature-card .icon { color: var(--primary); font-size: 40px; margin-bottom: 20px; }
+        .feature-card h3 { margin-bottom: 10px; }
 
-        /* --- The Vynix Power Section --- */
+        /* --- Vynix Section --- */
         .vynix-section {
             padding: 100px 5%;
             text-align: center;
@@ -171,7 +162,6 @@
 
         .vynix-section h2 { font-size: 3rem; margin-bottom: 1rem; }
 
-        /* --- Footer --- */
         footer {
             padding: 50px 5%;
             border-top: 1px solid #222;
@@ -186,7 +176,7 @@
             height: 400px;
             background: var(--primary);
             filter: blur(150px);
-            opacity: 0.1;
+            opacity: 0.08;
             pointer-events: none;
         }
     </style>
@@ -198,13 +188,12 @@
 
     <nav>
         <div class="logo">
-            ONA <span class="vynix-badge">BY VYNIX</span>
+            ONA <span class="vynix-badge">CODE</span>
         </div>
-        <a href="ai.html" class="btn-launch">Launch Vision</a>
+        <a href="terminal.html" class="btn-launch">Open IDE</a>
     </nav>
 
     <section class="hero">
-        
         <video class="hero-video" autoplay loop muted playsinline>
             <source src="0136bf9d-a9ec-49c8-896d-41ebdc98860d.mp4" type="video/mp4">
         </video>
@@ -212,41 +201,41 @@
         <div class="hero-overlay"></div>
 
         <div class="hero-content">
-            <h1 class="fade-in">See the Africa <br> of Tomorrow.</h1>
-            <p class="fade-in delay-1">The world's first AI art engine dedicated to African aesthetics, futurism, and storytelling. Powered by the Vynix Intelligence Layer.</p>
+            <h1 class="fade-in">Code at the Speed <br> of Thought.</h1>
+            <p class="fade-in delay-1">The first neural code assistant built to understand African engineering scale. From complex backend architecture to seamless IDE integration, powered by Vynix.</p>
             <div class="fade-in delay-2" style="display: flex; gap: 15px; justify-content: center;">
-                <a href="ai.html" class="btn-launch" style="background: var(--primary);">Start Creating</a>
-                <a href="#" class="btn-launch" style="background: transparent; color: white; border: 1px solid white;">View Gallery</a>
+                <a href="terminal.html" class="btn-launch" style="background: var(--primary);">Start Coding</a>
+                <a href="#" class="btn-launch" style="background: transparent; color: white; border: 1px solid white;">Read Docs</a>
             </div>
         </div>
     </section>
 
     <section class="features">
         <div class="feature-card">
-            <span class="material-symbols-rounded icon">auto_awesome</span>
-            <h3>Cultural Precision</h3>
-            <p>Unlike generic AI, Ona understands the nuances of African patterns, architecture, and skin tones.</p>
+            <span class="material-symbols-rounded icon">terminal</span>
+            <h3>Deep Context IDE</h3>
+            <p>Ona lives in your editor, providing real-time suggestions, refactoring, and documentation based on your entire workspace.</p>
         </div>
         <div class="feature-card">
-            <span class="material-symbols-rounded icon">bolt</span>
-            <h3>Vynix Engine</h3>
-            <p>Ultra-fast generation powered by the Vynix core, delivering 4K renders in seconds.</p>
+            <span class="material-symbols-rounded icon">memory</span>
+            <h3>Vynix Logic Layer</h3>
+            <p>Go beyond autocomplete. Our model predicts complex logical flows and handles boilerplate generation in 20+ languages.</p>
         </div>
         <div class="feature-card">
-            <span class="material-symbols-rounded icon">movie</span>
-            <h3>Vision in Motion</h3>
-            <p>Go beyond stills. Coming soon: Generate cinematic African-themed videos with a single prompt.</p>
+            <span class="material-symbols-rounded icon">developer_board</span>
+            <h3>Developer Support</h3>
+            <p>Dedicated tools for local deployment, cloud orchestration, and performance debugging tailored for the African tech ecosystem.</p>
         </div>
     </section>
 
     <section class="vynix-section">
-        <p style="text-transform: uppercase; letter-spacing: 2px; font-weight: 600; color: var(--primary);">Architecture</p>
-        <h2>Driven by Vynix</h2>
-        <p style="max-width: 700px; margin: 0 auto;">Ona isn't just a wrapper. It's an expression of the Vynix neural network, specifically tuned to recognize and celebrate the rich diversity of the African continent.</p>
+        <p style="text-transform: uppercase; letter-spacing: 2px; font-weight: 600; color: var(--primary);">Intelligence</p>
+        <h2>Engineered by Vynix</h2>
+        <p style="max-width: 700px; margin: 0 auto;">Ona is more than a chatbot; it is a high-performance compiler for your ideas. It leverages the Vynix Intelligence Layer to turn natural language into production-ready code.</p>
     </section>
 
     <footer>
-        <p>&copy; 2026 Ona AI • Developed by RareGrade Tech • All Rights Reserved</p>
+        <p>&copy; 2026 Ona Code • Developed by RareGrade Tech • All Rights Reserved</p>
     </footer>
 
 </body>
