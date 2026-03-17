@@ -1,860 +1,917 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Ona AI // Codex Core</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Rounded" rel="stylesheet"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Ona AI • Chat & Vision</title>
 
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-remote-config-compat.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Rounded" rel="stylesheet"/>
 
-    <style>
-        :root {
-            --bg-dark: #0d1117;
-            --bg-panel: #161b22;
-            --bg-terminal: #0d1117;
-            --primary: #58a6ff; /* Codex Blue */
-            --primary-dim: rgba(88, 166, 255, 0.15);
-            --accent: #238636; /* GitHub Green */
-            --accent-warn: #d29922;
-            --accent-error: #da3633;
-            --text-main: #c9d1d9;
-            --text-dim: #8b949e;
-            --text-bright: #f0f6fc;
-            --border: #30363d;
-            --border-hover: #8b949e;
-            --font-mono: 'JetBrains Mono', monospace;
-            --font-sans: 'Inter', sans-serif;
-            --success: #3fb950;
-            --warning: #d29922;
-        }
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: var(--font-mono);
-            background: var(--bg-dark);
-            color: var(--text-main);
-            height: 100svh;
-            display: flex;
-            overflow: hidden;
-            line-height: 1.6;
-        }
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-remote-config-compat.js"></script>
 
-        /* --- AUTH OVERLAY --- */
-        #authOverlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(13, 17, 23, 0.95); display: none; z-index: 1000;
-            align-items: center; justify-content: center;
-            backdrop-filter: blur(20px);
-        }
+  <style>
+    :root {
+      --bg-body: #F7F7F7;
+      --bg-surface: #FFFFFF;
+      --bg-sidebar: #EFEFEF;
+      --primary: #C5A059; 
+      --accent: #1A1A1A;
+      --primary-gradient: linear-gradient(135deg, #C5A059, #8E6E37);
+      --text-main: #1A1A1A;
+      --text-secondary: #707070;
+      --border-color: #EAEAEA;
+      --sidebar-width: 280px;
+      --user-bubble: #1A1A1A;
+      --ai-bubble: #FFFFFF;
+    }
 
-        .auth-container {
-            background: var(--bg-panel); width: 90%; max-width: 420px; padding: 40px;
-            border-radius: 12px; border: 1px solid var(--border);
-            text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        }
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-        .auth-container h2 {
-            color: var(--text-bright); font-family: var(--font-sans); 
-            letter-spacing: -0.5px; font-size: 1.5rem; margin-bottom: 8px;
-        }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg-body);
+      color: var(--text-main);
+      height: 100svh; 
+      display: flex;
+      flex-direction: row;
+      overflow: hidden;
+    }
 
-        .benchmark-badge {
-            display: inline-flex; align-items: center; gap: 6px;
-            background: var(--primary-dim); color: var(--primary);
-            padding: 4px 12px; border-radius: 20px; font-size: 0.75rem;
-            margin-bottom: 24px; border: 1px solid rgba(88, 166, 255, 0.3);
-        }
+    /* --- SIDEBAR --- */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border-color);
+      display: none;
+      flex-direction: column;
+      padding: 20px;
+      z-index: 20;
+    }
 
-        .google-btn {
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            width: 100%; margin-top: 20px; padding: 12px;
-            border: 1px solid var(--border); background: var(--bg-dark);
-            color: var(--text-main); font-family: var(--font-mono); font-weight: 600;
-            cursor: pointer; transition: all 0.2s; border-radius: 6px;
-        }
-        .google-btn:hover { 
-            border-color: var(--primary); 
-            color: var(--primary);
-            transform: translateY(-1px);
-        }
+    .sidebar-header { margin-bottom: 30px; }
 
-        /* --- SIDEBAR --- */
-        .sidebar {
-            width: 280px; background: var(--bg-panel); border-right: 1px solid var(--border);
-            display: flex; flex-direction: column; padding: 20px;
-        }
+    .new-chat-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      width: 100%;
+      padding: 12px 15px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
 
-        .logo-section {
-            display: flex; align-items: center; gap: 12px; margin-bottom: 30px;
-            padding-bottom: 20px; border-bottom: 1px solid var(--border);
-        }
+    .new-chat-btn:hover { background: #e4e4e4; }
 
-        .logo-icon {
-            width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary), #1f6feb);
-            border-radius: 8px; display: flex; align-items: center; justify-content: center;
-            font-weight: bold; color: white; font-size: 1.2rem;
-        }
+    .history-title {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+      padding-left: 10px;
+    }
 
-        .logo-text {
-            font-family: var(--font-sans); font-weight: 800; color: var(--text-bright);
-            font-size: 1.1rem; letter-spacing: -0.5px;
-        }
+    /* --- APP CORE --- */
+    .app-core {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      position: relative;
+    }
 
-        .logo-sub {
-            font-size: 0.7rem; color: var(--text-dim); font-family: var(--font-mono);
-        }
+    /* Header */
+    .app-header {
+      background: var(--bg-surface);
+      height: 64px;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+      z-index: 10;
+    }
 
-        .stats-panel {
-            background: var(--bg-dark); border: 1px solid var(--border);
-            border-radius: 8px; padding: 16px; margin-bottom: 20px;
-        }
+    .app-title {
+      font-weight: 700;
+      letter-spacing: 1px;
+      font-size: 1.2rem;
+      text-transform: uppercase;
+    }
 
-        .stats-title {
-            font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase;
-            letter-spacing: 1px; margin-bottom: 12px; font-family: var(--font-sans);
-            font-weight: 600;
-        }
+    .header-tabs {
+      display: flex;
+      gap: 8px;
+      background: #EAEAEA;
+      padding: 4px;
+      border-radius: 24px;
+    }
 
-        .stat-row {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 8px; font-size: 0.85rem;
-        }
+    .header-tab {
+      padding: 8px 20px;
+      border-radius: 20px;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
 
-        .stat-label { color: var(--text-dim); }
-        .stat-value { color: var(--primary); font-weight: 600; }
-        .stat-value.success { color: var(--success); }
-        .stat-value.warning { color: var(--warning); }
+    .header-tab.active {
+      background: var(--accent);
+      color: white;
+    }
 
-        .language-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
-            margin-top: 20px;
-        }
+    .icon-btn {
+      background: none; border: none; color: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      width: 44px; height: 44px; border-radius: 50%; cursor: pointer;
+    }
 
-        .lang-badge {
-            background: var(--bg-dark); border: 1px solid var(--border);
-            padding: 6px; text-align: center; font-size: 0.7rem;
-            border-radius: 4px; color: var(--text-dim); cursor: pointer;
-            transition: all 0.2s;
-        }
+    /* Main Content */
+    .main-content { 
+      flex: 1; 
+      overflow-y: auto; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center;
+    }
 
-        .lang-badge:hover, .lang-badge.active {
-            border-color: var(--primary); color: var(--primary); background: var(--primary-dim);
-        }
+    .chat-wrapper {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
 
-        /* --- TERMINAL CORE --- */
-        .terminal-wrapper {
-            flex: 1; display: flex; flex-direction: column; height: 100%;
-            padding: 0; position: relative; background: var(--bg-terminal);
-        }
+    /* Welcome Screen */
+    .welcome-screen {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 30px 20px; text-align: center;
+      width: 100%;
+    }
 
-        .terminal-header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 16px 24px; border-bottom: 1px solid var(--border);
-            background: var(--bg-panel);
-        }
+    .ona-logo {
+      width: 80px; height: 80px;
+      background: var(--primary-gradient);
+      border-radius: 22px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 20px rgba(197, 160, 89, 0.3);
+    }
 
-        .header-left {
-            display: flex; align-items: center; gap: 12px;
-        }
+    .brand-title {
+      font-size: 2.2rem; font-weight: 700; margin-bottom: 8px;
+    }
 
-        .status-indicator {
-            display: flex; align-items: center; gap: 6px;
-            font-size: 0.8rem; color: var(--text-dim);
-        }
+    .suggestions-container {
+      width: 100%; max-width: 500px; margin-top: 30px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
+    }
 
-        .status-dot { 
-            width: 8px; height: 8px; border-radius: 50%; 
-            background: var(--success); box-shadow: 0 0 10px var(--success);
-            animation: pulse 2s infinite;
-        }
+    .suggestion-chip {
+      background: white; border: 1px solid var(--border-color);
+      padding: 16px; border-radius: 12px; font-size: 0.9rem;
+      text-align: left; cursor: pointer; transition: 0.2s;
+    }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
+    .suggestion-chip:hover { border-color: #ccc; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .suggestion-chip:active { background: #f0f0f0; transform: scale(0.98); }
 
-        .model-badge {
-            background: var(--primary-dim); color: var(--primary);
-            padding: 4px 10px; border-radius: 4px; font-size: 0.75rem;
-            border: 1px solid rgba(88, 166, 255, 0.3); font-weight: 600;
-        }
+    /* Chat Container */
+    .chat-container { 
+      padding: 20px; 
+      display: none; 
+      flex-direction: column; 
+      gap: 20px;
+      flex: 1;
+    }
 
-        .header-actions {
-            display: flex; gap: 12px;
-        }
+    .message-row { 
+      display: flex; 
+      width: 100%;
+      animation: fadeIn 0.3s ease;
+    }
 
-        .icon-btn {
-            background: transparent; border: 1px solid var(--border);
-            color: var(--text-dim); padding: 6px 12px; border-radius: 6px;
-            cursor: pointer; font-size: 0.8rem; transition: all 0.2s;
-            display: flex; align-items: center; gap: 6px;
-        }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-        .icon-btn:hover {
-            border-color: var(--primary); color: var(--primary);
-        }
+    .message-row.user { justify-content: flex-end; }
+    .message-row.ai { justify-content: flex-start; }
 
-        #terminalOutput {
-            flex: 1; overflow-y: auto; display: flex; flex-direction: column;
-            gap: 16px; scroll-behavior: smooth; padding: 24px;
-            font-size: 0.9rem;
-        }
+    .msg-bubble {
+      max-width: 80%; 
+      padding: 14px 18px; 
+      border-radius: 20px;
+      font-size: 1rem; 
+      line-height: 1.6;
+      word-wrap: break-word;
+    }
 
-        .line { 
-            line-height: 1.6; 
-            animation: fadeIn 0.3s ease-in;
-        }
+    .msg-bubble.user { 
+      background: var(--user-bubble); 
+      color: white; 
+      border-radius: 20px 20px 4px 20px; 
+    }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+    .msg-bubble.ai { 
+      background: var(--ai-bubble); 
+      color: var(--text-main); 
+      border: 1px solid var(--border-color);
+      border-radius: 20px 20px 20px 4px;
+    }
 
-        .prompt-prefix { 
-            color: var(--primary); font-weight: bold; margin-right: 8px;
-        }
-        
-        .timestamp {
-            color: var(--text-dim); font-size: 0.75rem; margin-right: 12px;
-        }
+    .msg-bubble.ai p { margin-bottom: 12px; }
+    .msg-bubble.ai p:last-child { margin-bottom: 0; }
+    .msg-bubble.ai strong { color: var(--primary); }
+    .msg-bubble.ai em { color: var(--text-secondary); }
 
-        /* Enhanced Code Styling */
-        .code-block-wrapper {
-            margin: 16px 0; border: 1px solid var(--border);
-            background: var(--bg-panel); border-radius: 8px;
-            overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        }
+    /* AI Avatar */
+    .ai-avatar {
+      width: 32px;
+      height: 32px;
+      background: var(--primary-gradient);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
 
-        .code-header {
-            padding: 10px 16px; background: rgba(48, 54, 61, 0.5);
-            border-bottom: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center;
-            font-size: 0.8rem;
-        }
+    .ai-avatar span {
+      color: white;
+      font-size: 18px;
+    }
 
-        .code-lang {
-            background: var(--bg-dark); padding: 2px 8px; border-radius: 4px;
-            color: var(--primary); font-weight: 600; text-transform: uppercase;
-            font-size: 0.7rem;
-        }
+    .message-content {
+      display: flex;
+      align-items: flex-start;
+      max-width: 85%;
+    }
 
-        .code-actions {
-            display: flex; gap: 8px;
-        }
+    /* Image Styles */
+    .img-wrapper {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      cursor: zoom-in;
+      max-width: 500px;
+      margin-top: 10px;
+    }
 
-        .code-btn {
-            background: transparent; border: none; color: var(--text-dim);
-            cursor: pointer; font-size: 0.75rem; padding: 4px 8px;
-            border-radius: 4px; transition: all 0.2s;
-        }
+    .generated-img {
+      width: 100%;
+      display: block; 
+      border-radius: 12px;
+    }
 
-        .code-btn:hover { color: var(--text-bright); background: rgba(255,255,255,0.1); }
+    .watermark {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.6); 
+      color: var(--primary); 
+      padding: 6px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      pointer-events: none; 
+      backdrop-filter: blur(2px); 
+    }
 
-        pre { 
-            padding: 20px; overflow-x: auto; color: var(--text-main);
-            background: var(--bg-dark); margin: 0; font-size: 0.85rem;
-            line-height: 1.5;
-        }
+    .action-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
 
-        code {
-            font-family: var(--font-mono);
-        }
+    .action-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
 
-        /* Syntax Highlighting Simulation */
-        .code-keyword { color: #ff7b72; }
-        .code-string { color: #a5d6ff; }
-        .code-function { color: #d2a8ff; }
-        .code-comment { color: #8b949e; font-style: italic; }
-        .code-number { color: #79c0ff; }
+    .action-btn:hover { background: #f0f0f0; }
 
-        /* Analysis Blocks */
-        .analysis-block {
-            background: var(--bg-panel); border-left: 3px solid var(--accent);
-            padding: 16px; margin: 12px 0; border-radius: 0 8px 8px 0;
-        }
+    /* Bottom Section */
+    .bottom-section {
+      background: var(--bg-body);
+      padding-bottom: env(safe-area-inset-bottom);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
 
-        .analysis-title {
-            color: var(--accent); font-weight: 600; font-size: 0.8rem;
-            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;
-            display: flex; align-items: center; gap: 6px;
-        }
+    .input-wrapper {
+      width: 100%;
+      max-width: 800px;
+    }
 
-        .analysis-content { color: var(--text-dim); font-size: 0.9rem; }
+    .input-bar {
+      padding: 10px 20px 25px 20px;
+    }
 
-        .error-block {
-            border-left-color: var(--accent-error);
-        }
-        .error-block .analysis-title { color: var(--accent-error); }
+    .input-box {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--bg-surface); border: 1px solid var(--border-color);
+      border-radius: 30px; padding: 8px 8px 8px 24px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+      transition: all 0.3s ease;
+    }
 
-        .warning-block {
-            border-left-color: var(--accent-warn);
-        }
-        .warning-block .analysis-title { color: var(--accent-warn); }
+    .input-box:focus-within {
+      border-color: var(--primary);
+      box-shadow: 0 4px 20px rgba(197, 160, 89, 0.15);
+    }
 
-        /* --- INPUT AREA --- */
-        .input-container {
-            padding: 20px 24px; border-top: 1px solid var(--border);
-            background: var(--bg-panel);
-        }
+    .chat-input {
+      flex: 1; border: none; background: transparent;
+      font-size: 1rem; outline: none; padding: 10px 0;
+      font-family: inherit;
+    }
 
-        .input-line {
-            display: flex; align-items: center; gap: 12px;
-            background: var(--bg-dark); border: 1px solid var(--border);
-            padding: 12px 16px; border-radius: 8px;
-            transition: border-color 0.2s;
-        }
+    .send-btn {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--accent); color: white; border: none;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s; cursor: pointer;
+    }
 
-        .input-line:focus-within {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--primary-dim);
-        }
+    .send-btn:hover:not(:disabled) { 
+      background: #333; 
+      transform: scale(1.05);
+    }
+    .send-btn:disabled { 
+      background: var(--text-secondary); 
+      cursor: not-allowed;
+      transform: none;
+    }
 
-        .input-line.disabled { 
-            opacity: 0.5; pointer-events: none; 
-            filter: grayscale(100%);
-        }
-        
-        #userInput {
-            flex: 1; background: transparent; border: none; outline: none;
-            color: var(--text-bright); font-family: var(--font-mono); 
-            font-size: 0.95rem;
-        }
+    /* Loading */
+    .loader { 
+      display: flex; 
+      gap: 6px; 
+      padding: 15px 0; 
+      align-items: center;
+    }
+    .dot { 
+      width: 8px; 
+      height: 8px; 
+      background: var(--primary); 
+      border-radius: 50%; 
+      animation: pulse 1.2s infinite; 
+    }
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-        #userInput::placeholder { color: var(--text-dim); }
+    .thinking-text {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-left: 10px;
+    }
 
-        .input-hints {
-            display: flex; gap: 12px; margin-top: 8px; padding-left: 16px;
-            font-size: 0.75rem; color: var(--text-dim);
-        }
+    /* Image Viewer Modal */
+    .image-viewer {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(5px);
+      z-index: 1000; display: none; flex-direction: column;
+      align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease;
+    }
 
-        .hint-key {
-            background: var(--bg-dark); padding: 2px 6px; border-radius: 4px;
-            border: 1px solid var(--border); color: var(--text-dim);
-        }
+    .image-viewer img {
+      max-width: 95%; max-height: 85%; border-radius: 8px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5); object-fit: contain;
+    }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-dark); }
-        ::-webkit-scrollbar-thumb { 
-            background: var(--border); border-radius: 4px; 
-        }
-        ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+    .close-viewer-btn {
+      position: absolute; top: 30px; right: 30px;
+      background: rgba(255, 255, 255, 0.2); border: none; color: white;
+      width: 44px; height: 44px; border-radius: 50%; display: flex;
+      align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;
+    }
 
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .sidebar { display: none; }
-            .terminal-header { padding: 12px 16px; }
-            #terminalOutput { padding: 16px; }
-        }
+    .close-viewer-btn:hover { background: rgba(255, 255, 255, 0.4); transform: scale(1.05); }
 
-        /* Loading Animation */
-        .typing-indicator {
-            display: flex; gap: 4px; padding: 12px 0;
-        }
-        .typing-dot {
-            width: 8px; height: 8px; background: var(--primary);
-            border-radius: 50%; animation: typing 1.4s infinite;
-        }
-        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    /* Code blocks in chat */
+    .code-block {
+      background: #1A1A1A;
+      color: #EAEAEA;
+      padding: 16px;
+      border-radius: 12px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      margin: 10px 0;
+    }
 
-        @keyframes typing {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-10px); }
-        }
-    </style>
+    /* Responsive */
+    @media (min-width: 768px) {
+      body { flex-direction: row; }
+      .sidebar { display: flex; }
+      .app-header .icon-btn[onclick="resetChat()"] { display: none; }
+      .app-header { background: var(--bg-body); border-bottom: none; }
+      .input-box { padding: 12px 12px 12px 24px; }
+    }
+
+    @media (max-width: 767px) {
+      body { flex-direction: column; }
+      .header-tabs { transform: scale(0.9); }
+    }
+  </style>
+<base target="_blank">
 </head>
 <body>
 
-    <div id="authOverlay">
-        <div class="auth-container">
-            <div class="logo-icon" style="margin: 0 auto 16px;">O</div>
-            <h2>Ona Codex Core</h2>
-            <div class="benchmark-badge">
-                <span class="material-symbols-rounded" style="font-size: 14px;">verified</span>
-                SWE-bench Optimized // 80.9% Accuracy
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <button class="new-chat-btn" onclick="resetChat()">
+        <span class="material-symbols-rounded">add</span> New Chat
+      </button>
+    </div>
+    <div class="history-title">Recent</div>
+    <div style="font-size: 0.85rem; color: var(--text-secondary); padding-left: 10px;">
+      Sessions will appear here.
+    </div>
+  </aside>
+
+  <div class="app-core">
+    <header class="app-header">
+      <button class="icon-btn" onclick="resetChat()" title="New Chat">
+        <span class="material-symbols-rounded">refresh</span>
+      </button>
+
+      <div class="header-tabs">
+        <button class="header-tab active" id="tabChat" onclick="switchTab('chat')">
+          <span class="material-symbols-rounded" style="font-size: 18px;">chat</span> Chat
+        </button>
+        <button class="header-tab" id="tabImages" onclick="switchTab('images')">
+          <span class="material-symbols-rounded" style="font-size: 18px;">image</span> Images
+        </button>
+      </div>
+
+      <button class="icon-btn"><span class="material-symbols-rounded">account_circle</span></button>
+    </header>
+
+    <main class="main-content" id="mainScroll">
+      <div class="chat-wrapper">
+        <!-- Welcome Screen -->
+        <div class="welcome-screen" id="welcomeScreen">
+          <div class="ona-logo">
+            <span class="material-symbols-rounded" style="color:white; font-size:40px;">auto_awesome</span>
+          </div>
+          <h1 class="brand-title">Ona AI</h1>
+          <p style="color: var(--text-secondary);">Your creative companion for conversation and art.</p>
+
+          <div class="suggestions-container" id="suggestionsContainer">
+            <div class="suggestion-chip" onclick="setPrompt('Tell me about African innovation in technology')">
+              <strong>Knowledge</strong><br>African Tech Innovation
             </div>
-            <p style="color: var(--text-dim); font-size: 0.85rem; line-height: 1.5; margin-bottom: 24px;">
-                Expert-level coding assistant trained on 500+ real-world software engineering tasks. 
-                Supports 50+ languages with architectural best practices.
-            </p>
-            <button class="google-btn" onclick="login()">
-                <span class="material-symbols-rounded">login</span>
-                AUTHENTICATE_VIA_GOOGLE
+            <div class="suggestion-chip" onclick="setPrompt('Help me write a poem about the savanna')">
+              <strong>Creative</strong><br>Savanna Poetry
+            </div>
+            <div class="suggestion-chip" onclick="setPrompt('Explain quantum computing simply')">
+              <strong>Learning</strong><br>Quantum Basics
+            </div>
+            <div class="suggestion-chip" onclick="setPrompt('Give me a recipe for jollof rice')">
+              <strong>Practical</strong><br>Jollof Recipe
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat Messages -->
+        <div class="chat-container" id="chatContainer"></div>
+      </div>
+    </main>
+
+    <footer class="bottom-section">
+      <div class="input-wrapper">
+        <div class="input-bar">
+          <div class="input-box" id="inputBoxContainer">
+            <input type="text" class="chat-input" id="userInput" placeholder="Message Ona AI..." autocomplete="off" />
+            <button class="send-btn" id="sendBtn">
+              <span class="material-symbols-rounded">arrow_upward</span>
             </button>
+          </div>
         </div>
-    </div>
-
-    <aside class="sidebar">
-        <div class="logo-section">
-            <div class="logo-icon">O</div>
-            <div>
-                <div class="logo-text">Ona AI</div>
-                <div class="logo-sub">Codex Core v4.0</div>
-            </div>
+        <div style="text-align: center; padding-bottom: 10px; font-size: 0.75rem; color: var(--text-secondary);">
+          Ona AI can make mistakes. Consider checking important information.
         </div>
+      </div>
+    </footer>
+  </div>
 
-        <div class="stats-panel">
-            <div class="stats-title">Performance Metrics</div>
-            <div class="stat-row">
-                <span class="stat-label">SWE-bench Verified</span>
-                <span class="stat-value success">80.9%</span>
-            </div>
-            <div class="stat-row">
-                <span class="stat-label">HumanEval</span>
-                <span class="stat-value success">96.3%</span>
-            </div>
-            <div class="stat-row">
-                <span class="stat-label">Terminal-Bench</span>
-                <span class="stat-value">77.3%</span>
-            </div>
-            <div class="stat-row">
-                <span class="stat-label">LiveCodeBench</span>
-                <span class="stat-value warning">84.9%</span>
-            </div>
+  <div id="imageViewer" class="image-viewer">
+    <button class="close-viewer-btn" onclick="closeImageViewer()">
+      <span class="material-symbols-rounded">close</span>
+    </button>
+    <img id="viewerImage" src="" alt="Expanded View" />
+  </div>
+
+  <script>
+    // --- CONFIGURATION ---
+    const CLOUDINARY_CLOUD_NAME = "dqkujefxj"; 
+    const CLOUDINARY_UPLOAD_PRESET = "banter_box"; 
+    const API_BASE = "https://api.x.ai/v1";
+    let XAI_API_KEY = "";
+
+    // --- STATE ---
+    let currentTab = 'chat';
+    let conversationHistory = [];
+
+    // --- ELEMENTS ---
+    const els = {
+      welcome: document.getElementById('welcomeScreen'),
+      chat: document.getElementById('chatContainer'),
+      input: document.getElementById('userInput'),
+      send: document.getElementById('sendBtn'),
+      scroll: document.getElementById('mainScroll'),
+      suggestions: document.getElementById('suggestionsContainer'),
+      viewer: document.getElementById('imageViewer'),
+      viewerImg: document.getElementById('viewerImage'),
+      tabChat: document.getElementById('tabChat'),
+      tabImages: document.getElementById('tabImages')
+    };
+
+    // --- FIREBASE INIT ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyBOyZ3As4GTuNvjemvPF_SpsC6m6vqtNhc",
+      authDomain: "fire-b-a8878.firebaseapp.com",
+      projectId: "fire-b-a8878",
+      databaseURL: "https://fire-b-a8878-default-rtdb.firebaseio.com",
+      appId: "1:658673187627:web:6e4c29af661785f0afa36e"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const remoteConfig = firebase.remoteConfig();
+    remoteConfig.settings.minimumFetchIntervalMillis = 0;
+
+    async function loadKey() {
+      try {
+        await remoteConfig.fetchAndActivate();
+        XAI_API_KEY = remoteConfig.getValue('xai_api_key').asString();
+      } catch (e) { console.error("Key Load Error", e); }
+    }
+    loadKey();
+
+    // --- TAB SWITCHING ---
+    function switchTab(tab) {
+      currentTab = tab;
+
+      if (tab === 'chat') {
+        els.tabChat.classList.add('active');
+        els.tabImages.classList.remove('active');
+        els.input.placeholder = "Message Ona AI...";
+        updateSuggestions('chat');
+      } else {
+        els.tabChat.classList.remove('active');
+        els.tabImages.classList.add('active');
+        els.input.placeholder = "Describe an image to generate...";
+        updateSuggestions('images');
+      }
+
+      // Reset view if no messages
+      if (conversationHistory.length === 0) {
+        els.welcome.style.display = 'flex';
+        els.chat.style.display = 'none';
+      }
+    }
+
+    function updateSuggestions(type) {
+      if (type === 'chat') {
+        els.suggestions.innerHTML = `
+          <div class="suggestion-chip" onclick="setPrompt('Tell me about African innovation in technology')">
+            <strong>Knowledge</strong><br>African Tech Innovation
+          </div>
+          <div class="suggestion-chip" onclick="setPrompt('Help me write a poem about the savanna')">
+            <strong>Creative</strong><br>Savanna Poetry
+          </div>
+          <div class="suggestion-chip" onclick="setPrompt('Explain quantum computing simply')">
+            <strong>Learning</strong><br>Quantum Basics
+          </div>
+          <div class="suggestion-chip" onclick="setPrompt('Give me a recipe for jollof rice')">
+            <strong>Practical</strong><br>Jollof Recipe
+          </div>
+        `;
+      } else {
+        els.suggestions.innerHTML = `
+          <div class="suggestion-chip" onclick="setPrompt('African futuristic city with baobab shaped skyscrapers')">
+            <strong>Futurism</strong><br>Baobab City
+          </div>
+          <div class="suggestion-chip" onclick="setPrompt('Portrait of a warrior in glowing tribal neon armor')">
+            <strong>Portrait</strong><br>Neon Warrior
+          </div>
+          <div class="suggestion-chip" onclick="setPrompt('Serengeti sunset with acacia trees and wildlife')">
+            <strong>Nature</strong><br>Sunset Savanna
+          </div>
+          <div class="suggestion-chip" onclick="setPrompt('Traditional African market in cyberpunk style')">
+            <strong>Style</strong><br>Cyberpunk Market
+          </div>
+        `;
+      }
+    }
+
+    // --- CHAT FUNCTIONS ---
+    function resetChat() { 
+      conversationHistory = [];
+      location.reload(); 
+    }
+
+    function activateChat() { 
+      els.welcome.style.display = 'none'; 
+      els.chat.style.display = 'flex'; 
+    }
+
+    function setPrompt(t) { 
+      els.input.value = t; 
+      handleSend(); 
+    }
+
+    function openImageViewer(url) {
+      els.viewerImg.src = url;
+      els.viewer.style.display = 'flex';
+      setTimeout(() => { els.viewer.style.opacity = '1'; }, 10);
+    }
+
+    function closeImageViewer() {
+      els.viewer.style.opacity = '0';
+      setTimeout(() => { 
+        els.viewer.style.display = 'none'; 
+        els.viewerImg.src = ''; 
+      }, 300);
+    }
+
+    async function uploadToCloudinary(imageUrl) {
+      const url = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
+      const formData = new FormData();
+      formData.append('file', imageUrl);
+      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+      const response = await fetch(url, {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) throw new Error("Failed to upload to Cloudinary");
+      const data = await response.json();
+      return data.secure_url; 
+    }
+
+    // --- MESSAGE HANDLING ---
+    async function handleSend() {
+      const prompt = els.input.value.trim();
+      if (!prompt || !XAI_API_KEY) return;
+
+      activateChat();
+
+      // Add user message
+      conversationHistory.push({ role: 'user', content: prompt });
+      els.chat.innerHTML += `
+        <div class="message-row user">
+          <div class="msg-bubble user">${escapeHtml(prompt)}</div>
         </div>
+      `;
 
-        <div class="stats-panel">
-            <div class="stats-title">Active Languages</div>
-            <div class="language-grid">
-                <div class="lang-badge active">Python</div>
-                <div class="lang-badge">JavaScript</div>
-                <div class="lang-badge">TypeScript</div>
-                <div class="lang-badge">Rust</div>
-                <div class="lang-badge">Go</div>
-                <div class="lang-badge">C++</div>
-                <div class="lang-badge">Java</div>
-                <div class="lang-badge">Ruby</div>
-                <div class="lang-badge">+42</div>
+      // Show loader
+      const loaderId = 'loader-' + Date.now();
+      els.chat.innerHTML += `
+        <div class="message-row ai" id="${loaderId}">
+          <div class="message-content">
+            <div class="ai-avatar">
+              <span class="material-symbols-rounded">auto_awesome</span>
             </div>
+            <div class="loader">
+              <div class="dot"></div>
+              <div class="dot"></div>
+              <div class="dot"></div>
+              <span class="thinking-text">${currentTab === 'chat' ? 'Thinking...' : 'Creating...'}</span>
+            </div>
+          </div>
         </div>
+      `;
 
-        <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border);">
-            <div class="stats-title">System Status</div>
-            <div style="font-size: 0.8rem; color: var(--text-dim); line-height: 1.6;">
-                <div>Model: grok-code-fast-1</div>
-                <div>Context: 128K tokens</div>
-                <div>Temperature: 0.2 (Precise)</div>
-                <div style="margin-top: 8px; color: var(--success);">
-                    ● All systems operational
+      els.input.value = '';
+      els.scroll.scrollTop = els.scroll.scrollHeight;
+
+      try {
+        if (currentTab === 'chat') {
+          await handleChatRequest(prompt, loaderId);
+        } else {
+          await handleImageRequest(prompt, loaderId);
+        }
+      } catch (err) {
+        document.getElementById(loaderId).remove();
+        els.chat.innerHTML += `
+          <div class="message-row ai">
+            <div class="message-content">
+              <div class="ai-avatar">
+                <span class="material-symbols-rounded">auto_awesome</span>
+              </div>
+              <div class="msg-bubble ai" style="color: #d32f2f;">
+                Sorry, I encountered an error: ${escapeHtml(err.message)}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      els.scroll.scrollTop = els.scroll.scrollHeight;
+    }
+
+    async function handleChatRequest(prompt, loaderId) {
+      const messages = [
+        { role: "system", content: "You are Ona AI, a helpful and creative AI assistant with a warm, knowledgeable personality. You excel at conversation, creative writing, analysis, and helping users with a wide range of tasks. Keep responses concise but informative." },
+        ...conversationHistory.map(msg => ({ role: msg.role, content: msg.content }))
+      ];
+
+      const res = await fetch(`${API_BASE}/chat/completions`, {
+        method: 'POST',
+        headers: { 
+          'Authorization': `Bearer ${XAI_API_KEY}`, 
+          'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify({ 
+          model: "grok-4-1-fast-non-reasoning",
+          messages: messages,
+          stream: false
+        })
+      });
+
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+
+      const reply = data.choices[0].message.content;
+      conversationHistory.push({ role: 'assistant', content: reply });
+
+      document.getElementById(loaderId).remove();
+
+      els.chat.innerHTML += `
+        <div class="message-row ai">
+          <div class="message-content">
+            <div class="ai-avatar">
+              <span class="material-symbols-rounded">auto_awesome</span>
+            </div>
+            <div class="msg-bubble ai">${formatMessage(reply)}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function handleImageRequest(prompt, loaderId) {
+      const res = await fetch(`${API_BASE}/images/generations`, {
+        method: 'POST',
+        headers: { 
+          'Authorization': `Bearer ${XAI_API_KEY}`, 
+          'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify({ 
+          model: "grok-imagine-image", 
+          prompt: prompt 
+        })
+      });
+
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+
+      if (data.data && data.data[0].url) {
+        let sourceUrl = data.data[0].url;
+        let finalDisplayUrl = sourceUrl;
+
+        // Upload to Cloudinary
+        if (CLOUDINARY_CLOUD_NAME !== "YOUR_CLOUD_NAME") {
+          try {
+             finalDisplayUrl = await uploadToCloudinary(sourceUrl);
+          } catch (cloudErr) {
+             console.error("Cloudinary upload failed, using original", cloudErr);
+          }
+        }
+
+        document.getElementById(loaderId).remove();
+
+        const encodedPrompt = encodeURIComponent(prompt);
+
+        els.chat.innerHTML += `
+          <div class="message-row ai">
+            <div class="message-content">
+              <div class="ai-avatar">
+                <span class="material-symbols-rounded">auto_awesome</span>
+              </div>
+              <div style="display:flex; flex-direction:column; align-items:flex-start; width:100%;">
+                <div class="msg-bubble ai">Here's your generated image:</div>
+
+                <div class="img-wrapper" onclick="openImageViewer('${finalDisplayUrl}')">
+                  <img src="${finalDisplayUrl}" class="generated-img">
+                  <div class="watermark">
+                    <span class="material-symbols-rounded" style="font-size:14px;">auto_awesome</span> Ona AI
+                  </div>
                 </div>
-            </div>
-        </div>
-    </aside>
 
-    <div class="terminal-wrapper">
-        <header class="terminal-header">
-            <div class="header-left">
-                <div class="status-indicator">
-                    <span class="status-dot"></span>
-                    <span>ONLINE</span>
+                <div class="action-row">
+                  <button class="action-btn" onclick="editPrompt('${encodedPrompt}')">
+                    <span class="material-symbols-rounded" style="font-size: 16px;">edit</span> Edit Prompt
+                  </button>
+                  <button class="action-btn" onclick="downloadImage('${finalDisplayUrl}')">
+                    <span class="material-symbols-rounded" style="font-size: 16px;">download</span> Download
+                  </button>
                 </div>
-                <div class="model-badge">CODEX_MODE</div>
-                <span style="color: var(--text-dim); font-size: 0.8rem; margin-left: 12px;">
-                    Session: <span id="userNameDisplay">GUEST</span>
-                </span>
+              </div>
             </div>
-            <div class="header-actions">
-                <button class="icon-btn" onclick="clearTerminal()" title="Clear Terminal">
-                    <span class="material-symbols-rounded" style="font-size: 16px;">mop</span>
-                    Clear
-                </button>
-                <button class="icon-btn" onclick="logout()" title="Logout">
-                    <span class="material-symbols-rounded" style="font-size: 16px;">logout</span>
-                    Exit
-                </button>
-            </div>
-        </header>
+          </div>
+        `;
 
-        <main id="terminalOutput">
-            <div class="line">
-                <span class="timestamp">[15:37:02]</span>
-                <span style="color: var(--success);">●</span> Initializing Ona Codex Core...
-            </div>
-            <div class="line">
-                <span class="timestamp">[15:37:02]</span>
-                <span style="color: var(--primary); font-weight: 600;">Welcome to Ona AI // Codex Core</span>
-            </div>
-            <div class="line" style="color: var(--text-dim);">
-                <span class="timestamp">[15:37:02]</span>
-                Expert software architect mode activated. Optimized for SWE-bench Verified tasks, 
-                multi-file refactoring, and test-driven development.
-            </div>
-            <div class="line" style="color: var(--text-dim);">
-                <span class="timestamp">[15:37:02]</span>
-                Type <span style="color: var(--primary);">'help'</span> for commands or start coding. 
-                Supports architecture review, debugging, and complex system design.
-            </div>
-        </main>
+        conversationHistory.push({ role: 'assistant', content: `[Generated image: ${prompt}]` });
+      }
+    }
 
-        <div class="input-container">
-            <div class="input-line disabled" id="inputLine">
-                <span class="prompt-prefix">ona@codex:~$</span>
-                <input type="text" id="userInput" placeholder="Describe your coding task or paste code for review..." autocomplete="off" />
-            </div>
-            <div class="input-hints">
-                <span><span class="hint-key">Tab</span> autocomplete</span>
-                <span><span class="hint-key">↑↓</span> history</span>
-                <span><span class="hint-key">Ctrl+C</span> cancel</span>
-                <span><span class="hint-key">Ctrl+Enter</span> multiline</span>
-            </div>
-        </div>
-    </div>
+    // --- UTILITIES ---
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
 
-    <script>
-        // --- FIREBASE CONFIG ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyBOyZ3As4GTuNvjemvPF_SpsC6m6vqtNhc",
-            authDomain: "fire-b-a8878.firebaseapp.com",
-            projectId: "fire-b-a8878",
-            databaseURL: "https://fire-b-a8878-default-rtdb.firebaseio.com",
-            appId: "1:658673187627:web:6e4c29af661785f0afa36e"
-        };
-        firebase.initializeApp(firebaseConfig);
+    function formatMessage(text) {
+      // Basic markdown formatting
+      let formatted = escapeHtml(text);
 
-        const auth = firebase.auth();
-        const remoteConfig = firebase.remoteConfig();
-        let XAI_API_KEY = "";
-        
-        // Expert System Prompt - Optimized for benchmark performance
-        let chatHistory = [{ 
-            role: "system", 
-            content: `You are Ona AI Codex Core, an elite software architect optimized for benchmark-leading performance (SWE-bench Verified: 80.9%, HumanEval: 96.3%). 
+      // Bold
+      formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      // Italic
+      formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
+      // Code blocks
+      formatted = formatted.replace(/```(.*?)```/gs, '<div class="code-block">$1</div>');
+      // Inline code
+      formatted = formatted.replace(/`(.*?)`/g, '<code style="background:#f0f0f0;padding:2px 6px;border-radius:4px;font-family:monospace;">$1</code>');
+      // Line breaks
+      formatted = formatted.replace(/\n/g, '<p>');
 
-CAPABILITIES:
-- Expert in 50+ programming languages with deep knowledge of idioms and best practices
-- Specializes in real-world software engineering: debugging, refactoring, test generation, and architecture design
-- Follows SOLID principles, DRY, KISS, and language-specific style guides
-- Generates production-ready code with error handling, type safety, and comprehensive documentation
+      return formatted;
+    }
 
-RESPONSE FORMAT:
-1. Always analyze requirements before coding
-2. Provide architecture overview for complex tasks
-3. Use markdown code blocks with language tags
-4. Include complexity analysis (Time/Space)
-5. Add test cases where applicable
-6. Highlight potential edge cases and security considerations
+    function editPrompt(encodedPrompt) {
+      const promptText = decodeURIComponent(encodedPrompt);
+      if (currentTab !== 'images') switchTab('images');
+      els.input.value = promptText;
+      els.input.focus();
+    }
 
-CODING STANDARDS:
-- Python: PEP 8, type hints, docstrings (Google style)
-- JavaScript/TypeScript: ESLint, Prettier, JSDoc
-- Rust: Idiomatic, safe code with proper error handling
-- Go: Standard formatting, efficient concurrency patterns
-- Java: Spring Boot best practices, clean architecture
+    async function downloadImage(url) {
+      try {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = 'ona-ai-generated.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(downloadUrl);
+      } catch (err) {
+        console.error('Download failed:', err);
+        window.open(url, '_blank');
+      }
+    }
 
-When debugging: Provide root cause analysis, not just fixes.
-When refactoring: Explain architectural improvements and trade-offs.
-When reviewing: Check for security vulnerabilities, performance bottlenecks, and maintainability issues.`
-        }];
-
-        // --- AUTH ---
-        function login() {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            auth.signInWithPopup(provider);
-        }
-
-        function logout() {
-            if (confirm("Terminate Codex session?")) auth.signOut();
-        }
-
-        auth.onAuthStateChanged(user => {
-            const overlay = document.getElementById('authOverlay');
-            const inputLine = document.getElementById('inputLine');
-            const nameDisplay = document.getElementById('userNameDisplay');
-
-            if (user) {
-                overlay.style.display = 'none';
-                inputLine.classList.remove('disabled');
-                const firstName = user.displayName ? user.displayName.toUpperCase().split(' ')[0] : 'DEV';
-                nameDisplay.innerText = firstName;
-                document.getElementById('userInput').focus();
-                addSystemMessage(`Authenticated as ${firstName}. Codex Core ready.`);
-            } else {
-                overlay.style.display = 'flex';
-                inputLine.classList.add('disabled');
-                nameDisplay.innerText = "GUEST";
-            }
-        });
-
-        // --- API LOAD ---
-        async function loadKey() {
-            try {
-                await remoteConfig.fetchAndActivate();
-                XAI_API_KEY = remoteConfig.getValue('xai_api_key').asString();
-                addSystemMessage("API security layer initialized. Connected to xAI infrastructure.");
-            } catch (e) {
-                addSystemMessage("Warning: Remote config failed. Using fallback authentication.", "warning");
-            }
-        }
-        loadKey();
-
-        // --- TERMINAL ENGINE ---
-        const userInput = document.getElementById('userInput');
-        const outputArea = document.getElementById('terminalOutput');
-        let commandHistory = [];
-        let historyIndex = -1;
-
-        userInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                const val = userInput.value.trim();
-                if (val) {
-                    commandHistory.push(val);
-                    historyIndex = commandHistory.length;
-                    handleCommand(val);
-                }
-                userInput.value = '';
-            } else if (e.key === 'ArrowUp') {
-                e.preventDefault();
-                if (historyIndex > 0) {
-                    historyIndex--;
-                    userInput.value = commandHistory[historyIndex];
-                }
-            } else if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                if (historyIndex < commandHistory.length - 1) {
-                    historyIndex++;
-                    userInput.value = commandHistory[historyIndex];
-                } else {
-                    historyIndex = commandHistory.length;
-                    userInput.value = '';
-                }
-            } else if (e.key === 'Tab') {
-                e.preventDefault();
-                // Simple autocomplete suggestions could go here
-            }
-        });
-
-        function getTimestamp() {
-            const now = new Date();
-            return `[${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}]`;
-        }
-
-        function addSystemMessage(text, type = 'info') {
-            const line = document.createElement('div');
-            line.className = 'line';
-            const color = type === 'warning' ? 'var(--accent-warn)' : 'var(--text-dim)';
-            line.innerHTML = `
-                <span class="timestamp">${getTimestamp()}</span>
-                <span style="color: ${color};">${type === 'warning' ? '⚠' : '●'} ${text}</span>
-            `;
-            outputArea.appendChild(line);
-            outputArea.scrollTop = outputArea.scrollHeight;
-        }
-
-        function printToTerminal(text, type = "normal") {
-            const line = document.createElement('div');
-            line.className = 'line';
-            
-            if (type === "user") {
-                line.innerHTML = `
-                    <span class="timestamp">${getTimestamp()}</span>
-                    <span class="prompt-prefix">ona@codex:~$</span> 
-                    <span style="color: var(--text-bright);">${escapeHtml(text)}</span>
-                `;
-            } else {
-                line.innerHTML = formatAIResponse(text);
-            }
-            
-            outputArea.appendChild(line);
-            outputArea.scrollTop = outputArea.scrollHeight;
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function formatAIResponse(text) {
-            // Enhanced markdown processing for code blocks
-            let formatted = text.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
-                const language = lang || 'text';
-                const escapedCode = escapeHtml(code.trim());
-                return `
-                    <div class="code-block-wrapper">
-                        <div class="code-header">
-                            <span class="code-lang">${language}</span>
-                            <div class="code-actions">
-                                <button class="code-btn" onclick="copyToClipboard(this)" data-code="${encodeURIComponent(code.trim())}">
-                                    <span class="material-symbols-rounded" style="font-size: 14px; vertical-align: middle;">content_copy</span> Copy
-                                </button>
-                                <button class="code-btn" onclick="insertCode(this)">
-                                    <span class="material-symbols-rounded" style="font-size: 14px; vertical-align: middle;">play_arrow</span> Run
-                                </button>
-                            </div>
-                        </div>
-                        <pre><code class="language-${language}">${escapedCode}</code></pre>
-                    </div>
-                `;
-            });
-
-            // Process inline code
-            formatted = formatted.replace(/`([^`]+)`/g, '<code style="background: var(--bg-panel); padding: 2px 6px; border-radius: 4px; color: var(--primary); font-size: 0.9em;">$1</code>');
-
-            // Process headers
-            formatted = formatted.replace(/### (.*)/g, '<div style="color: var(--primary); font-weight: 600; margin-top: 16px; margin-bottom: 8px; font-size: 1.1em;">$1</div>');
-            formatted = formatted.replace(/## (.*)/g, '<div style="color: var(--text-bright); font-weight: 700; margin-top: 20px; margin-bottom: 10px; font-size: 1.2em; border-bottom: 1px solid var(--border); padding-bottom: 8px;">$1</div>');
-
-            // Process analysis blocks (custom syntax)
-            formatted = formatted.replace(/\[ANALYSIS\]([\s\S]*?)\[\/ANALYSIS\]/g, 
-                '<div class="analysis-block"><div class="analysis-title">Analysis</div><div class="analysis-content">$1</div></div>');
-            
-            formatted = formatted.replace(/\[WARNING\]([\s\S]*?)\[\/WARNING\]/g, 
-                '<div class="analysis-block warning-block"><div class="analysis-title">Warning</div><div class="analysis-content">$1</div></div>');
-
-            formatted = formatted.replace(/\[ERROR\]([\s\S]*?)\[\/ERROR\]/g, 
-                '<div class="analysis-block error-block"><div class="analysis-title">Error</div><div class="analysis-content">$1</div></div>');
-
-            // Convert newlines to breaks
-            formatted = formatted.replace(/\n/g, '<br>');
-
-            return `<span class="timestamp">${getTimestamp()}</span>${formatted}`;
-        }
-
-        function showTypingIndicator() {
-            const indicator = document.createElement('div');
-            indicator.className = 'line typing-indicator-container';
-            indicator.id = 'typingIndicator';
-            indicator.innerHTML = `
-                <span class="timestamp">${getTimestamp()}</span>
-                <div class="typing-indicator">
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                </div>
-            `;
-            outputArea.appendChild(indicator);
-            outputArea.scrollTop = outputArea.scrollHeight;
-        }
-
-        function removeTypingIndicator() {
-            const indicator = document.getElementById('typingIndicator');
-            if (indicator) indicator.remove();
-        }
-
-        async function handleCommand(cmd) {
-            if (cmd.toLowerCase() === 'clear') {
-                clearTerminal();
-                return;
-            }
-
-            if (cmd.toLowerCase() === 'help') {
-                printToTerminal(`
-## Available Commands
-
-**System:**
-- \`clear\` - Clear terminal
-- \`help\` - Show this help
-- \`status\` - Show system status
-- \`lang <language>\` - Set primary language context
-
-**Coding Modes:**
-- \`review\` - Code review mode (paste code)
-- \`arch\` - Architecture design mode
-- \`debug\` - Debug mode (describe issue)
-- \`test\` - Generate test cases
-
-**Benchmarks:**
-Current performance targets:
-- SWE-bench Verified: 80.9%
-- HumanEval: 96.3%
-- Terminal-Bench 2.0: 77.3%
-                `, "assistant");
-                return;
-            }
-
-            if (cmd.toLowerCase() === 'status') {
-                addSystemMessage("Model: grok-code-fast-1 | Context: 128K | Temp: 0.2 | Status: Operational");
-                return;
-            }
-
-            printToTerminal(cmd, "user");
-            chatHistory.push({ role: "user", content: cmd });
-            
-            showTypingIndicator();
-
-            try {
-                const res = await fetch(`https://api.x.ai/v1/chat/completions`, {
-                    method: 'POST',
-                    headers: { 
-                        'Authorization': `Bearer ${XAI_API_KEY}`, 
-                        'Content-Type': 'application/json' 
-                    },
-                    body: JSON.stringify({ 
-                        model: "grok-code-fast-1", 
-                        messages: chatHistory,
-                        temperature: 0.2, // Low temp for precise coding
-                        max_tokens: 4096,
-                        top_p: 0.95
-                    })
-                });
-
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-                const data = await res.json();
-                removeTypingIndicator();
-                
-                const reply = data.choices[0].message.content;
-                chatHistory.push({ role: "assistant", content: reply });
-                
-                // Keep context window manageable
-                if (chatHistory.length > 20) {
-                    chatHistory = [chatHistory[0], ...chatHistory.slice(-19)];
-                }
-                
-                printToTerminal(reply);
-
-            } catch (e) {
-                removeTypingIndicator();
-                printToTerminal(`[ERROR] Connection failed: ${e.message}. Retrying...`, "error");
-                addSystemMessage("Failed to reach xAI infrastructure. Check API configuration.", "warning");
-            }
-        }
-
-        function clearTerminal() {
-            outputArea.innerHTML = `
-                <div class="line">
-                    <span class="timestamp">${getTimestamp()}</span>
-                    <span style="color: var(--success);">●</span> Terminal cleared. Ready for input.
-                </div>
-            `;
-        }
-
-        // Utility functions for code blocks
-        window.copyToClipboard = function(btn) {
-            const code = decodeURIComponent(btn.getAttribute('data-code'));
-            navigator.clipboard.writeText(code).then(() => {
-                const original = btn.innerHTML;
-                btn.innerHTML = '<span class="material-symbols-rounded" style="font-size: 14px;">check</span> Copied';
-                setTimeout(() => btn.innerHTML = original, 2000);
-            });
-        };
-
-        window.insertCode = function(btn) {
-            addSystemMessage("Code execution environment not configured. Copy and run locally.");
-        };
-
-        // Language badge selection
-        document.querySelectorAll('.lang-badge').forEach(badge => {
-            badge.addEventListener('click', function() {
-                document.querySelectorAll('.lang-badge').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                const lang = this.textContent;
-                addSystemMessage(`Context switched to ${lang}. Optimizing for ${lang} best practices.`);
-            });
-        });
-
-        // Focus input on load
-        window.onload = () => {
-            if (auth.currentUser) document.getElementById('userInput').focus();
-        };
-    </script>
+    // --- EVENT LISTENERS ---
+    els.send.onclick = handleSend;
+    els.input.onkeypress = e => { if(e.key==='Enter') handleSend(); };
+  </script>
 </body>
 </html>
