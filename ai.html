@@ -3,35 +3,35 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Ona AI • Code Assistant</title>
-  
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <title>Ona Code • Expert Developer AI</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Rounded" rel="stylesheet"/>
 
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-remote-config-compat.js"></script>
 
   <style>
     :root {
-      --bg-body: #F7F7F7;
-      --bg-surface: #FFFFFF;
-      --bg-sidebar: #EFEFEF;
-      --primary: #4A90E2; 
-      --accent: #1A1A1A;
-      --text-main: #1A1A1A;
-      --text-secondary: #707070;
-      --border-color: #EAEAEA;
+      --bg-body: #0D1117;
+      --bg-sidebar: #161B22;
+      --bg-surface: #0D1117;
+      --primary: #58A6FF;
+      --accent: #238636;
+      --text-main: #E6EDF3;
+      --text-secondary: #8B949E;
+      --border-color: #30363D;
       --sidebar-width: 280px;
+      --code-bg: #010409;
     }
-    
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    
+
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
     body {
       font-family: 'Outfit', sans-serif;
       background: var(--bg-body);
       color: var(--text-main);
-      height: 100svh; 
+      height: 100svh;
       display: flex;
       overflow: hidden;
     }
@@ -41,132 +41,198 @@
       width: var(--sidebar-width);
       background: var(--bg-sidebar);
       border-right: 1px solid var(--border-color);
-      display: none;
+      display: flex;
       flex-direction: column;
       padding: 20px;
+      transition: transform 0.3s ease;
+      z-index: 100;
     }
 
-    /* --- AUTH MODAL / BOTTOM SHEET --- */
-    #authOverlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5); display: none; z-index: 100;
-      align-items: flex-end; /* Bottom for mobile */
+    .new-chat-btn {
+      background: var(--accent);
+      border: none;
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
       justify-content: center;
+      gap: 10px;
+      font-family: inherit;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      margin-bottom: 25px;
     }
 
-    .auth-container {
-      background: white; width: 100%; padding: 30px;
-      border-radius: 24px 24px 0 0; /* Bottom sheet style */
-      text-align: center; animation: slideUp 0.3s ease-out;
+    .history-label {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 15px;
     }
 
-    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-
-    .google-btn {
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      width: 100%; max-width: 300px; margin: 20px auto; padding: 12px;
-      border: 1px solid var(--border-color); border-radius: 30px;
-      background: white; font-weight: 600; cursor: pointer; transition: 0.2s;
-    }
-    .google-btn:hover { background: #f9f9f9; }
-
-    /* Desktop Modal Style */
-    @media (min-width: 768px) {
-      .sidebar { display: flex; }
-      #authOverlay { align-items: center; } /* Center for desktop */
-      .auth-container {
-        width: 400px; border-radius: 20px;
-        animation: fadeIn 0.3s ease-out;
-      }
-      @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-    }
-
-    /* --- APP CORE --- */
-    .app-core { flex: 1; display: flex; flex-direction: column; height: 100%; }
+    /* --- MAIN CONTENT --- */
+    .app-main { flex: 1; display: flex; flex-direction: column; height: 100%; position: relative; }
 
     .app-header {
-      background: var(--bg-surface); height: 64px; padding: 0 20px;
-      display: flex; align-items: center; justify-content: space-between;
+      height: 60px;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       border-bottom: 1px solid var(--border-color);
     }
+
+    .menu-toggle { display: none; background: none; border: none; color: white; cursor: pointer; }
+
+    /* --- CHAT AREA --- */
+    .chat-view { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+    .chat-container { width: 100%; max-width: 900px; display: flex; flex-direction: column; gap: 24px; }
+
+    .msg-row { display: flex; width: 100%; }
+    .msg-row.user { justify-content: flex-end; }
+    .msg-content { max-width: 85%; }
     
-    .user-profile { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-    .user-profile img { width: 32px; height: 32px; border-radius: 50%; display: none; }
+    .bubble { 
+      padding: 14px 18px; 
+      border-radius: 12px; 
+      line-height: 1.6; 
+      font-size: 0.95rem;
+      word-wrap: break-word;
+    }
+    .user .bubble { background: #1F6FEB; color: white; }
+    .ai .bubble { background: #21262D; border: 1px solid var(--border-color); color: var(--text-main); width: 100%; }
 
-    .main-content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
-    .chat-wrapper { width: 100%; max-width: 800px; display: flex; flex-direction: column; flex: 1; }
+    /* --- CODE BLOCKS --- */
+    .code-container {
+      margin: 15px 0;
+      background: var(--code-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      position: relative;
+    }
+    .code-header {
+      padding: 8px 16px;
+      background: #161B22;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+    .copy-btn {
+      background: none; border: 1px solid var(--border-color); color: var(--text-secondary);
+      padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.7rem;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .copy-btn:hover { color: white; border-color: white; }
+    .code-body {
+      padding: 16px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      white-space: pre;
+      color: #79C0FF;
+    }
 
-    .chat-container { padding: 20px; display: none; flex-direction: column; gap: 24px; }
+    /* --- INPUT AREA --- */
+    .input-area { padding: 20px; display: flex; justify-content: center; background: var(--bg-body); }
+    .input-box {
+      width: 100%; max-width: 900px;
+      background: #161B22;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      display: flex;
+      padding: 10px 15px;
+      align-items: flex-end;
+    }
+    .chat-input {
+      flex: 1; background: none; border: none; color: white;
+      font-family: inherit; font-size: 1rem; outline: none;
+      padding: 8px 0; min-height: 24px; max-height: 200px; resize: none;
+    }
+    .send-btn {
+      background: var(--primary); color: white; border: none;
+      width: 36px; height: 36px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; margin-left: 10px;
+    }
 
-    /* Code Block Styles */
-    .code-block-wrapper { margin: 16px 0; background: #1E1E1E; border-radius: 8px; overflow: hidden; }
-    .code-header { display: flex; justify-content: space-between; padding: 8px 16px; background: #2D2D2D; color: #A0A0A0; font-size: 0.8rem; }
-    .copy-btn { background: none; border: none; color: inherit; cursor: pointer; font-size: 0.8rem; }
-    pre { padding: 16px; overflow-x: auto; color: #D4D4D4; font-family: monospace; font-size: 0.85rem; }
+    /* --- RESPONSIVE / MOBILE SIDEBAR --- */
+    @media (max-width: 768px) {
+      .sidebar {
+        position: fixed;
+        left: 0; top: 0; bottom: 0;
+        transform: translateX(-100%);
+      }
+      .sidebar.open { transform: translateX(0); }
+      .menu-toggle { display: block; }
+      .sidebar-overlay {
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,0.5); z-index: 90;
+      }
+      .sidebar-overlay.open { display: block; }
+    }
 
-    /* Bottom Section */
-    .bottom-section { background: var(--bg-body); padding-bottom: env(safe-area-inset-bottom); width: 100%; }
-    .input-bar { padding: 10px 20px 25px 20px; max-width: 800px; margin: 0 auto; }
-    .input-box { display: flex; background: white; border: 1px solid var(--border-color); border-radius: 30px; padding: 8px 8px 8px 24px; }
-    .input-box.disabled { opacity: 0.5; pointer-events: none; }
-    .chat-input { flex: 1; border: none; outline: none; font-family: inherit; }
-    .send-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--accent); color: white; border: none; cursor: pointer; }
-
-    .message-row { display: flex; width: 100%; }
-    .message-row.user { justify-content: flex-end; }
-    .msg-bubble { max-width: 85%; padding: 12px 18px; border-radius: 18px; line-height: 1.5; }
-    .msg-bubble.user { background: white; border: 1px solid var(--border-color); }
-    .msg-bubble.ai { width: 100%; }
+    .loader { display: flex; gap: 5px; padding: 10px; }
+    .dot { width: 6px; height: 6px; background: var(--primary); border-radius: 50%; animation: pulse 1s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
   </style>
 </head>
 <body>
 
-  <div id="authOverlay">
-    <div class="auth-container">
-      <h2 style="margin-bottom: 10px;">Welcome to Ona Code</h2>
-      <p style="color: var(--text-secondary); margin-bottom: 20px;">Please sign in to start coding.</p>
-      <button class="google-btn" onclick="login()">
-        <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" width="20" alt="Google">
-        Continue with Google
-      </button>
-    </div>
-  </div>
+  <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
 
-  <aside class="sidebar">
-    <div style="margin-bottom: 30px;">
-      <button class="new-chat-btn" onclick="location.reload()" style="width:100%; padding:10px; border-radius:20px; cursor:pointer;">+ New Chat</button>
-    </div>
-    <div style="font-size: 0.8rem; color: var(--text-secondary);">History (Coming soon)</div>
+  <aside class="sidebar" id="sidebar">
+    <button class="new-chat-btn" onclick="location.reload()">
+      <span class="material-symbols-rounded">add</span> New Project
+    </button>
+    <div class="history-label">Coding History</div>
+    <div style="font-size: 0.85rem; color: var(--text-secondary);">Your code sessions appear here.</div>
   </aside>
 
-  <div class="app-core">
+  <main class="app-main">
     <header class="app-header">
-      <div class="app-title">Ona AI</div>
-      <div class="user-profile" id="userProfile" onclick="toggleAuth()">
-        <span id="userName" style="font-size: 0.9rem; font-weight: 500;">Sign In</span>
-        <img id="userAvatar" src="" alt="Avatar">
-        <span class="material-symbols-rounded">account_circle</span>
-      </div>
+      <button class="menu-toggle" onclick="toggleSidebar()">
+        <span class="material-symbols-rounded">menu</span>
+      </button>
+      <div style="font-weight: 700; color: var(--primary);">ONA // CODE</div>
+      <div style="width: 40px;"></div>
     </header>
 
-    <main class="main-content" id="mainScroll">
-      <div class="chat-wrapper">
-        <div class="chat-container" id="chatContainer"></div>
-      </div>
-    </main>
-
-    <footer class="bottom-section">
-      <div class="input-bar">
-        <div class="input-box disabled" id="inputBox">
-          <input type="text" class="chat-input" id="userInput" placeholder="Ask a coding question..." />
-          <button class="send-btn" onclick="handleSend()"><span class="material-symbols-rounded">arrow_upward</span></button>
+    <section class="chat-view" id="scrollArea">
+      <div class="chat-container" id="chatContainer">
+        <div class="msg-row ai">
+          <div class="msg-content">
+            <div class="bubble">
+              Hello. I am configured for <strong>Expert Software Development</strong>. <br><br>
+              How can I help you build today?
+            </div>
+          </div>
         </div>
       </div>
+    </section>
+
+    <footer class="input-area">
+      <div class="input-box">
+        <textarea class="chat-input" id="userInput" placeholder="Ask for code, logic, or debugging..." rows="1"></textarea>
+        <button class="send-btn" id="sendBtn" onclick="handleSend()">
+          <span class="material-symbols-rounded">arrow_upward</span>
+        </button>
+      </div>
     </footer>
-  </div>
+  </main>
 
   <script>
-    // --- FIREBASE CONFIG ---
+    let XAI_API_KEY = "";
+    const chatContainer = document.getElementById('chatContainer');
+    const userInput = document.getElementById('userInput');
+    const scrollArea = document.getElementById('scrollArea');
+
+    // Firebase for API Key
     const firebaseConfig = {
       apiKey: "AIzaSyBOyZ3As4GTuNvjemvPF_SpsC6m6vqtNhc",
       authDomain: "fire-b-a8878.firebaseapp.com",
@@ -175,90 +241,122 @@
       appId: "1:658673187627:web:6e4c29af661785f0afa36e"
     };
     firebase.initializeApp(firebaseConfig);
-
-    const auth = firebase.auth();
     const remoteConfig = firebase.remoteConfig();
-    let XAI_API_KEY = "";
-    let chatHistory = [{ role: "system", content: "You are Ona AI, an expert coder." }];
+    remoteConfig.settings.minimumFetchIntervalMillis = 0;
 
-    // --- AUTH LOGIC ---
-    function login() {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider);
-    }
-
-    function toggleAuth() {
-      if (auth.currentUser) {
-        if (confirm("Logout?")) auth.signOut();
-      } else {
-        document.getElementById('authOverlay').style.display = 'flex';
-      }
-    }
-
-    auth.onAuthStateChanged(user => {
-      const overlay = document.getElementById('authOverlay');
-      const inputBox = document.getElementById('inputBox');
-      const avatar = document.getElementById('userAvatar');
-      const nameTxt = document.getElementById('userName');
-
-      if (user) {
-        overlay.style.display = 'none';
-        inputBox.classList.remove('disabled');
-        avatar.src = user.photoURL;
-        avatar.style.display = 'block';
-        nameTxt.innerText = user.displayName.split(' ')[0];
-        document.querySelector('.material-symbols-rounded').style.display = 'none';
-      } else {
-        overlay.style.display = 'flex';
-        inputBox.classList.add('disabled');
-        avatar.style.display = 'none';
-        nameTxt.innerText = "Sign In";
-      }
-    });
-
-    // --- CORE LOGIC ---
-    async function loadKey() {
+    async function init() {
       try {
         await remoteConfig.fetchAndActivate();
         XAI_API_KEY = remoteConfig.getValue('xai_api_key').asString();
-      } catch (e) {}
+      } catch (e) { console.error("Key Error", e); }
     }
-    loadKey();
+    init();
 
-    function formatMarkdown(text) {
-      let formatted = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-      formatted = formatted.replace(/```(\w+)?\n([\s\S]*?)```/g, (m, lang, code) => {
-        return `<div class="code-block-wrapper"><div class="code-header"><span>${lang || 'CODE'}</span><button class="copy-btn" onclick="navigator.clipboard.writeText(this.parentElement.nextElementSibling.innerText)">Copy</button></div><pre><code>${code}</code></pre></div>`;
-      });
-      return formatted.replace(/\n/g, '<br>');
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('overlay').classList.toggle('open');
     }
+
+    userInput.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = (this.scrollHeight) + 'px';
+    });
 
     async function handleSend() {
-      const prompt = document.getElementById('userInput').value.trim();
+      const prompt = userInput.value.trim();
       if (!prompt || !XAI_API_KEY) return;
 
-      const container = document.getElementById('chatContainer');
-      container.style.display = 'flex';
-      container.innerHTML += `<div class="message-row user"><div class="msg-bubble user">${prompt}</div></div>`;
-      
-      document.getElementById('userInput').value = '';
-      chatHistory.push({ role: "user", content: prompt });
+      userInput.value = '';
+      userInput.style.height = 'auto';
+
+      appendMessage('user', prompt);
+      const loaderId = appendLoader();
 
       try {
-        const res = await fetch(`https://api.x.ai/v1/chat/completions`, {
+        const response = await fetch("https://api.x.ai/v1/chat/completions", {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${XAI_API_KEY}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ model: "grok-code-fast-1", messages: chatHistory })
+          body: JSON.stringify({
+            model: "grok-4-1-fast-non-reasoning",
+            messages: [
+              { role: "system", content: "You are an elite software developer. Provide clean, functional, and modern code. Always use markdown for code blocks." },
+              { role: "user", content: prompt }
+            ]
+          })
         });
-        const data = await res.json();
-        const reply = data.choices[0].message.content;
-        chatHistory.push({ role: "assistant", content: reply });
-        container.innerHTML += `<div class="message-row ai"><div class="msg-bubble ai">${formatMarkdown(reply)}</div></div>`;
-      } catch (e) {
-        container.innerHTML += `<div style="color:red">Error sending message.</div>`;
+
+        const data = await response.json();
+        document.getElementById(loaderId).remove();
+        appendMessage('ai', data.choices[0].message.content);
+      } catch (err) {
+        document.getElementById(loaderId).innerText = "Error fetching response.";
       }
-      document.getElementById('mainScroll').scrollTop = document.getElementById('mainScroll').scrollHeight;
     }
+
+    function appendMessage(role, text) {
+      const row = document.createElement('div');
+      row.className = `msg-row ${role}`;
+      
+      const content = document.createElement('div');
+      content.className = 'msg-content';
+      
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      bubble.innerHTML = role === 'ai' ? formatCode(text) : escapeHtml(text);
+      
+      content.appendChild(bubble);
+      row.appendChild(content);
+      chatContainer.appendChild(row);
+      scrollArea.scrollTop = scrollArea.scrollHeight;
+    }
+
+    function appendLoader() {
+      const id = 'loader-' + Date.now();
+      const loaderHtml = `
+        <div class="msg-row ai" id="${id}">
+          <div class="msg-content">
+            <div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+          </div>
+        </div>`;
+      chatContainer.insertAdjacentHTML('beforeend', loaderHtml);
+      scrollArea.scrollTop = scrollArea.scrollHeight;
+      return id;
+    }
+
+    function formatCode(text) {
+      // Regex to find code blocks
+      return text.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
+        const id = 'code-' + Math.random().toString(36).substr(2, 9);
+        return `
+          <div class="code-container">
+            <div class="code-header">
+              <span>${lang || 'code'}</span>
+              <button class="copy-btn" onclick="copyToClipboard('${id}', this)">
+                <span class="material-symbols-rounded" style="font-size:14px">content_copy</span> Copy
+              </button>
+            </div>
+            <div class="code-body" id="${id}">${escapeHtml(code.trim())}</div>
+          </div>`;
+      }).replace(/\n/g, '<br>');
+    }
+
+    function copyToClipboard(id, btn) {
+      const text = document.getElementById(id).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        btn.innerHTML = '<span class="material-symbols-rounded" style="font-size:14px">check</span> Copied';
+        setTimeout(() => {
+          btn.innerHTML = '<span class="material-symbols-rounded" style="font-size:14px">content_copy</span> Copy';
+        }, 2000);
+      });
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    userInput.onkeydown = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } };
   </script>
 </body>
 </html>
