@@ -10,35 +10,44 @@
 
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-remote-config-compat.js"></script>
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
 
   <style>
+    /* ══════════════════════════════════════
+       DESIGN TOKENS — LIGHT THEME
+    ══════════════════════════════════════ */
     :root {
-      --bg:            #f9f8f5;
-      --bg-sidebar:    #f2f0ec;
-      --bg-surface:    #ffffff;
-      --bg-hover:      #ece9e4;
-      --bg-input:      #ffffff;
-      --bg-code:       #f6f8fa;
-      --claude:        #b5651d;
-      --claude-light:  #fdf3e7;
-      --claude-border: #e8c99a;
-      --text:          #1a1a1a;
-      --text-dim:      #6b6b6b;
-      --text-faint:    #b0a898;
-      --border:        #e3dfd9;
-      --border-soft:   #ede9e3;
-      --red:           #c0392b;
-      --green:         #2e7d32;
-      --think-bg:      #fffbf4;
-      --think-bd:      #e8c99a;
-      --think-text:    #9a6b1e;
-      --sidebar-w:     248px;
-      --hh:            48px;
-      --shadow-sm:     0 1px 3px rgba(0,0,0,.06);
-      --shadow-md:     0 2px 8px rgba(0,0,0,.08);
+      --bg:              #f7f6f3;
+      --bg-sidebar:      #efede9;
+      --bg-surface:      #ffffff;
+      --bg-hover:        #e8e5df;
+      --bg-input:        #ffffff;
+      --bg-code:         #f6f8fa;
+      --bg-code-header:  #eef0f2;
+      --claude:          #b5651d;
+      --claude-mid:      #c97a2a;
+      --claude-light:    #fdf4e8;
+      --claude-border:   #e6c38a;
+      --text:            #1c1917;
+      --text-dim:        #64605a;
+      --text-faint:      #aaa49c;
+      --border:          #e2ddd7;
+      --border-soft:     #ede9e4;
+      --red:             #b91c1c;
+      --green:           #15803d;
+      --think-bg:        #fffcf4;
+      --think-bd:        #e6c38a;
+      --think-text:      #92600f;
+      --shadow-xs:       0 1px 2px rgba(0,0,0,.05);
+      --shadow-sm:       0 1px 4px rgba(0,0,0,.07);
+      --shadow-md:       0 2px 10px rgba(0,0,0,.09);
+      --sidebar-w:       252px;
+      --hh:              49px;
+      /* long code threshold */
+      --long-lines:      30;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -52,9 +61,9 @@
       overflow: hidden;
     }
 
-    /* ══════════════════════════════════
+    /* ══════════════════════════════════════
        SIDEBAR
-    ══════════════════════════════════ */
+    ══════════════════════════════════════ */
     .sidebar {
       width: var(--sidebar-w);
       background: var(--bg-sidebar);
@@ -62,7 +71,7 @@
       display: flex;
       flex-direction: column;
       flex-shrink: 0;
-      transition: transform .26s cubic-bezier(.4,0,.2,1);
+      transition: transform .25s cubic-bezier(.4,0,.2,1);
       z-index: 200;
     }
 
@@ -77,8 +86,8 @@
     }
 
     .logo-box {
-      width: 26px;
-      height: 26px;
+      width: 27px;
+      height: 27px;
       border-radius: 7px;
       background: var(--claude);
       display: flex;
@@ -89,7 +98,7 @@
       font-weight: 500;
       color: #fff;
       flex-shrink: 0;
-      box-shadow: 0 2px 6px rgba(181,101,29,.3);
+      box-shadow: 0 2px 6px rgba(181,101,29,.28);
     }
 
     .logo-name {
@@ -104,10 +113,9 @@
       font-size: 0.58rem;
       font-family: 'JetBrains Mono', monospace;
       color: var(--text-faint);
-      letter-spacing: .05em;
       background: var(--bg-surface);
       border: 1px solid var(--border);
-      padding: 2px 6px;
+      padding: 2px 7px;
       border-radius: 10px;
     }
 
@@ -119,7 +127,7 @@
     .sb-body::-webkit-scrollbar { width: 4px; }
     .sb-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-    .sb-section {
+    .sb-section-label {
       font-size: 0.6rem;
       text-transform: uppercase;
       letter-spacing: .1em;
@@ -137,7 +145,7 @@
       border-radius: 7px;
       margin-bottom: 4px;
       border: 1px dashed var(--border);
-      background: none;
+      background: transparent;
       color: var(--text-dim);
       font-family: 'Inter', sans-serif;
       font-size: 0.78rem;
@@ -160,10 +168,10 @@
       font-size: 0.75rem;
       color: var(--text-dim);
       cursor: pointer;
-      transition: background .12s;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      transition: background .12s;
     }
     .hist-item:hover { background: var(--bg-hover); color: var(--text); }
 
@@ -184,9 +192,9 @@
     }
     .sb-footer em { color: var(--claude); font-style: normal; font-weight: 500; }
 
-    /* ══════════════════════════════════
+    /* ══════════════════════════════════════
        MAIN AREA
-    ══════════════════════════════════ */
+    ══════════════════════════════════════ */
     .main {
       flex: 1;
       display: flex;
@@ -203,7 +211,7 @@
       border-bottom: 1px solid var(--border);
       background: var(--bg-surface);
       flex-shrink: 0;
-      box-shadow: var(--shadow-sm);
+      box-shadow: var(--shadow-xs);
     }
 
     .menu-toggle {
@@ -250,20 +258,16 @@
       border-radius: 50%;
       background: var(--text-faint);
       flex-shrink: 0;
-      transition: all .3s;
+      transition: background .3s, box-shadow .3s;
     }
-    .status-dot.online { background: var(--green); box-shadow: 0 0 5px rgba(46,125,50,.4); }
-    .status-dot.busy   {
-      background: var(--claude);
-      box-shadow: 0 0 5px rgba(181,101,29,.4);
-      animation: pulse-dot 1s ease-in-out infinite;
-    }
-    .status-dot.error  { background: var(--red); box-shadow: 0 0 5px rgba(192,57,43,.4); }
-    @keyframes pulse-dot { 0%,100%{opacity:.6} 50%{opacity:1} }
+    .status-dot.online { background: var(--green); box-shadow: 0 0 5px rgba(21,128,61,.35); }
+    .status-dot.busy   { background: var(--claude); box-shadow: 0 0 5px rgba(181,101,29,.4); animation: dot-pulse 1s ease-in-out infinite; }
+    .status-dot.error  { background: var(--red); box-shadow: 0 0 5px rgba(185,28,28,.4); }
+    @keyframes dot-pulse { 0%,100%{ opacity:.6; } 50%{ opacity:1; } }
 
-    /* ══════════════════════════════════
-       CHAT VIEW
-    ══════════════════════════════════ */
+    /* ══════════════════════════════════════
+       CHAT AREA
+    ══════════════════════════════════════ */
     .chat-view {
       flex: 1;
       overflow-y: auto;
@@ -273,22 +277,22 @@
     .chat-view::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
     .chat-inner {
-      max-width: 780px;
+      max-width: 800px;
       margin: 0 auto;
-      padding: 28px 20px 8px;
+      padding: 28px 22px 8px;
     }
 
-    /* Welcome screen */
+    /* ── Welcome ── */
     .welcome {
       text-align: center;
-      padding: 52px 16px 36px;
+      padding: 52px 16px 40px;
     }
 
     .wlc-icon {
       width: 52px;
       height: 52px;
       border-radius: 14px;
-      background: linear-gradient(135deg, #b5651d 0%, #d4852a 100%);
+      background: linear-gradient(135deg, var(--claude) 0%, var(--claude-mid) 100%);
       margin: 0 auto 18px;
       display: flex;
       align-items: center;
@@ -310,7 +314,7 @@
     .welcome p {
       font-size: 0.84rem;
       color: var(--text-dim);
-      line-height: 1.65;
+      line-height: 1.66;
       max-width: 400px;
       margin: 0 auto 22px;
     }
@@ -332,7 +336,7 @@
       color: var(--text-dim);
       cursor: pointer;
       transition: all .14s;
-      box-shadow: var(--shadow-sm);
+      box-shadow: var(--shadow-xs);
     }
     .chip:hover {
       background: var(--claude-light);
@@ -340,7 +344,7 @@
       border-color: var(--claude-border);
     }
 
-    /* Message groups */
+    /* ── Message groups ── */
     .msg-group {
       padding: 18px 0;
       border-bottom: 1px solid var(--border-soft);
@@ -368,15 +372,8 @@
       font-weight: 600;
       flex-shrink: 0;
     }
-    .avatar.u {
-      background: var(--bg-hover);
-      border: 1px solid var(--border);
-      color: var(--text-dim);
-    }
-    .avatar.a {
-      background: var(--claude);
-      color: #fff;
-    }
+    .avatar.u { background: var(--bg-hover); border: 1px solid var(--border); color: var(--text-dim); }
+    .avatar.a { background: var(--claude); color: #fff; }
 
     .msg-body { padding-left: 28px; }
 
@@ -387,18 +384,18 @@
       border-radius: 10px;
       padding: 10px 14px;
       font-size: 0.87rem;
-      line-height: 1.6;
+      line-height: 1.62;
       color: var(--text);
       max-width: 100%;
       word-break: break-word;
       white-space: pre-wrap;
-      box-shadow: var(--shadow-sm);
+      box-shadow: var(--shadow-xs);
     }
 
-    /* AI prose styles */
+    /* ── AI prose ── */
     .ai-prose {
       font-size: 0.87rem;
-      line-height: 1.74;
+      line-height: 1.75;
       color: var(--text);
     }
     .ai-prose p { margin-bottom: 10px; }
@@ -407,13 +404,8 @@
     .ai-prose em { color: var(--text-dim); }
     .ai-prose ul, .ai-prose ol { padding-left: 18px; margin-bottom: 10px; }
     .ai-prose li { margin-bottom: 4px; }
-    .ai-prose h1,
-    .ai-prose h2,
-    .ai-prose h3 {
-      color: #111;
-      font-weight: 600;
-      margin: 16px 0 6px;
-      font-size: 0.95rem;
+    .ai-prose h1, .ai-prose h2, .ai-prose h3 {
+      color: #111; font-weight: 600; margin: 16px 0 6px; font-size: 0.96rem;
     }
     .ai-prose a { color: var(--claude); text-decoration: underline; }
     .ai-prose blockquote {
@@ -423,30 +415,14 @@
       margin: 8px 0;
       font-style: italic;
     }
-    .ai-prose hr {
-      border: none;
-      border-top: 1px solid var(--border);
-      margin: 14px 0;
-    }
-    .ai-prose table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.82rem;
-      margin: 10px 0;
-    }
+    .ai-prose hr { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+    .ai-prose table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin: 10px 0; }
     .ai-prose th {
-      background: var(--bg-hover);
-      border: 1px solid var(--border);
-      padding: 6px 10px;
-      text-align: left;
-      font-weight: 600;
-      font-size: 0.78rem;
+      background: var(--bg-hover); border: 1px solid var(--border);
+      padding: 6px 10px; text-align: left; font-weight: 600; font-size: 0.78rem;
     }
-    .ai-prose td {
-      border: 1px solid var(--border);
-      padding: 6px 10px;
-    }
-    /* Inline code in prose */
+    .ai-prose td { border: 1px solid var(--border); padding: 6px 10px; }
+    /* inline code in prose */
     .ai-prose code {
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.76rem;
@@ -457,16 +433,16 @@
       color: var(--claude);
     }
 
-    /* ══════════════════════════════════
+    /* ══════════════════════════════════════
        THINKING / REASONING BLOCK
-    ══════════════════════════════════ */
+    ══════════════════════════════════════ */
     .think-block {
       margin-bottom: 14px;
       border: 1px solid var(--think-bd);
       border-radius: 8px;
       overflow: hidden;
       background: var(--think-bg);
-      box-shadow: 0 1px 4px rgba(181,101,29,.07);
+      box-shadow: 0 1px 4px rgba(181,101,29,.06);
     }
 
     .think-hdr {
@@ -477,7 +453,7 @@
       cursor: pointer;
       user-select: none;
     }
-    .think-hdr:hover { background: rgba(181,101,29,.04); }
+    .think-hdr:hover { background: rgba(181,101,29,.03); }
 
     .think-dots { display: flex; gap: 3px; }
     .think-dots span {
@@ -485,13 +461,13 @@
       height: 4px;
       border-radius: 50%;
       background: var(--think-text);
-      animation: tdot 1.3s ease-in-out infinite;
+      animation: think-dot 1.3s ease-in-out infinite;
     }
     .think-dots span:nth-child(2) { animation-delay: .18s; }
     .think-dots span:nth-child(3) { animation-delay: .36s; }
-    @keyframes tdot {
+    @keyframes think-dot {
       0%,80%,100% { opacity: .2; transform: scale(.75); }
-      40%          { opacity: 1; transform: scale(1); }
+      40%          { opacity: 1;  transform: scale(1);   }
     }
 
     .think-lbl {
@@ -514,38 +490,64 @@
       display: none;
       padding: 10px 12px;
       border-top: 1px solid var(--think-bd);
-      font-size: 0.74rem;
-      line-height: 1.64;
+      font-size: 0.73rem;
+      line-height: 1.65;
       color: var(--think-text);
       font-family: 'JetBrains Mono', monospace;
       white-space: pre-wrap;
       word-break: break-word;
-      max-height: 280px;
+      max-height: 300px;
       overflow-y: auto;
     }
     .think-block.open .think-body { display: block; }
     .think-body::-webkit-scrollbar { width: 3px; }
     .think-body::-webkit-scrollbar-thumb { background: var(--think-bd); border-radius: 2px; }
 
-    /* ══════════════════════════════════
-       CODE BLOCKS
-    ══════════════════════════════════ */
+    /* ══════════════════════════════════════
+       CODE BLOCKS  — normal + "file" variant
+    ══════════════════════════════════════ */
+
+    /* Shared wrapper */
     .code-wrap {
       margin: 12px 0;
-      border-radius: 8px;
+      border-radius: 9px;
       border: 1px solid var(--border);
       overflow: hidden;
       box-shadow: var(--shadow-sm);
     }
 
+    /* "File" wrapper — slightly elevated style for long code */
+    .code-wrap.is-file {
+      border-color: var(--claude-border);
+      box-shadow: 0 2px 10px rgba(181,101,29,.1);
+    }
+
+    /* Header bar */
     .code-bar {
       display: flex;
       align-items: center;
       padding: 6px 12px;
-      background: var(--bg-hover);
+      background: var(--bg-code-header);
       border-bottom: 1px solid var(--border);
       gap: 8px;
+      min-height: 34px;
     }
+    .code-wrap.is-file .code-bar {
+      background: #fef9f0;
+      border-bottom-color: var(--claude-border);
+    }
+
+    /* File icon shown for long-code blocks */
+    .file-icon {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.68rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--claude);
+      font-weight: 500;
+    }
+    .file-icon svg { flex-shrink: 0; }
 
     .code-lang {
       font-size: 0.6rem;
@@ -555,58 +557,92 @@
       letter-spacing: .08em;
     }
 
-    .copy-btn {
+    /* Action buttons area (right side of bar) */
+    .code-actions {
       margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Copy + Download buttons */
+    .cb-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
       background: var(--bg-surface);
       border: 1px solid var(--border);
       color: var(--text-dim);
       padding: 3px 9px;
-      border-radius: 4px;
+      border-radius: 5px;
       cursor: pointer;
       font-size: 0.62rem;
       font-family: 'JetBrains Mono', monospace;
       transition: all .13s;
+      white-space: nowrap;
     }
-    .copy-btn:hover { color: var(--text); border-color: var(--text-dim); }
-    .copy-btn.ok { color: var(--green); border-color: var(--green); background: #f0faf0; }
+    .cb-btn:hover { color: var(--text); border-color: var(--text-dim); background: var(--bg-hover); }
+    .cb-btn.ok { color: var(--green); border-color: var(--green); background: #f0faf3; }
+    .cb-btn.download { color: var(--claude); border-color: var(--claude-border); background: var(--claude-light); }
+    .cb-btn.download:hover { background: #fdebd0; border-color: var(--claude); }
 
+    /* Line count badge */
+    .line-badge {
+      font-size: 0.58rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-faint);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 2px 6px;
+      border-radius: 10px;
+      margin-left: 4px;
+    }
+
+    /* The actual code pre element */
     pre.code-body {
       padding: 14px 15px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.77rem;
-      line-height: 1.62;
+      line-height: 1.64;
       overflow-x: auto;
       background: var(--bg-code);
       margin: 0;
     }
-    pre.code-body::-webkit-scrollbar { height: 4px; }
+
+    /* Long code: show scrollable window, user can expand */
+    .code-wrap.is-file pre.code-body {
+      max-height: 420px;
+      overflow-y: auto;
+    }
+
+    pre.code-body::-webkit-scrollbar { height: 4px; width: 4px; }
     pre.code-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-    /* highlight.js github theme overrides */
+    /* highlight.js light-theme override */
     .hljs { background: transparent !important; padding: 0 !important; }
 
-    /* ══════════════════════════════════
+    /* ══════════════════════════════════════
        INPUT AREA
-    ══════════════════════════════════ */
+    ══════════════════════════════════════ */
     .input-area {
-      padding: 10px 20px 15px;
+      padding: 10px 22px 15px;
       background: var(--bg);
       border-top: 1px solid var(--border);
       flex-shrink: 0;
     }
 
-    .input-wrap { max-width: 780px; margin: 0 auto; }
+    .input-wrap { max-width: 800px; margin: 0 auto; }
 
     .input-box {
       background: var(--bg-input);
       border: 1px solid var(--border);
       border-radius: 10px;
       transition: border-color .15s, box-shadow .15s;
-      box-shadow: var(--shadow-sm);
+      box-shadow: var(--shadow-xs);
     }
     .input-box:focus-within {
       border-color: var(--claude-border);
-      box-shadow: 0 0 0 3px rgba(181,101,29,.08);
+      box-shadow: 0 0 0 3px rgba(181,101,29,.07);
     }
 
     .input-inner {
@@ -643,18 +679,10 @@
       margin-left: 9px;
       flex-shrink: 0;
       transition: all .13s;
-      box-shadow: 0 2px 6px rgba(181,101,29,.25);
+      box-shadow: 0 2px 5px rgba(181,101,29,.22);
     }
-    .send-btn:hover:not(:disabled) {
-      background: #c4711e;
-      box-shadow: 0 3px 8px rgba(181,101,29,.35);
-    }
-    .send-btn:disabled {
-      background: var(--bg-hover);
-      cursor: not-allowed;
-      opacity: .6;
-      box-shadow: none;
-    }
+    .send-btn:hover:not(:disabled) { background: #c4711e; box-shadow: 0 3px 8px rgba(181,101,29,.3); }
+    .send-btn:disabled { background: var(--bg-hover); cursor: not-allowed; opacity: .55; box-shadow: none; }
 
     .input-hint {
       padding: 6px 2px 0;
@@ -672,9 +700,9 @@
       font-size: 0.58rem;
     }
 
-    /* ══════════════════════════════════
-       TYPING / LOADER
-    ══════════════════════════════════ */
+    /* ══════════════════════════════════════
+       THINKING / TYPING LOADER
+    ══════════════════════════════════════ */
     .typing-loader {
       display: flex;
       align-items: center;
@@ -688,54 +716,50 @@
       height: 5px;
       border-radius: 50%;
       background: var(--claude);
-      animation: tpulse 1.2s ease-in-out infinite;
+      animation: t-bounce 1.2s ease-in-out infinite;
     }
     .t-dots span:nth-child(2) { animation-delay: .15s; }
     .t-dots span:nth-child(3) { animation-delay: .3s; }
-    @keyframes tpulse {
+    @keyframes t-bounce {
       0%,80%,100% { opacity: .25; transform: translateY(0); }
-      40%          { opacity: 1; transform: translateY(-3px); }
+      40%          { opacity: 1;   transform: translateY(-3px); }
     }
 
     .t-label {
       font-size: 0.68rem;
       font-family: 'JetBrains Mono', monospace;
       color: var(--think-text);
-      animation: fade-cycle 2s ease-in-out infinite;
+      animation: label-fade 2s ease-in-out infinite;
     }
-    @keyframes fade-cycle { 0%,100%{opacity:.5} 50%{opacity:1} }
+    @keyframes label-fade { 0%,100%{ opacity:.5; } 50%{ opacity:1; } }
 
-    /* ══════════════════════════════════
-       ERROR MESSAGE
-    ══════════════════════════════════ */
+    /* ══════════════════════════════════════
+       ERROR ROW
+    ══════════════════════════════════════ */
     .err-row {
       font-size: 0.83rem;
       color: var(--red);
-      padding: 8px 12px;
-      background: #fdf2f2;
-      border: 1px solid #f5c2c2;
+      padding: 9px 12px;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
       border-radius: 7px;
     }
 
-    /* ══════════════════════════════════
+    /* ══════════════════════════════════════
        OVERLAY + RESPONSIVE
-    ══════════════════════════════════ */
+    ══════════════════════════════════════ */
     .overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,.35);
+      background: rgba(0,0,0,.3);
       z-index: 150;
       backdrop-filter: blur(2px);
     }
     .overlay.open { display: block; }
 
     @media (max-width: 720px) {
-      .sidebar {
-        position: fixed;
-        left: 0; top: 0; bottom: 0;
-        transform: translateX(-100%);
-      }
+      .sidebar { position: fixed; left: 0; top: 0; bottom: 0; transform: translateX(-100%); }
       .sidebar.open { transform: translateX(0); }
       .menu-toggle { display: flex; }
       .chat-inner { padding: 20px 14px 8px; }
@@ -745,14 +769,12 @@
 </head>
 <body>
 
-<!-- Mobile overlay -->
 <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
-<!-- ════════════════════════════════════
+<!-- ══════════════════════════════════════
      SIDEBAR
-════════════════════════════════════ -->
+══════════════════════════════════════ -->
 <aside class="sidebar" id="sidebar">
-
   <div class="sb-top">
     <div class="logo-box">Oc</div>
     <span class="logo-name">Ona Code</span>
@@ -760,7 +782,7 @@
   </div>
 
   <div class="sb-body">
-    <div style="padding: 8px 0 4px;">
+    <div style="padding:8px 0 4px;">
       <button class="new-btn" onclick="newChat()">
         <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
           <path d="M12 5v14M5 12h14"/>
@@ -768,7 +790,7 @@
         New session
       </button>
     </div>
-    <div class="sb-section">Recent</div>
+    <div class="sb-section-label">Recent</div>
     <div id="historyList">
       <div style="font-size:0.68rem;color:var(--text-faint);padding:6px 10px;font-family:'JetBrains Mono',monospace;">
         — no sessions yet —
@@ -776,18 +798,14 @@
     </div>
   </div>
 
-  <div class="sb-footer">
-    model · <em>grok-4-1-fast</em>
-  </div>
-
+  <div class="sb-footer">model · <em>grok-4-1-fast</em></div>
 </aside>
 
-<!-- ════════════════════════════════════
+<!-- ══════════════════════════════════════
      MAIN
-════════════════════════════════════ -->
+══════════════════════════════════════ -->
 <main class="main">
 
-  <!-- Header -->
   <header class="app-header">
     <button class="menu-toggle" onclick="toggleSidebar()">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -803,29 +821,26 @@
     </div>
   </header>
 
-  <!-- Chat view -->
   <section class="chat-view" id="scrollArea">
     <div class="chat-inner" id="chatContainer">
 
-      <!-- Welcome -->
       <div class="welcome" id="welcomeScreen">
         <div class="wlc-icon">Oc</div>
         <h1>Expert Coding Assistant</h1>
-        <p>Ask me to write, debug, refactor, or explain code. I reason through problems before responding — every time.</p>
+        <p>Ask me to write, debug, refactor, or explain code. I always deliver complete, runnable implementations — no placeholders, ever.</p>
         <div class="chips">
-          <button class="chip" onclick="inject('Write a REST API in Node.js with Express, JWT auth, and error handling')">REST API · Node.js</button>
-          <button class="chip" onclick="inject('Debug this Python code and explain the root cause of the error')">Debug Python</button>
-          <button class="chip" onclick="inject('Build a React component with useState, useEffect hooks and TypeScript types')">React + TypeScript</button>
-          <button class="chip" onclick="inject('Explain how async/await works with a practical real-world example')">Async / Await</button>
-          <button class="chip" onclick="inject('Write an advanced SQL query using JOINs, GROUP BY, and window functions')">SQL · Window fn</button>
-          <button class="chip" onclick="inject('Create a complete Docker Compose setup for a Node.js app with Postgres and Redis')">Docker Compose</button>
+          <button class="chip" onclick="inject('Write a full REST API in Node.js with Express, JWT auth middleware, and error handling')">REST API · Node.js</button>
+          <button class="chip" onclick="inject('Debug this Python code and show me the fully corrected version')">Debug Python</button>
+          <button class="chip" onclick="inject('Build a complete React component with useState, useEffect and full TypeScript types')">React + TypeScript</button>
+          <button class="chip" onclick="inject('Explain async/await with a full working Node.js example')">Async / Await</button>
+          <button class="chip" onclick="inject('Write a SQL query using JOINs, GROUP BY, and window functions with sample data')">SQL · Window fn</button>
+          <button class="chip" onclick="inject('Create a complete Docker Compose setup for Node.js + Postgres + Redis with env vars')">Docker Compose</button>
         </div>
       </div>
 
     </div>
   </section>
 
-  <!-- Input -->
   <footer class="input-area">
     <div class="input-wrap">
       <div class="input-box">
@@ -852,17 +867,44 @@
 
 </main>
 
-<!-- ════════════════════════════════════
-     SCRIPTS
-════════════════════════════════════ -->
+<!-- ══════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════ -->
 <script>
 
-/* ─────────────────────────────────────
-   STATE & ELEMENT REFERENCES
-───────────────────────────────────── */
-let API_KEY   = "";
-let isBusy    = false;
-let msgHistory = [];   // full conversation history sent to API
+/* ─────────────────────────────────────────────
+   CONSTANTS
+───────────────────────────────────────────── */
+// Lines threshold: code blocks with >= this many lines
+// get the "file" treatment (download button + scrollable)
+const LONG_CODE_LINES = 30;
+
+// Extension map: language tag -> file extension
+const LANG_EXT = {
+  javascript: 'js',  js: 'js',       typescript: 'ts',   ts: 'ts',
+  python:     'py',  py: 'py',       java:       'java',
+  kotlin:     'kt',  swift:   'swift', go:        'go',
+  rust:       'rs',  cpp:     'cpp',   c:         'c',
+  csharp:     'cs',  cs:      'cs',    php:       'php',
+  ruby:       'rb',  rb:      'rb',    shell:     'sh',
+  bash:       'sh',  sh:      'sh',    html:      'html',
+  css:        'css', scss:    'scss',  json:      'json',
+  yaml:       'yml', yml:     'yml',   xml:       'xml',
+  sql:        'sql', graphql: 'graphql', dockerfile: 'Dockerfile',
+  markdown:   'md',  md:      'md',    txt:       'txt',
+  text:       'txt',
+};
+
+function extForLang(lang) {
+  return LANG_EXT[(lang || '').toLowerCase()] || 'txt';
+}
+
+/* ─────────────────────────────────────────────
+   STATE
+───────────────────────────────────────────── */
+let API_KEY    = "";
+let isBusy     = false;
+let msgHistory = [];   // [{role, content}, ...]
 
 const $chat   = document.getElementById('chatContainer');
 const $input  = document.getElementById('userInput');
@@ -871,15 +913,15 @@ const $send   = document.getElementById('sendBtn');
 const $dot    = document.getElementById('statusDot');
 const $lbl    = document.getElementById('statusLabel');
 
-/* ─────────────────────────────────────
-   FIREBASE REMOTE CONFIG — API KEY
-───────────────────────────────────── */
+/* ─────────────────────────────────────────────
+   FIREBASE — FETCH API KEY
+───────────────────────────────────────────── */
 const firebaseConfig = {
-  apiKey:     "AIzaSyBOyZ3As4GTuNvjemvPF_SpsC6m6vqtNhc",
-  authDomain: "fire-b-a8878.firebaseapp.com",
-  projectId:  "fire-b-a8878",
-  databaseURL:"https://fire-b-a8878-default-rtdb.firebaseio.com",
-  appId:      "1:658673187627:web:6e4c29af661785f0afa36e"
+  apiKey:      "AIzaSyBOyZ3As4GTuNvjemvPF_SpsC6m6vqtNhc",
+  authDomain:  "fire-b-a8878.firebaseapp.com",
+  projectId:   "fire-b-a8878",
+  databaseURL: "https://fire-b-a8878-default-rtdb.firebaseio.com",
+  appId:       "1:658673187627:web:6e4c29af661785f0afa36e"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -894,59 +936,50 @@ rc.settings.minimumFetchIntervalMillis = 0;
     $send.disabled = false;
   } catch (e) {
     setStatus('error', 'key error');
-    console.error('Firebase key error:', e);
+    console.error('Firebase RC error:', e);
   }
 })();
 
-/* ─────────────────────────────────────
-   SYSTEM PROMPT — EXPERT CODING AI
-───────────────────────────────────── */
-const SYSTEM_PROMPT = `You are Ona Code — a senior software engineer and expert full-stack coding assistant.
+/* ─────────────────────────────────────────────
+   SYSTEM PROMPT
+   Hardcodes the "always full code" contract.
+───────────────────────────────────────────── */
+const SYSTEM_PROMPT = `You are Ona Code — a senior software engineer and expert full-stack coding assistant. You write complete, production-quality code.
 
-STRICT RESPONSE FORMAT:
-1. START with a <think> block: write your internal reasoning — analyse the problem, choose the best approach, plan the full solution, consider edge cases.
-2. AFTER </think>, write your full markdown response.
-3. ALWAYS produce complete, runnable code. Never skip sections, never write "// ... rest of code", never omit imports, never write placeholder comments. Every function must be fully implemented.
-4. Use fenced code blocks with the correct language tag for ALL code.
-5. After each major code block, add a "**Key points:**" section with 2–5 concise bullet points explaining the important decisions.
-6. Keep prose tight and direct — no filler phrases, no unnecessary caveats.
-7. If you spot a bug or improvement opportunity, state it clearly.
-8. Use modern syntax and idiomatic patterns for the requested language.
-9. Include proper error handling in all code.
-10. If the user asks to fix or debug, show the FULL corrected code, not just the changed lines.
+ABSOLUTE CODE RULES (never violate):
+1. ALWAYS write the complete, full implementation. Never skip any part of the code.
+2. NEVER use "...", "// rest of implementation", "// add your logic here", "// TODO", or any placeholder.
+3. NEVER write skeleton code. Every function body must be fully implemented.
+4. NEVER omit imports, exports, type definitions, or boilerplate. Include everything needed to run the code.
+5. If fixing or debugging, show the FULL corrected file — not just the changed lines.
+6. If the implementation is long, still write ALL of it. Do not summarise or truncate code under any circumstances.
 
-NEVER:
-- Write partial code or skeleton code
-- Use "..." or "// omitted" or "// add your logic here" placeholders
-- Refuse a coding request
-- Give a response without full implementations`;
+RESPONSE FORMAT:
+- Start with <think>…</think> containing your internal reasoning: analyze the problem, plan the architecture, consider edge cases, choose the best approach.
+- After </think>, write a clean markdown response.
+- Use fenced code blocks with the correct language tag for ALL code.
+- After each code block add "**Key points:**" with 2–5 concise bullets explaining important decisions.
+- Keep prose tight and direct. No filler phrases, no unnecessary disclaimers.
+- Write modern, idiomatic, production-quality code with proper error handling.`;
 
-/* ─────────────────────────────────────
-   STATUS INDICATOR
-───────────────────────────────────── */
+/* ─────────────────────────────────────────────
+   STATUS
+───────────────────────────────────────────── */
 function setStatus(state, label) {
   $dot.className = 'status-dot ' + state;
   $lbl.textContent = label;
 }
 
-/* ─────────────────────────────────────
-   SIDEBAR TOGGLE
-───────────────────────────────────── */
+/* ─────────────────────────────────────────────
+   SIDEBAR
+───────────────────────────────────────────── */
 function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('overlay').classList.toggle('open');
 }
 
-/* ─────────────────────────────────────
-   NEW CHAT
-───────────────────────────────────── */
-function newChat() {
-  location.reload();
-}
+function newChat() { location.reload(); }
 
-/* ─────────────────────────────────────
-   SIDEBAR HISTORY
-───────────────────────────────────── */
 function addHistoryItem(title) {
   const list = document.getElementById('historyList');
   list.innerHTML = '';
@@ -956,9 +989,9 @@ function addHistoryItem(title) {
   list.appendChild(el);
 }
 
-/* ─────────────────────────────────────
-   QUICK CHIP INJECT
-───────────────────────────────────── */
+/* ─────────────────────────────────────────────
+   QUICK CHIPS
+───────────────────────────────────────────── */
 function inject(text) {
   $input.value = text;
   autoResize();
@@ -966,41 +999,32 @@ function inject(text) {
   handleSend();
 }
 
-/* ─────────────────────────────────────
-   HTML ESCAPE UTILITY
-───────────────────────────────────── */
+/* ─────────────────────────────────────────────
+   DOM UTILS
+───────────────────────────────────────────── */
 function escHtml(str) {
   const d = document.createElement('div');
   d.textContent = String(str);
   return d.innerHTML;
 }
 
-/* ─────────────────────────────────────
-   TEXTAREA AUTO-RESIZE
-───────────────────────────────────── */
 function autoResize() {
   $input.style.height = 'auto';
   $input.style.height = Math.min($input.scrollHeight, 160) + 'px';
 }
 
-/* ─────────────────────────────────────
-   SCROLL TO BOTTOM
-───────────────────────────────────── */
 function scrollEnd() {
   requestAnimationFrame(() => { $scroll.scrollTop = $scroll.scrollHeight; });
 }
 
-/* ─────────────────────────────────────
-   REMOVE WELCOME SCREEN
-───────────────────────────────────── */
 function removeWelcome() {
   const w = document.getElementById('welcomeScreen');
   if (w) w.remove();
 }
 
-/* ─────────────────────────────────────
+/* ─────────────────────────────────────────────
    APPEND USER MESSAGE
-───────────────────────────────────── */
+───────────────────────────────────────────── */
 function appendUser(text) {
   removeWelcome();
   const g = document.createElement('div');
@@ -1017,20 +1041,18 @@ function appendUser(text) {
   scrollEnd();
 }
 
-/* ─────────────────────────────────────
-   APPEND THINKING LOADER
-───────────────────────────────────── */
+/* ─────────────────────────────────────────────
+   THINKING LOADER (animated)
+───────────────────────────────────────────── */
 function appendLoader() {
   const id = 'ldr-' + Date.now();
-  const g = document.createElement('div');
+  const g  = document.createElement('div');
   g.className = 'msg-group';
   g.id = id;
   g.innerHTML = `
     <div class="msg-meta">
       <div class="avatar a">Oc</div>
-      <span style="color:var(--claude);font-family:'JetBrains Mono',monospace;font-size:0.68rem;font-weight:500;">
-        Ona Code
-      </span>
+      <span style="color:var(--claude);font-family:'JetBrains Mono',monospace;font-size:0.68rem;font-weight:500;">Ona Code</span>
     </div>
     <div class="msg-body">
       <div class="typing-loader">
@@ -1043,11 +1065,11 @@ function appendLoader() {
   return id;
 }
 
-/* ─────────────────────────────────────
-   APPEND AI RESPONSE
-───────────────────────────────────── */
+/* ─────────────────────────────────────────────
+   RENDER AI RESPONSE
+───────────────────────────────────────────── */
 function appendAI(rawText) {
-  // Extract <think>…</think> block
+  // Pull out <think>...</think>
   const thinkMatch = rawText.match(/<think>([\s\S]*?)<\/think>/i);
   const thinkText  = thinkMatch ? thinkMatch[1].trim() : null;
   const prose      = rawText.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
@@ -1058,13 +1080,11 @@ function appendAI(rawText) {
   let html = `
     <div class="msg-meta">
       <div class="avatar a">Oc</div>
-      <span style="color:var(--claude);font-family:'JetBrains Mono',monospace;font-size:0.68rem;font-weight:500;">
-        Ona Code
-      </span>
+      <span style="color:var(--claude);font-family:'JetBrains Mono',monospace;font-size:0.68rem;font-weight:500;">Ona Code</span>
     </div>
     <div class="msg-body">`;
 
-  // Reasoning / thinking block
+  // Collapsible reasoning block
   if (thinkText) {
     html += `
       <div class="think-block open">
@@ -1081,14 +1101,14 @@ function appendAI(rawText) {
       </div>`;
   }
 
-  // Main prose rendered from markdown
+  // Main response rendered from markdown
   html += `<div class="ai-prose">${renderMarkdown(prose)}</div>`;
   html += `</div>`;
 
   g.innerHTML = html;
   $chat.appendChild(g);
 
-  // Apply syntax highlighting to all code blocks in this message
+  // Apply syntax highlighting to every code block injected
   g.querySelectorAll('pre.code-body').forEach(el => {
     if (el.dataset.hl) return;
     const lang = el.dataset.lang || '';
@@ -1096,61 +1116,117 @@ function appendAI(rawText) {
       el.innerHTML = (lang && hljs.getLanguage(lang))
         ? hljs.highlight(el.textContent, { language: lang }).value
         : hljs.highlightAuto(el.textContent).value;
-    } catch (e) {
-      // leave as-is if highlight fails
-    }
+    } catch (_) { /* leave plain if hljs fails */ }
     el.dataset.hl = '1';
   });
 
   scrollEnd();
 }
 
-/* ─────────────────────────────────────
-   MARKDOWN → HTML RENDERER
-   Handles code blocks first with custom
-   UI, then uses marked for everything else
-───────────────────────────────────── */
+/* ─────────────────────────────────────────────
+   MARKDOWN → HTML
+   Code blocks are rendered with custom UI.
+   Determines "file" vs normal based on line count.
+───────────────────────────────────────────── */
 function renderMarkdown(text) {
-  // Replace ``` code blocks with custom rendered HTML
-  const withCustomCode = text.replace(/```(\w*)\n?([\s\S]*?)```/g, (_, lang, code) => {
+  // Replace fenced code blocks with custom rendered blocks
+  const withCode = text.replace(/```(\w*)\n?([\s\S]*?)```/g, (_, lang, code) => {
     const id       = 'cb-' + Math.random().toString(36).slice(2, 10);
+    const rawCode  = code.trim();
     const safeLang = (lang || 'text').toLowerCase();
-    return `
-      <div class="code-wrap">
-        <div class="code-bar">
-          <span class="code-lang">${escHtml(safeLang)}</span>
-          <button class="copy-btn" onclick="copyCode('${id}', this)">copy</button>
-        </div>
-        <pre class="code-body" id="${id}" data-lang="${escHtml(safeLang)}">${escHtml(code.trim())}</pre>
-      </div>`;
+    const lines    = rawCode.split('\n').length;
+    const isFile   = lines >= LONG_CODE_LINES;
+    const ext      = extForLang(safeLang);
+
+    // Suggested filename for download
+    const filename = `code.${ext}`;
+
+    if (isFile) {
+      // Long code — "file" style with download button
+      return `
+        <div class="code-wrap is-file">
+          <div class="code-bar">
+            <div class="file-icon">
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+              ${escHtml(filename)}
+            </div>
+            <span class="line-badge">${lines} lines</span>
+            <div class="code-actions">
+              <button class="cb-btn download" onclick="downloadCode('${id}','${escHtml(filename)}')">
+                <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                </svg>
+                Download
+              </button>
+              <button class="cb-btn" onclick="copyCode('${id}',this)">Copy</button>
+            </div>
+          </div>
+          <pre class="code-body" id="${id}" data-lang="${escHtml(safeLang)}">${escHtml(rawCode)}</pre>
+        </div>`;
+    } else {
+      // Short code — standard style
+      return `
+        <div class="code-wrap">
+          <div class="code-bar">
+            <span class="code-lang">${escHtml(safeLang)}</span>
+            <div class="code-actions">
+              <button class="cb-btn" onclick="copyCode('${id}',this)">Copy</button>
+            </div>
+          </div>
+          <pre class="code-body" id="${id}" data-lang="${escHtml(safeLang)}">${escHtml(rawCode)}</pre>
+        </div>`;
+    }
   });
 
-  // Run remaining content through marked for full markdown support
-  return marked.parse(withCustomCode, { breaks: true, gfm: true });
+  // Parse remaining markdown (headings, lists, bold, etc.)
+  return marked.parse(withCode, { breaks: true, gfm: true });
 }
 
-/* ─────────────────────────────────────
+/* ─────────────────────────────────────────────
    COPY CODE BUTTON
-───────────────────────────────────── */
+───────────────────────────────────────────── */
 function copyCode(id, btn) {
   const el = document.getElementById(id);
   if (!el) return;
   navigator.clipboard.writeText(el.innerText).then(() => {
-    btn.textContent = 'copied!';
+    const prev = btn.textContent;
+    btn.textContent = 'Copied!';
     btn.classList.add('ok');
     setTimeout(() => {
-      btn.textContent = 'copy';
+      btn.textContent = prev.trim() === 'Copied!' ? 'Copy' : prev;
       btn.classList.remove('ok');
     }, 2000);
   }).catch(() => {
-    btn.textContent = 'failed';
-    setTimeout(() => { btn.textContent = 'copy'; }, 1500);
+    btn.textContent = 'Failed';
+    setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
   });
 }
 
-/* ─────────────────────────────────────
-   APPEND ERROR MESSAGE
-───────────────────────────────────── */
+/* ─────────────────────────────────────────────
+   DOWNLOAD CODE AS FILE
+   Creates a temporary Blob URL and clicks it.
+───────────────────────────────────────────── */
+function downloadCode(id, filename) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const content  = el.innerText;
+  const blob     = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  const url      = URL.createObjectURL(blob);
+  const anchor   = document.createElement('a');
+  anchor.href     = url;
+  anchor.download = filename;
+  document.body.appendChild(anchor);
+  anchor.click();
+  document.body.removeChild(anchor);
+  URL.revokeObjectURL(url);
+}
+
+/* ─────────────────────────────────────────────
+   ERROR MESSAGE
+───────────────────────────────────────────── */
 function appendError(msg) {
   const g = document.createElement('div');
   g.className = 'msg-group';
@@ -1166,9 +1242,9 @@ function appendError(msg) {
   scrollEnd();
 }
 
-/* ─────────────────────────────────────
+/* ─────────────────────────────────────────────
    MAIN SEND HANDLER
-───────────────────────────────────── */
+───────────────────────────────────────────── */
 async function handleSend() {
   const prompt = $input.value.trim();
   if (!prompt || isBusy || !API_KEY) return;
@@ -1185,16 +1261,15 @@ async function handleSend() {
   // Render user message
   appendUser(prompt);
 
-  // Add to conversation history
+  // Push to history
   msgHistory.push({ role: 'user', content: prompt });
 
-  // Add first message to sidebar history
+  // First message -> sidebar entry
   if (msgHistory.length === 1) {
-    const title = prompt.length > 44 ? prompt.slice(0, 44) + '…' : prompt;
-    addHistoryItem(title);
+    addHistoryItem(prompt.length > 44 ? prompt.slice(0, 44) + '…' : prompt);
   }
 
-  // Show thinking animation
+  // Show thinking loader
   const loaderId = appendLoader();
 
   try {
@@ -1206,7 +1281,7 @@ async function handleSend() {
       },
       body: JSON.stringify({
         model:      'grok-4-1-fast-non-reasoning',
-        max_tokens: 4096,
+        max_tokens: 8192,   // generous — full code needs room
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           ...msgHistory
@@ -1220,10 +1295,9 @@ async function handleSend() {
     document.getElementById(loaderId)?.remove();
 
     if (data.error) {
-      appendError(data.error.message || 'API returned an error. Please try again.');
+      appendError(data.error.message || 'API error — please try again.');
     } else {
       const reply = data.choices[0].message.content;
-      // Add assistant reply to history for multi-turn context
       msgHistory.push({ role: 'assistant', content: reply });
       appendAI(reply);
     }
@@ -1231,7 +1305,7 @@ async function handleSend() {
   } catch (err) {
     document.getElementById(loaderId)?.remove();
     appendError('Network error — could not reach the API. Check your connection.');
-    console.error('API fetch error:', err);
+    console.error('API error:', err);
   }
 
   // Unlock UI
@@ -1240,9 +1314,9 @@ async function handleSend() {
   setStatus('online', 'ready');
 }
 
-/* ─────────────────────────────────────
+/* ─────────────────────────────────────────────
    INPUT EVENTS
-───────────────────────────────────── */
+───────────────────────────────────────────── */
 $input.addEventListener('input', () => {
   autoResize();
   $send.disabled = !$input.value.trim() || isBusy || !API_KEY;
