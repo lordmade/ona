@@ -1,782 +1,2171 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-<title>Ona AI • 1BUSKET Assistant</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Rounded" rel="stylesheet"/>
-<script src="https://unpkg.com/lucide@latest"></script>
-<style>
-:root{
-  --bg:#F5F4F1;--surface:#fff;--sb:#FAFAF8;
-  --pg:linear-gradient(135deg,#C5A059,#8E6E37);
-  --accent:#1A1A1A;--orange:#ff751f;--orange-l:#ffe8d6;--orange-d:#e0661c;
-  --text:#1A1A1A;--dim:#707070;--border:#E8E6E0;--border-l:#f0f0f0;
-  --green:#10B981;--yellow:#ffc107;--danger:#ff3b30;
-  --sw:272px;--sh:0 2px 12px rgba(0,0,0,.07);--shl:0 8px 32px rgba(0,0,0,.12);
-  --safe:env(safe-area-inset-bottom,0px);
-}
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);height:100svh;display:flex;overflow:hidden}
-/* SIDEBAR */
-.sidebar{width:var(--sw);background:var(--sb);border-right:1px solid var(--border);display:none;flex-direction:column;z-index:20;flex-shrink:0;overflow-y:auto}
-.sb-top{padding:18px 16px 13px;border-bottom:1px solid var(--border)}
-.sb-logo{display:flex;align-items:center;gap:9px;margin-bottom:14px}
-.lm{width:34px;height:34px;background:var(--pg);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.lm i{width:17px;height:17px;color:white}
-.lt{font-weight:800;font-size:.97rem}.ls{font-size:.66rem;color:var(--orange);font-weight:700;text-transform:uppercase;letter-spacing:.7px}
-.new-btn{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:28px;padding:9px 14px;display:flex;align-items:center;gap:7px;font-family:inherit;font-size:.86rem;font-weight:600;color:var(--text);cursor:pointer;transition:.2s}
-.new-btn:hover{background:#edece9}.new-btn i{width:15px;height:15px}
-.status-bar{margin:9px 16px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:9px;padding:7px 11px;display:flex;align-items:center;gap:7px;font-size:.74rem;font-weight:600;color:var(--green)}
-.sdot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:blink 2s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.sb-sect{padding:10px 16px}
-.sb-ttl{font-size:.66rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
-.qa{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;cursor:pointer;transition:.2s;border:none;background:transparent;font-family:inherit;font-size:.83rem;font-weight:500;color:var(--text);width:100%;text-align:left}
-.qa:hover{background:var(--orange-l);color:var(--orange)}.qa i{width:16px;height:16px;color:var(--orange);flex-shrink:0}
-.qa-badge{margin-left:auto;background:var(--orange);color:white;font-size:.6rem;font-weight:700;padding:2px 6px;border-radius:20px;display:none}
-.user-strip{margin:0 16px 10px;background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:9px 11px;display:flex;align-items:center;gap:9px;cursor:pointer;transition:.2s}
-.user-strip:hover{border-color:var(--orange)}
-.us-av{width:34px;height:34px;border-radius:50%;object-fit:cover;flex-shrink:0}
-.us-noav{width:34px;height:34px;border-radius:50%;background:var(--orange-l);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.us-noav i{width:16px;height:16px;color:var(--orange)}
-.us-info{flex:1;min-width:0}
-.us-name{font-size:.82rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.us-email{font-size:.67rem;color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.us-signin{font-size:.82rem;font-weight:600;color:var(--orange)}
-/* APP CORE */
-.app-core{flex:1;display:flex;flex-direction:column;height:100%;overflow:hidden;position:relative}
-/* HEADER */
-.header{background:var(--surface);height:58px;padding:0 15px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0}
-.h-left{display:flex;align-items:center;gap:9px}
-.h-logo{display:flex;align-items:center;gap:7px}
-.h-lm{width:28px;height:28px;background:var(--pg);border-radius:7px;display:flex;align-items:center;justify-content:center}
-.h-lm i{width:14px;height:14px;color:white}
-.h-lt{font-weight:800;font-size:.92rem}.h-ls{font-size:.62rem;color:var(--orange);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
-.htabs{display:flex;gap:4px;background:#EAEAE6;padding:3px;border-radius:20px}
-.htab{padding:6px 12px;border-radius:17px;border:none;background:transparent;font-family:inherit;font-size:.8rem;font-weight:600;color:var(--dim);cursor:pointer;transition:.25s;display:flex;align-items:center;gap:4px}
-.htab i{width:13px;height:13px}.htab.active{background:var(--accent);color:white}.htab.active.vtab{background:var(--green)}
-.icon-btn{background:none;border:none;color:var(--accent);display:flex;align-items:center;justify-content:center;width:37px;height:37px;border-radius:50%;cursor:pointer;transition:.2s;position:relative}
-.icon-btn:hover{background:var(--border)}.icon-btn i{width:19px;height:19px}
-.cart-badge{position:absolute;top:-2px;right:-2px;background:var(--orange);color:white;font-size:.58rem;font-weight:700;padding:1px 5px;border-radius:10px;min-width:15px;text-align:center;border:2px solid var(--surface);display:none}
-/* MAIN */
-.main-scroll{flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center}
-.chat-wrap{width:100%;max-width:820px;display:flex;flex-direction:column;flex:1;padding-bottom:10px}
-/* WELCOME */
-.welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:26px 18px;text-align:center}
-.wicon{width:68px;height:68px;background:var(--pg);border-radius:17px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;box-shadow:0 10px 22px rgba(197,160,89,.3)}
-.wicon i{width:33px;height:33px;color:white}
-.wtitle{font-size:1.85rem;font-weight:800;margin-bottom:4px}
-.wbadge{display:inline-flex;align-items:center;gap:5px;background:var(--orange-l);color:var(--orange);font-size:.76rem;font-weight:700;padding:5px 12px;border-radius:20px;margin:9px 0}
-.wbadge i{width:13px;height:13px}
-.wsub{color:var(--dim);font-size:.9rem;max-width:350px;line-height:1.55;margin-bottom:20px}
-.chips{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:490px}
-.chip{background:var(--surface);border:1.5px solid var(--border);padding:12px;border-radius:12px;font-size:.84rem;text-align:left;cursor:pointer;transition:.2s}
-.chip:hover{border-color:var(--orange);box-shadow:0 4px 13px rgba(255,117,31,.13);transform:translateY(-1px)}.chip:active{transform:scale(.98)}
-.chip-ico{font-size:1.25rem;margin-bottom:4px;display:block}
-.chip strong{display:block;font-size:.76rem;color:var(--dim);margin-bottom:1px}
-/* CHAT */
-.chat-container{padding:16px;display:none;flex-direction:column;gap:18px;flex:1}
-.msg-row{display:flex;width:100%;animation:fu .3s ease}
-@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.msg-row.user{justify-content:flex-end}
-.bubble{max-width:80%;padding:11px 15px;border-radius:19px;font-size:.93rem;line-height:1.65;word-break:break-word;position:relative}
-.bubble.user{background:var(--accent);color:white;border-radius:19px 19px 4px 19px}
-.bubble.ai{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:19px 19px 19px 4px;box-shadow:var(--sh)}
-.bubble.ai p{margin-bottom:8px}.bubble.ai p:last-child{margin-bottom:0}
-.bubble.ai strong{color:var(--orange)}
-.ai-wrap{display:flex;align-items:flex-start;gap:8px;width:100%}
-.ai-av{width:26px;height:26px;background:var(--pg);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
-.ai-av i{width:13px;height:13px;color:white}
-.speak-btn{position:absolute;bottom:-25px;left:0;background:var(--surface);border:1px solid var(--border);color:var(--dim);width:23px;height:23px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;opacity:0}
-.msg-row.ai:hover .speak-btn,.speak-btn.speaking{opacity:1}
-.speak-btn:hover{background:var(--green);color:white;border-color:var(--green)}
-.speak-btn.speaking{background:var(--green);color:white;border-color:var(--green);animation:blink 1.5s infinite}
-.speak-btn i{width:11px;height:11px}
-/* SHOP CARDS */
-.shop-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:9px;margin-top:7px}
-.sc{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;transition:.2s}
-.sc:hover{border-color:var(--orange);box-shadow:0 4px 14px rgba(255,117,31,.13)}
-.sc-img{width:100%;height:95px;object-fit:cover;display:block}
-.sc-body{padding:9px 11px}
-.sc-name{font-weight:800;font-size:.9rem;margin-bottom:2px}
-.sc-meta{display:flex;align-items:center;gap:5px;flex-wrap:wrap;font-size:.73rem;color:var(--dim)}
-.sc-badge{background:var(--orange-l);color:var(--orange);font-size:.66rem;font-weight:700;padding:2px 6px;border-radius:6px}
-.sc-rating{color:var(--yellow);font-weight:700}
-.sc-open{color:var(--green);font-weight:700}.sc-closed{color:var(--danger);font-weight:700}
-.sc-footer{padding:7px 11px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.menu-btn{background:var(--orange);color:white;border:none;padding:5px 13px;border-radius:16px;font-size:.76rem;font-weight:700;font-family:inherit;cursor:pointer;transition:.2s}
-.menu-btn:hover{background:var(--orange-d)}
-/* ORDER CARDS */
-.ocard{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:12px;margin-top:7px}
-.ocard-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.ocard-title{font-weight:800;font-size:.9rem}
-.ostatus{font-size:.7rem;font-weight:700;padding:3px 8px;border-radius:20px}
-.ostatus.pending{background:#fef9c3;color:#854d0e}.ostatus.confirmed,.ostatus.preparing{background:#dbeafe;color:#1e40af}
-.ostatus.out_for_delivery{background:#fef3c7;color:#854d0e}.ostatus.delivered{background:#d1fae5;color:#065f46}.ostatus.cancelled{background:#fee2e2;color:#991b1b}
-.oi-row{display:flex;justify-content:space-between;font-size:.8rem;padding:3px 0;border-bottom:1px solid var(--border)}.oi-row:last-child{border:none}
-.ototal{display:flex;justify-content:space-between;font-weight:800;font-size:.9rem;margin-top:6px;padding-top:6px;border-top:1.5px solid var(--border)}
-/* MENU DRAWER */
-.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1998;opacity:0;visibility:hidden;transition:.3s;backdrop-filter:blur(3px)}
-.drawer-overlay.open{opacity:1;visibility:visible}
-.drawer{position:fixed;right:0;top:0;bottom:0;width:100%;max-width:440px;background:var(--bg);z-index:1999;transform:translateX(100%);transition:transform .35s cubic-bezier(.32,.72,0,1);display:flex;flex-direction:column;box-shadow:var(--shl)}
-.drawer.open{transform:translateX(0)}
-.drawer-hd{padding:11px 14px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px;flex-shrink:0}
-.drawer-img{width:46px;height:46px;border-radius:9px;object-fit:cover;flex-shrink:0}
-.drawer-info{flex:1;min-width:0}
-.drawer-name{font-weight:800;font-size:.95rem}
-.drawer-meta{font-size:.73rem;color:var(--dim);margin-top:1px}
-.drawer-close{width:30px;height:30px;border-radius:50%;background:var(--bg);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--dim);transition:.2s;flex-shrink:0}
-.drawer-close:hover{background:var(--border)}.drawer-close i{width:15px;height:15px}
-.drawer-body{flex:1;overflow-y:auto;padding:13px}
-.mcat{font-size:.76rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.4px;padding:9px 0 5px;border-bottom:1px solid var(--border);margin-bottom:7px}
-.mitem{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:10px 11px;margin-bottom:7px;display:flex;gap:9px;align-items:flex-start;transition:.2s}
-.mitem:hover{border-color:var(--orange)}
-.mitem-img{width:52px;height:52px;border-radius:7px;object-fit:cover;flex-shrink:0}
-.mitem-noimg{width:52px;height:52px;border-radius:7px;background:var(--bg);border:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.mitem-noimg i{width:20px;height:20px;color:var(--border)}
-.mitem-info{flex:1;min-width:0}
-.mitem-name{font-weight:700;font-size:.88rem;margin-bottom:2px}
-.mitem-desc{font-size:.73rem;color:var(--dim);line-height:1.4;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.mitem-price{font-weight:800;font-size:.9rem}
-.add-btn{background:var(--orange);color:white;border:none;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;flex-shrink:0;margin-top:11px}
-.add-btn:hover{background:var(--orange-d);transform:scale(1.08)}.add-btn i{width:15px;height:15px}
-.menu-empty{text-align:center;padding:36px 18px;color:var(--dim)}
-.menu-empty i{width:36px;height:36px;opacity:.25;margin-bottom:9px}
-/* CART DRAWER */
-.cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:2999;opacity:0;visibility:hidden;transition:.3s}
-.cart-overlay.open{opacity:1;visibility:visible}
-.cart-drawer{position:fixed;right:0;top:0;bottom:0;width:100%;max-width:400px;background:var(--bg);z-index:3000;transform:translateX(100%);transition:transform .35s cubic-bezier(.32,.72,0,1);display:flex;flex-direction:column;box-shadow:var(--shl)}
-.cart-drawer.open{transform:translateX(0)}
-.cart-hd{padding:11px 13px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
-.cart-hd h3{font-weight:800;font-size:.95rem}
-.close-btn{width:30px;height:30px;border-radius:50%;background:var(--bg);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--dim);transition:.2s}
-.close-btn:hover{background:var(--border);transform:rotate(90deg)}.close-btn i{width:15px;height:15px}
-.cart-body{flex:1;overflow-y:auto;padding:9px;display:flex;flex-direction:column;gap:7px}
-.cart-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--dim);text-align:center;padding:28px}
-.cart-empty i{width:40px;height:40px;opacity:.25;margin-bottom:11px}
-.cart-empty p{font-weight:700;font-size:.86rem;color:var(--text);margin-bottom:2px}
-.vg{background:var(--surface);border-radius:10px;border:1px solid var(--border);overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.04)}
-.vg-hd{display:flex;align-items:center;gap:8px;padding:9px 11px;cursor:pointer;transition:.2s}
-.vg-hd:active{background:var(--bg)}
-.vg-img{width:38px;height:38px;border-radius:7px;object-fit:cover;flex-shrink:0;background:var(--bg);border:1px solid var(--border-l)}
-.vg-info{flex:1;min-width:0}
-.vg-name{font-weight:800;font-size:.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.vg-meta{font-size:.66rem;color:var(--dim);margin-top:1px}
-.vg-cnt{background:var(--orange-l);color:var(--orange-d);border-radius:100px;padding:2px 7px;font-size:.63rem;font-weight:700;flex-shrink:0}
-.vg-chev{width:14px;height:14px;color:var(--dim);transition:transform .25s;flex-shrink:0}
-.vg.expanded .vg-chev{transform:rotate(180deg)}
-.vg-items{display:none;flex-direction:column;border-top:1px solid var(--border-l)}
-.vg.expanded .vg-items{display:flex}
-.ci{display:flex;align-items:center;gap:7px;padding:7px 11px;border-bottom:1px solid var(--border-l);transition:.2s}
-.ci:last-child{border-bottom:none}
-.ci-img{width:42px;height:42px;border-radius:6px;object-fit:cover;flex-shrink:0;background:var(--bg);border:1px solid var(--border-l)}
-.ci-info{flex:1;min-width:0}
-.ci-name{font-weight:700;font-size:.76rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ci-price{font-size:.66rem;color:var(--dim)}
-.ci-total{font-weight:800;font-size:.76rem;white-space:nowrap}
-.qty{display:flex;align-items:center;gap:2px;background:var(--bg);border-radius:100px;padding:2px;flex-shrink:0}
-.qty-btn{width:21px;height:21px;border-radius:50%;border:none;background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.qty-btn:hover{background:var(--orange-l);color:var(--orange)}.qty-btn:active{background:var(--orange);color:white}
-.qty-btn i{width:10px;height:10px}.qty-val{font-weight:700;min-width:15px;text-align:center;font-size:.72rem}
-.vg-sub{display:flex;justify-content:space-between;align-items:center;padding:5px 11px 9px;border-top:1px dashed var(--border)}
-.vg-sub-lbl{font-size:.68rem;color:var(--dim);font-weight:600}
-.vg-sub-val{font-size:.76rem;font-weight:800;color:var(--orange)}
-.cart-footer{padding:9px 11px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0}
-.cart-sum{background:var(--bg);border-radius:7px;padding:7px 9px;margin-bottom:7px}
-.csr{display:flex;justify-content:space-between;font-size:.72rem;color:var(--dim);margin-bottom:2px}
-.csr.total{font-weight:800;font-size:.86rem;color:var(--text);padding-top:4px;border-top:1px solid var(--border);margin-top:2px}
-.co-btn-main{width:100%;background:var(--orange);color:white;border:none;padding:10px;border-radius:7px;font-family:inherit;font-weight:800;font-size:.86rem;cursor:pointer;transition:.2s}
-.co-btn-main:hover{background:var(--orange-d);transform:translateY(-1px)}.co-btn-main:disabled{background:var(--border);color:var(--dim);cursor:not-allowed;transform:none}
-/* CHECKOUT DRAWER */
-.co-drawer{position:absolute;inset:0;background:var(--bg);transform:translateX(100%);transition:transform .35s cubic-bezier(.32,.72,0,1);display:flex;flex-direction:column;z-index:10;overflow:hidden}
-.co-drawer.open{transform:translateX(0)}
-.co-hd{padding:10px 13px;background:var(--surface);border-bottom:1px solid var(--border-l);display:flex;align-items:center;gap:7px;flex-shrink:0}
-.co-back{width:26px;height:26px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--dim);transition:.2s;flex-shrink:0}
-.co-back:hover{background:var(--border)}.co-back i{width:13px;height:13px}
-.co-title{font-weight:800;font-size:.9rem;flex:1}
-.co-pills{display:flex;gap:3px}
-.co-pill{width:5px;height:5px;border-radius:50%;background:var(--border);transition:.2s}
-.co-pill.active{background:var(--orange);width:13px;border-radius:3px}.co-pill.done{background:var(--orange-d)}
-.co-body{flex:1;overflow-y:auto;padding:11px;display:flex;flex-direction:column;gap:9px}
-.co-card{background:var(--surface);border-radius:10px;border:1px solid var(--border-l);overflow:hidden;box-shadow:var(--sh)}
-.co-card-hd{display:flex;align-items:center;gap:7px;padding:8px 11px;border-bottom:1px solid var(--border-l)}
-.co-card-ico{width:24px;height:24px;border-radius:6px;background:var(--orange-l);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.co-card-ico i{width:11px;height:11px;color:var(--orange-d)}
-.co-card-lbl{font-size:.76rem;font-weight:700;flex:1}
-.co-card-edit{font-size:.67rem;font-weight:600;color:var(--orange);cursor:pointer;padding:3px 7px;border-radius:5px;transition:.2s}
-.co-card-edit:hover{background:var(--orange-l)}
-.co-card-body{padding:9px 11px}
-.co-oi{display:flex;align-items:center;gap:7px;padding:3px 0;border-bottom:1px solid var(--border-l)}
-.co-oi:last-child{border:none}
-.co-oi-img{width:30px;height:30px;border-radius:4px;object-fit:cover;flex-shrink:0;background:var(--bg);border:1px solid var(--border-l)}
-.co-oi-name{font-size:.72rem;font-weight:600;flex:1;color:var(--text)}
-.co-oi-qty{font-size:.65rem;color:var(--dim)}
-.co-oi-price{font-size:.72rem;font-weight:700;white-space:nowrap}
-.co-vb{margin-bottom:7px}.co-vb:last-child{margin-bottom:0}
-.co-vb-lbl{display:flex;align-items:center;gap:5px;font-size:.65rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
-.co-vb-lbl img{width:14px;height:14px;border-radius:3px;object-fit:cover}
-.co-addr-row{display:flex;align-items:flex-start;gap:7px;padding:2px 0}
-.co-addr-ico{color:var(--orange);flex-shrink:0;margin-top:1px}.co-addr-ico i{width:13px;height:13px}
-.co-addr-main{font-size:.78rem;font-weight:600;line-height:1.4}
-.co-addr-sub{font-size:.66rem;color:var(--dim);margin-top:1px}
-.co-addr-inp{width:100%;margin-top:8px;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-family:inherit;font-size:.79rem;background:var(--bg);outline:none;transition:.2s;display:none}
-.co-addr-inp:focus{border-color:var(--orange);background:var(--surface)}
-.co-pay-opts{display:flex;flex-direction:column;gap:5px}
-.co-po{display:flex;align-items:center;gap:7px;padding:8px 11px;border-radius:7px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;transition:.2s}
-.co-po:hover{border-color:var(--orange);transform:translateX(3px)}.co-po.sel{border-color:var(--orange);background:var(--orange-l)}
-.co-po-ico{width:26px;height:26px;border-radius:6px;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.co-po.sel .co-po-ico{background:rgba(255,117,31,.15)}.co-po-ico i{width:12px;height:12px;color:var(--dim)}.co-po.sel .co-po-ico i{color:var(--orange-d)}
-.co-po-info{flex:1}.co-po-name{font-size:.76rem;font-weight:700}.co-po-sub{font-size:.62rem;color:var(--dim);margin-top:1px}
-.co-po-chk{width:15px;height:15px;border-radius:50%;border:1.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:.2s}
-.co-po.sel .co-po-chk{background:var(--orange);border-color:var(--orange)}
-.co-po.sel .co-po-chk::after{content:'';display:block;width:5px;height:3px;border-left:1.5px solid white;border-bottom:1.5px solid white;transform:rotate(-45deg) translate(0,-1px)}
-.co-pr{display:flex;justify-content:space-between;font-size:.72rem;color:var(--dim);padding:2px 0}
-.co-pr.total{font-size:.84rem;font-weight:800;color:var(--text);padding-top:5px;border-top:1px solid var(--border);margin-top:2px}
-.co-footer{padding:9px 11px;padding-bottom:calc(9px + var(--safe));background:var(--surface);border-top:1px solid var(--border-l);flex-shrink:0;display:flex;flex-direction:column;gap:5px}
-.co-confirm{width:100%;background:var(--orange);color:white;border:none;padding:11px;border-radius:7px;font-family:inherit;font-weight:800;font-size:.86rem;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:6px}
-.co-confirm:hover{background:var(--orange-d);transform:translateY(-1px)}.co-confirm:disabled{background:var(--border);color:var(--dim);cursor:not-allowed;transform:none}
-.co-confirm i{width:15px;height:15px}
-.co-success{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px;text-align:center;animation:fu .4s ease}
-.co-success-ring{width:66px;height:66px;border-radius:50%;background:var(--orange-l);display:flex;align-items:center;justify-content:center;margin-bottom:14px}
-.co-success-ring i{width:30px;height:30px;color:var(--orange)}
-.co-success-title{font-size:1.1rem;font-weight:800;margin-bottom:3px}
-.co-success-sub{font-size:.78rem;color:var(--dim);line-height:1.6;margin-bottom:18px}
-.co-done{width:100%;background:var(--orange);color:white;border:none;padding:11px;border-radius:7px;font-family:inherit;font-weight:800;font-size:.88rem;cursor:pointer;transition:.2s}
-.co-done:hover{background:var(--orange-d)}
-/* SIGN IN MODAL */
-.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:4000;display:none;opacity:0;transition:.3s;backdrop-filter:blur(4px)}
-.modal-ov.active{display:block;opacity:1}
-.modal{position:fixed;background:var(--surface);z-index:4001;display:none;border-radius:15px;box-shadow:var(--shl)}
-.modal.active{display:flex;flex-direction:column}
-@media(max-width:767px){.modal{left:0;right:0;bottom:0;border-radius:15px 15px 0 0;transform:translateY(100%);transition:transform .35s cubic-bezier(.32,.72,0,1)}.modal.active{transform:translateY(0)}}
-@media(min-width:768px){.modal{top:50%;left:50%;width:90%;max-width:400px;transform:translate(-50%,-50%) scale(.95);opacity:0;transition:all .3s}.modal.active{transform:translate(-50%,-50%) scale(1);opacity:1}}
-.modal-hd{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.modal-hd h3{font-weight:800;font-size:1.05rem}
-.modal-body{padding:18px}
-.modal-close{width:32px;height:32px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--dim);transition:.2s}
-.modal-close:hover{background:var(--border);transform:rotate(90deg)}.modal-close i{width:14px;height:14px}
-.g-btn{width:100%;padding:11px;background:white;border:1.5px solid var(--border);border-radius:9px;font-family:inherit;font-weight:700;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:.2s}
-.g-btn:hover{border-color:var(--orange)}
-.modal-txt{color:var(--dim);margin-bottom:16px;line-height:1.6;font-size:.88rem}
-/* TOAST */
-#toast{position:fixed;bottom:78px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--accent);color:white;padding:10px 18px;border-radius:9px;z-index:9000;transition:transform .3s ease,opacity .3s ease;font-weight:600;font-size:.86rem;box-shadow:0 8px 22px rgba(0,0,0,.25);pointer-events:none;opacity:0}
-#toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-/* LOADER */
-.loader{display:flex;gap:5px;padding:9px 0;align-items:center}
-.dot{width:6px;height:6px;background:#C5A059;border-radius:50%;animation:dp 1.2s infinite}
-.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
-@keyframes dp{0%,100%{opacity:.3}50%{opacity:1}}
-.thinktxt{font-size:.78rem;color:var(--dim);margin-left:6px}
-/* VOICE SEL */
-.vsel{display:flex;align-items:center;gap:5px;padding:5px 10px;background:var(--surface);border:1px solid var(--border);border-radius:17px;font-size:.74rem}
-.vsel select{border:none;background:transparent;font-family:inherit;font-size:.74rem;color:var(--text);cursor:pointer;outline:none}
-.vsel i{width:13px;height:13px;color:var(--green)}
-/* INPUT */
-.bottom{background:var(--bg);padding-bottom:env(safe-area-inset-bottom);display:flex;flex-direction:column;align-items:center;flex-shrink:0}
-.input-wrap{width:100%;max-width:820px}
-.input-bar{padding:7px 15px 16px}
-.input-box{display:flex;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--border);border-radius:27px;padding:6px 6px 6px 17px;box-shadow:var(--sh);transition:.3s}
-.input-box:focus-within{border-color:#C5A059;box-shadow:0 4px 17px rgba(197,160,89,.17)}
-.chat-input{flex:1;border:none;background:transparent;font-size:.93rem;outline:none;padding:8px 0;font-family:inherit;color:var(--text)}
-.chat-input::placeholder{color:var(--dim)}
-.send-btn{width:38px;height:38px;border-radius:50%;background:var(--accent);color:white;border:none;display:flex;align-items:center;justify-content:center;transition:.2s;cursor:pointer;flex-shrink:0}
-.send-btn:hover:not(:disabled){background:#333;transform:scale(1.05)}.send-btn:disabled{background:var(--dim);cursor:not-allowed}
-.send-btn i{width:17px;height:17px}
-.disc{text-align:center;padding-bottom:7px;font-size:.7rem;color:var(--dim)}
-@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
-@media(min-width:768px){.sidebar{display:flex}.h-mob-new{display:none}.header{background:var(--bg);border-bottom:none}.speak-btn{opacity:0}.msg-row.ai:hover .speak-btn{opacity:1}}
-@media(max-width:767px){.htabs{transform:scale(.88)}.vsel{display:none}.speak-btn{opacity:1;position:static;margin-top:5px;width:24px;height:24px}}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Qwen Support • Multilingual AI Assistant</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Rounded" rel="stylesheet"/>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-remote-config-compat.js"></script>
+
+  <style>
+    :root {
+      /* Qwen Brand Colors */
+      --qwen-primary: #6366F1;
+      --qwen-primary-dark: #4F46E5;
+      --qwen-primary-light: #818CF8;
+      --qwen-gradient: linear-gradient(135deg, #6366F1, #8B5CF6, #A78BFA);
+      --qwen-gradient-subtle: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.06));
+      
+      /* Base Theme */
+      --bg-body: #FAFAFB;
+      --bg-surface: #FFFFFF;
+      --bg-sidebar: #F8F9FC;
+      --text-main: #1F2937;
+      --text-secondary: #6B7280;
+      --text-muted: #9CA3AF;
+      --border-color: #E5E7EB;
+      --border-light: #F3F4F6;
+      
+      /* Chat Bubbles */
+      --user-bubble: #6366F1;
+      --user-bubble-text: #FFFFFF;
+      --ai-bubble: #FFFFFF;
+      --ai-bubble-border: #E5E7EB;
+      
+      /* UI Elements */
+      --sidebar-width: 280px;
+      --radius-lg: 20px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+      --radius-full: 9999px;
+      
+      /* Shadows */
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.3);
+      
+      /* Voice */
+      --voice-active: #10B981;
+      --voice-pulse: rgba(16, 185, 129, 0.2);
+    }
+
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+      -webkit-tap-highlight-color: transparent;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-body);
+      color: var(--text-main);
+      height: 100svh;
+      display: flex;
+      flex-direction: row;
+      overflow: hidden;
+      line-height: 1.5;
+    }
+
+    /* --- SIDEBAR --- */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border-color);
+      display: none;
+      flex-direction: column;
+      padding: 24px 20px;
+      z-index: 20;
+      transition: transform 0.3s ease;
+    }
+    
+    .sidebar-header { 
+      margin-bottom: 28px; 
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .qwen-logo-mini {
+      width: 32px;
+      height: 32px;
+      background: var(--qwen-gradient);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    
+    .qwen-logo-mini span {
+      color: white;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    
+    .new-chat-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .new-chat-btn:hover { 
+      background: var(--border-light); 
+      border-color: var(--qwen-primary-light);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+    
+    .new-chat-btn:active { transform: translateY(0); }
+    
+    .history-title {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin: 24px 0 12px 4px;
+      padding-left: 4px;
+    }
+
+    .history-list {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    
+    .history-item {
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 4px;
+    }
+    
+    .history-item:hover {
+      background: var(--border-light);
+      color: var(--text-main);
+    }
+    
+    .history-item.active {
+      background: var(--qwen-gradient-subtle);
+      color: var(--qwen-primary);
+      font-weight: 500;
+      border-left: 3px solid var(--qwen-primary);
+      padding-left: 9px;
+    }
+
+    /* --- APP CORE --- */
+    .app-core { 
+      flex: 1; 
+      display: flex; 
+      flex-direction: column; 
+      height: 100%; 
+      position: relative; 
+      background: var(--bg-body);
+    }
+
+    .app-header {
+      background: var(--bg-surface);
+      height: 68px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+      z-index: 10;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .qwen-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+    
+    .qwen-logo {
+      width: 36px;
+      height: 36px;
+      background: var(--qwen-gradient);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-glow);
+    }
+    
+    .qwen-logo span {
+      color: white;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    
+    .brand-name {
+      font-weight: 700;
+      font-size: 1.1rem;
+      background: var(--qwen-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header-tabs {
+      display: flex;
+      gap: 6px;
+      background: var(--border-light);
+      padding: 4px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-color);
+    }
+
+    .header-tab {
+      padding: 8px 18px;
+      border-radius: var(--radius-full);
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      position: relative;
+    }
+    
+    .header-tab::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius-full);
+      background: var(--qwen-gradient);
+      opacity: 0;
+      transition: opacity 0.2s;
+      z-index: -1;
+    }
+    
+    .header-tab:hover { color: var(--text-main); }
+    .header-tab.active { 
+      color: white; 
+      background: var(--qwen-primary);
+      box-shadow: var(--shadow-sm);
+    }
+    .header-tab.active::before { opacity: 1; }
+    .header-tab.active.voice-tab { background: var(--voice-active); }
+
+    .icon-btn {
+      background: none; 
+      border: none; 
+      color: var(--text-secondary);
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      width: 40px; 
+      height: 40px; 
+      border-radius: var(--radius-full); 
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+    
+    .icon-btn:hover { 
+      background: var(--border-light); 
+      color: var(--qwen-primary);
+      transform: scale(1.05);
+    }
+    
+    .icon-btn:active { transform: scale(0.98); }
+
+    /* Back button */
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--border-light);
+      border: 1px solid var(--border-color);
+      color: var(--qwen-primary);
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 8px 14px;
+      border-radius: var(--radius-full);
+      transition: all 0.2s;
+    }
+    
+    .back-btn:hover { 
+      background: var(--qwen-gradient-subtle); 
+      border-color: var(--qwen-primary-light);
+      transform: translateY(-1px);
+    }
+
+    /* Main Content */
+    .main-content { 
+      flex: 1; 
+      overflow-y: auto; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      padding: 20px;
+      scroll-behavior: smooth;
+    }
+    
+    .chat-wrapper { 
+      width: 100%; 
+      max-width: 760px; 
+      display: flex; 
+      flex-direction: column; 
+      flex: 1; 
+    }
+
+    /* ── VYNIX CONTEXT BANNER ── */
+    .vynix-context-banner {
+      margin: 16px 0 20px;
+      background: var(--qwen-gradient-subtle);
+      border: 1px solid rgba(99,102,241,0.25);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      animation: bannerSlide 0.4s cubic-bezier(0.34,1.56,0.64,1);
+      position: relative;
+      box-shadow: var(--shadow-sm);
+    }
+
+    @keyframes bannerSlide {
+      from { opacity: 0; transform: translateY(-12px) scale(0.98); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .ctx-thumb {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+      flex-shrink: 0;
+      border: 2px solid rgba(99,102,241,0.3);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .ctx-info { flex: 1; min-width: 0; }
+
+    .ctx-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--qwen-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 5px;
+    }
+
+    .ctx-author {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .ctx-text {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    /* Welcome Screen */
+    .welcome-screen {
+      flex: 1; 
+      display: flex; 
+      flex-direction: column;
+      align-items: center; 
+      justify-content: center;
+      padding: 40px 24px; 
+      text-align: center; 
+      width: 100%;
+      animation: fadeIn 0.4s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .qwen-welcome-logo {
+      width: 96px; 
+      height: 96px;
+      background: var(--qwen-gradient);
+      border-radius: 28px;
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-glow);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .qwen-welcome-logo::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.3) 60%, transparent 70%);
+      animation: shine 3s infinite;
+    }
+    
+    @keyframes shine {
+      0% { transform: translateX(-100%) rotate(45deg); }
+      100% { transform: translateX(100%) rotate(45deg); }
+    }
+    
+    .qwen-welcome-logo span {
+      color: white; 
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .brand-title { 
+      font-size: 2rem; 
+      font-weight: 700; 
+      margin-bottom: 10px;
+      background: var(--qwen-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .brand-subtitle {
+      color: var(--text-secondary);
+      max-width: 420px;
+      margin-bottom: 32px;
+      font-size: 1.05rem;
+    }
+    
+    .suggestions-container { 
+      width: 100%; 
+      max-width: 520px; 
+      margin-top: 20px; 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 14px; 
+    }
+    
+    .suggestion-chip {
+      background: var(--bg-surface); 
+      border: 1px solid var(--border-color);
+      padding: 16px 18px; 
+      border-radius: var(--radius-md); 
+      font-size: 0.9rem;
+      text-align: left; 
+      cursor: pointer; 
+      transition: all 0.2s;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .suggestion-chip::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--qwen-gradient-subtle);
+      opacity: 0;
+      transition: opacity 0.2s;
+      border-radius: var(--radius-md);
+    }
+    
+    .suggestion-chip:hover { 
+      border-color: var(--qwen-primary-light); 
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    
+    .suggestion-chip:hover::before { opacity: 1; }
+    
+    .suggestion-chip:active { 
+      transform: translateY(0);
+      background: var(--border-light);
+    }
+    
+    .suggestion-chip strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--qwen-primary);
+      font-weight: 600;
+    }
+
+    /* Chat Container */
+    .chat-container { 
+      padding: 12px 0 24px; 
+      display: none; 
+      flex-direction: column; 
+      gap: 20px; 
+      flex: 1; 
+      width: 100%;
+    }
+    
+    .message-row { 
+      display: flex; 
+      width: 100%; 
+      animation: messageSlide 0.3s ease; 
+    }
+    
+    @keyframes messageSlide { 
+      from { opacity: 0; transform: translateY(12px); } 
+      to { opacity: 1; transform: translateY(0); } 
+    }
+    
+    .message-row.user { justify-content: flex-end; }
+    .message-row.ai { justify-content: flex-start; }
+    
+    .msg-bubble { 
+      max-width: 82%; 
+      padding: 16px 20px; 
+      border-radius: var(--radius-lg); 
+      font-size: 1rem; 
+      line-height: 1.6; 
+      word-wrap: break-word; 
+      position: relative;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .msg-bubble.user { 
+      background: var(--user-bubble); 
+      color: var(--user-bubble-text); 
+      border-radius: var(--radius-lg) var(--radius-lg) 6px var(--radius-lg);
+      border-bottom-right-radius: 6px;
+    }
+    
+    .msg-bubble.ai { 
+      background: var(--ai-bubble); 
+      color: var(--text-main); 
+      border: 1px solid var(--ai-bubble-border); 
+      border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg) 6px;
+      border-bottom-left-radius: 6px;
+    }
+    
+    .msg-bubble.ai p { margin-bottom: 12px; }
+    .msg-bubble.ai p:last-child { margin-bottom: 0; }
+    .msg-bubble.ai strong { color: var(--qwen-primary); font-weight: 600; }
+    .msg-bubble.ai em { color: var(--text-secondary); font-style: normal; }
+
+    /* Voice speak button */
+    .speak-btn {
+      position: absolute;
+      bottom: -36px;
+      left: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      opacity: 0;
+      box-shadow: var(--shadow-sm);
+      z-index: 2;
+    }
+    
+    .message-row.ai:hover .speak-btn { opacity: 1; }
+    .speak-btn:hover { 
+      background: var(--qwen-primary); 
+      color: white; 
+      border-color: var(--qwen-primary);
+      transform: scale(1.1);
+    }
+    .speak-btn.speaking { 
+      background: var(--voice-active); 
+      color: white; 
+      border-color: var(--voice-active);
+      opacity: 1;
+      animation: pulse 1.5s infinite;
+      box-shadow: 0 0 0 4px var(--voice-pulse);
+    }
+
+    /* ── CONTEXT MESSAGE BUBBLE ── */
+    .ctx-msg-card {
+      background: var(--ai-bubble);
+      border: 1px solid rgba(99,102,241,0.25);
+      border-left: 4px solid var(--qwen-primary);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      max-width: 88%;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      animation: messageSlide 0.3s ease;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .ctx-msg-img { 
+      width: 48px; 
+      height: 48px; 
+      border-radius: var(--radius-sm); 
+      object-fit: cover; 
+      flex-shrink: 0; 
+      border: 2px solid rgba(99,102,241,0.2);
+    }
+    
+    .ctx-msg-body { flex: 1; min-width: 0; }
+    
+    .ctx-msg-label { 
+      font-size: 0.7rem; 
+      font-weight: 700; 
+      color: var(--qwen-primary); 
+      text-transform: uppercase; 
+      letter-spacing: 0.6px; 
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .ctx-msg-label span {
+      background: var(--qwen-gradient-subtle);
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      font-size: 0.65rem;
+    }
+    
+    .ctx-msg-text { 
+      font-size: 0.875rem; 
+      color: var(--text-secondary); 
+      line-height: 1.45; 
+    }
+
+    .ai-avatar { 
+      width: 36px; 
+      height: 36px; 
+      background: var(--qwen-gradient); 
+      border-radius: 12px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      margin-right: 12px; 
+      flex-shrink: 0;
+      box-shadow: var(--shadow-glow);
+    }
+    
+    .ai-avatar span { 
+      color: white; 
+      font-size: 18px; 
+      font-weight: 700;
+    }
+    
+    .message-content { 
+      display: flex; 
+      align-items: flex-start; 
+      max-width: 88%; 
+      width: 100%; 
+      position: relative; 
+    }
+
+    /* Image wrapper */
+    .img-wrapper { 
+      position: relative; 
+      border-radius: var(--radius-md); 
+      overflow: hidden; 
+      box-shadow: var(--shadow-lg); 
+      cursor: zoom-in; 
+      max-width: 520px; 
+      margin-top: 12px;
+      border: 1px solid var(--border-color);
+      transition: transform 0.2s;
+    }
+    
+    .img-wrapper:hover { transform: scale(1.01); }
+    
+    .generated-img { 
+      width: 100%; 
+      display: block; 
+      border-radius: var(--radius-md); 
+    }
+    
+    .watermark { 
+      position: absolute; 
+      bottom: 12px; 
+      right: 12px; 
+      background: rgba(255,255,255,0.92); 
+      color: var(--qwen-primary); 
+      padding: 6px 12px; 
+      border-radius: var(--radius-full); 
+      font-size: 0.75rem; 
+      font-weight: 600; 
+      display: flex; 
+      align-items: center; 
+      gap: 5px; 
+      pointer-events: none; 
+      backdrop-filter: blur(4px);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .action-row { 
+      display: flex; 
+      gap: 10px; 
+      margin-top: 14px; 
+      flex-wrap: wrap; 
+    }
+    
+    .action-btn { 
+      background: var(--bg-surface); 
+      border: 1px solid var(--border-color); 
+      color: var(--text-main); 
+      padding: 9px 18px; 
+      border-radius: var(--radius-full); 
+      font-size: 0.85rem; 
+      font-weight: 500; 
+      font-family: inherit; 
+      cursor: pointer; 
+      display: flex; 
+      align-items: center; 
+      gap: 6px; 
+      transition: all 0.2s;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .action-btn:hover { 
+      background: var(--qwen-gradient-subtle); 
+      border-color: var(--qwen-primary-light);
+      color: var(--qwen-primary);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+    
+    .action-btn:active { transform: translateY(0); }
+
+    /* Voice Mode Indicator */
+    .voice-indicator {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: var(--radius-full);
+      font-size: 0.85rem;
+      color: var(--voice-active);
+      font-weight: 600;
+      margin-bottom: 18px;
+      animation: fadeIn 0.3s ease;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .voice-indicator .material-symbols-rounded { 
+      font-size: 20px;
+      animation: pulse 2s infinite;
+    }
+
+    /* Voice Selector */
+    .voice-selector {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      margin-left: auto;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s;
+    }
+    
+    .voice-selector:hover {
+      border-color: var(--qwen-primary-light);
+      box-shadow: var(--shadow-md);
+    }
+    
+    .voice-selector select {
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: 0.8rem;
+      color: var(--text-main);
+      cursor: pointer;
+      outline: none;
+      font-weight: 500;
+      padding: 4px 2px;
+    }
+    
+    .voice-selector select option {
+      background: var(--bg-surface);
+      color: var(--text-main);
+    }
+
+    /* Code Block */
+    .code-container { 
+      position: relative; 
+      margin: 16px 0; 
+      max-width: 100%; 
+      border-radius: var(--radius-md); 
+      overflow: hidden; 
+      background: #1E293B; 
+      border: 1px solid #334155; 
+      box-shadow: var(--shadow-md);
+    }
+    
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      background: rgba(30, 41, 59, 0.8);
+      border-bottom: 1px solid #334155;
+      font-size: 0.75rem;
+      color: #94A3B8;
+    }
+    
+    .code-block { 
+      color: #E2E8F0; 
+      padding: 16px; 
+      font-family: 'SF Mono', 'Monaco', 'Consolas', monospace; 
+      font-size: 0.9rem; 
+      overflow-x: auto; 
+      white-space: pre; 
+      word-wrap: normal; 
+      line-height: 1.5;
+    }
+    
+    .copy-btn { 
+      position: absolute; 
+      top: 12px; 
+      right: 12px; 
+      background: rgba(255,255,255,0.12); 
+      color: #fff; 
+      border: 1px solid rgba(255,255,255,0.2); 
+      padding: 6px 12px; 
+      border-radius: var(--radius-sm); 
+      font-size: 0.75rem; 
+      cursor: pointer; 
+      display: flex; 
+      align-items: center; 
+      gap: 5px; 
+      transition: all 0.2s; 
+      font-family: inherit;
+      z-index: 3;
+    }
+    
+    .copy-btn:hover { 
+      background: rgba(255,255,255,0.25); 
+      transform: scale(1.05);
+    }
+    
+    .copy-btn.copied {
+      background: var(--voice-active);
+      border-color: var(--voice-active);
+    }
+
+    /* Bottom Section */
+    .bottom-section { 
+      background: var(--bg-surface); 
+      padding-bottom: env(safe-area-inset-bottom); 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      width: 100%;
+      border-top: 1px solid var(--border-color);
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.03);
+      z-index: 15;
+    }
+    
+    .input-wrapper { 
+      width: 100%; 
+      max-width: 760px; 
+      padding: 16px 20px 24px;
+    }
+    
+    .input-box {
+      display: flex; 
+      align-items: center; 
+      gap: 12px;
+      background: var(--bg-body); 
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-full); 
+      padding: 8px 12px 8px 24px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.25s ease;
+      position: relative;
+    }
+    
+    .input-box:focus-within { 
+      border-color: var(--qwen-primary); 
+      box-shadow: var(--shadow-glow);
+      background: var(--bg-surface);
+    }
+    
+    .input-box::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: var(--radius-full);
+      padding: 2px;
+      background: var(--qwen-gradient);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+    
+    .input-box:focus-within::before {
+      opacity: 1;
+    }
+    
+    .chat-input { 
+      flex: 1; 
+      border: none; 
+      background: transparent; 
+      font-size: 1rem; 
+      outline: none; 
+      padding: 12px 0; 
+      font-family: inherit; 
+      color: var(--text-main);
+    }
+    
+    .chat-input::placeholder {
+      color: var(--text-muted);
+    }
+    
+    .send-btn { 
+      width: 44px; 
+      height: 44px; 
+      border-radius: var(--radius-full); 
+      background: var(--qwen-gradient); 
+      color: white; 
+      border: none; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      transition: all 0.2s; 
+      cursor: pointer;
+      box-shadow: var(--shadow-glow);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .send-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.3) 60%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    
+    .send-btn:hover:not(:disabled) { 
+      transform: scale(1.08);
+      box-shadow: 0 0 25px rgba(99, 102, 241, 0.5);
+    }
+    
+    .send-btn:hover::after { opacity: 1; }
+    
+    .send-btn:disabled { 
+      background: var(--border-color); 
+      cursor: not-allowed; 
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .send-btn span {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Loader */
+    .loader { 
+      display: flex; 
+      gap: 6px; 
+      padding: 18px 0; 
+      align-items: center; 
+    }
+    
+    .dot { 
+      width: 9px; 
+      height: 9px; 
+      background: var(--qwen-primary); 
+      border-radius: var(--radius-full); 
+      animation: pulse 1.3s infinite; 
+      box-shadow: 0 0 8px rgba(99, 102, 241, 0.4);
+    }
+    
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+    
+    @keyframes pulse { 
+      0%, 100% { opacity: 0.4; transform: scale(0.9); } 
+      50% { opacity: 1; transform: scale(1.1); } 
+    }
+    
+    .thinking-text { 
+      font-size: 0.875rem; 
+      color: var(--text-secondary); 
+      margin-left: 12px; 
+      font-weight: 500;
+    }
+
+    /* Image Viewer */
+    .image-viewer { 
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      width: 100vw; 
+      height: 100vh; 
+      background: rgba(15, 23, 42, 0.92); 
+      backdrop-filter: blur(8px); 
+      z-index: 1000; 
+      display: none; 
+      flex-direction: column; 
+      align-items: center; 
+      justify-content: center; 
+      opacity: 0; 
+      transition: opacity 0.3s ease;
+      padding: 20px;
+    }
+    
+    .image-viewer img { 
+      max-width: 95%; 
+      max-height: 85%; 
+      border-radius: var(--radius-lg); 
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4); 
+      object-fit: contain;
+      border: 3px solid var(--bg-surface);
+    }
+    
+    .close-viewer-btn { 
+      position: absolute; 
+      top: 24px; 
+      right: 24px; 
+      background: rgba(255,255,255,0.15); 
+      border: 1px solid rgba(255,255,255,0.25); 
+      color: white; 
+      width: 48px; 
+      height: 48px; 
+      border-radius: var(--radius-full); 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      cursor: pointer; 
+      transition: all 0.2s;
+      backdrop-filter: blur(4px);
+    }
+    
+    .close-viewer-btn:hover { 
+      background: rgba(255,255,255,0.25); 
+      transform: scale(1.1);
+    }
+
+    /* Responsive */
+    @media (min-width: 768px) {
+      body { flex-direction: row; }
+      .sidebar { display: flex; }
+      .app-header .icon-btn[onclick="resetChat()"] { display: none; }
+      .app-header { background: var(--bg-body); }
+      .input-box { padding: 10px 14px 10px 26px; }
+      .speak-btn { opacity: 0; }
+      .message-row.ai:hover .speak-btn { opacity: 1; }
+    }
+
+    @media (max-width: 767px) {
+      body { flex-direction: column; }
+      .header-tabs { transform: scale(0.92); transform-origin: right center; }
+      .speak-btn { 
+        opacity: 1; 
+        position: static; 
+        margin-top: 10px; 
+        width: 34px; 
+        height: 34px;
+        margin-left: 4px;
+      }
+      .voice-selector { display: none; }
+      .suggestions-container { grid-template-columns: 1fr; }
+      .msg-bubble { max-width: 92%; }
+      .message-content { max-width: 92%; }
+      .ctx-msg-card { max-width: 95%; }
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { 
+      background: var(--border-color); 
+      border-radius: var(--radius-full);
+    }
+    ::-webkit-scrollbar-thumb:hover { background: var(--qwen-primary-light); }
+
+    /* Selection */
+    ::selection {
+      background: rgba(99, 102, 241, 0.2);
+      color: var(--text-main);
+    }
+  </style>
+  <base target="_blank">
 </head>
 <body>
 
-<!-- SIDEBAR -->
-<aside class="sidebar" id="sidebar">
-  <div class="sb-top">
-    <div class="sb-logo"><div class="lm"><i data-lucide="sparkles"></i></div><div><div class="lt">Ona AI</div><div class="ls">1BUSKET</div></div></div>
-    <button class="new-btn" onclick="resetChat()"><i data-lucide="plus"></i> New Conversation</button>
-  </div>
-  <div class="status-bar"><div class="sdot"></div><span id="statusText">Connecting…</span></div>
-  <div id="userStrip" class="user-strip" onclick="handleAuthClick()">
-    <div class="us-noav"><i data-lucide="user"></i></div>
-    <div class="us-info"><div class="us-signin">Sign in to order</div></div>
-    <i data-lucide="chevron-right" style="width:14px;height:14px;color:var(--dim);flex-shrink:0"></i>
-  </div>
-  <div class="sb-sect">
-    <div class="sb-ttl">Quick Actions</div>
-    <button class="qa" onclick="setPrompt('Show me all open restaurants nearby')"><i data-lucide="utensils"></i> Browse Restaurants</button>
-    <button class="qa" onclick="openCartDrawer()"><i data-lucide="shopping-cart"></i> My Cart <span class="qa-badge" id="sbBadge">0</span></button>
-    <button class="qa" onclick="setPrompt('Show my recent orders and their status')"><i data-lucide="receipt"></i> My Orders</button>
-    <button class="qa" onclick="setPrompt('What deals and promos are available today?')"><i data-lucide="tag"></i> Deals & Promos</button>
-    <button class="qa" onclick="setPrompt('Find me fast food that delivers close to me')"><i data-lucide="navigation"></i> Near Me</button>
-  </div>
-  <div class="sb-sect" style="border-top:1px solid var(--border);margin-top:auto;padding-top:12px">
-    <div class="sb-ttl">Voice</div>
-    <div class="vsel" style="width:100%;box-sizing:border-box"><i data-lucide="mic"></i><select id="sbVSel" onchange="changeVoice(this.value)" style="flex:1"><option value="eve">Eve (Energetic)</option><option value="ara" selected>Ara (Warm)</option><option value="rex">Rex (Professional)</option><option value="sal">Sal (Neutral)</option><option value="leo">Leo (Authoritative)</option></select></div>
-  </div>
-</aside>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="qwen-logo-mini">
+        <span>Q</span>
+      </div>
+      <button class="new-chat-btn" onclick="resetChat()">
+        <span class="material-symbols-rounded">add</span> New Conversation
+      </button>
+    </div>
+    <div class="history-title">Recent Chats</div>
+    <div class="history-list" id="historyList">
+      <div class="history-item active">Multilingual Support Setup</div>
+      <div class="history-item">API Integration Help</div>
+      <div class="history-item">Escalation Workflow</div>
+    </div>
+  </aside>
 
-<!-- APP CORE -->
-<div class="app-core">
-  <header class="header">
-    <div class="h-left">
-      <button class="icon-btn h-mob-new" onclick="resetChat()"><i data-lucide="refresh-cw"></i></button>
-      <div class="h-logo"><div class="h-lm"><i data-lucide="sparkles"></i></div><div><div class="h-lt">Ona AI</div><div class="h-ls">1BUSKET</div></div></div>
-    </div>
-    <div class="htabs">
-      <button class="htab active" id="tabChat" onclick="switchTab('chat')"><i data-lucide="message-circle"></i> Chat</button>
-      <button class="htab vtab" id="tabVoice" onclick="switchTab('voice')"><i data-lucide="volume-2"></i> Voice</button>
-    </div>
-    <div style="display:flex;align-items:center;gap:7px">
-      <div class="vsel" id="hVSel" style="display:none"><i data-lucide="mic"></i><select id="hVSS" onchange="changeVoice(this.value)"><option value="eve">Eve</option><option value="ara" selected>Ara</option><option value="rex">Rex</option><option value="sal">Sal</option><option value="leo">Leo</option></select></div>
-      <button class="icon-btn" onclick="openCartDrawer()"><i data-lucide="shopping-bag"></i><span class="cart-badge" id="hBadge"></span></button>
-      <button class="icon-btn" onclick="handleAuthClick()"><i data-lucide="user"></i></button>
-    </div>
-  </header>
-  <main class="main-scroll" id="mainScroll">
-    <div class="chat-wrap" id="chatWrap">
-      <div class="welcome" id="welcomeScreen">
-        <div class="wicon"><i data-lucide="sparkles"></i></div>
-        <h1 class="wtitle">Ona AI</h1>
-        <div class="wbadge"><i data-lucide="store"></i> Powered by 1BUSKET</div>
-        <p class="wsub">Your smart food ordering assistant. Find restaurants, add items to cart, and place orders — all through conversation.</p>
-        <div class="chips" id="chipsGrid">
-          <div class="chip" onclick="setPrompt('Show me open restaurants nearby')"><span class="chip-ico">🍽️</span><strong>Restaurants</strong>Open near me</div>
-          <div class="chip" onclick="openCartDrawer()"><span class="chip-ico">🛒</span><strong>My Cart</strong>View & checkout</div>
-          <div class="chip" onclick="setPrompt('Show my recent orders and delivery status')"><span class="chip-ico">📦</span><strong>My Orders</strong>Track delivery</div>
-          <div class="chip" onclick="setPrompt('What deals and promos are available right now?')"><span class="chip-ico">🔥</span><strong>Deals</strong>Today's specials</div>
-          <div class="chip" onclick="setPrompt('Find me a pizza restaurant')"><span class="chip-ico">🍕</span><strong>Pizza</strong>Find & order</div>
-          <div class="chip" onclick="setPrompt('What are delivery fees and how far are restaurants from me?')"><span class="chip-ico">🚴</span><strong>Delivery</strong>Fees & ETA</div>
+  <div class="app-core">
+    <header class="app-header">
+      <div class="header-left">
+        <button class="back-btn" id="backBtn" onclick="goBackToVynix()" style="display:none;">
+          <span class="material-symbols-rounded" style="font-size:18px;">arrow_back</span>
+          Back to Feed
+        </button>
+        <div class="qwen-brand" onclick="resetChat()">
+          <div class="qwen-logo">
+            <span>Q</span>
+          </div>
+          <span class="brand-name">Qwen Support</span>
         </div>
       </div>
-      <div class="chat-container" id="chatContainer"></div>
-    </div>
-  </main>
-  <footer class="bottom">
-    <div class="input-wrap">
-      <div class="input-bar"><div class="input-box"><input type="text" class="chat-input" id="userInput" placeholder="Ask about restaurants, cart, orders…" autocomplete="off"/><button class="send-btn" id="sendBtn"><i data-lucide="arrow-up"></i></button></div></div>
-      <div class="disc">Ona AI can make mistakes. Verify order details before confirming.</div>
-    </div>
-  </footer>
-</div>
 
-<!-- MENU DRAWER -->
-<div class="drawer-overlay" id="menuOv" onclick="closeMenuDrawer()"></div>
-<div class="drawer" id="menuDrawer">
-  <div class="drawer-hd"><img class="drawer-img" id="mdImg" src="" alt=""><div class="drawer-info"><div class="drawer-name" id="mdName"></div><div class="drawer-meta" id="mdMeta"></div></div><button class="drawer-close" onclick="closeMenuDrawer()"><i data-lucide="x"></i></button></div>
-  <div class="drawer-body" id="menuBody"><div class="menu-empty"><i data-lucide="loader-2" style="animation:spin 1s linear infinite;display:block;margin:0 auto 9px;width:30px;height:30px"></i><p>Loading menu…</p></div></div>
-</div>
+      <div class="header-tabs">
+        <button class="header-tab active" id="tabChat" onclick="switchTab('chat')">
+          <span class="material-symbols-rounded" style="font-size: 18px;">chat</span> Chat
+        </button>
+        <button class="header-tab voice-tab" id="tabVoice" onclick="switchTab('voice')">
+          <span class="material-symbols-rounded" style="font-size: 18px;">mic</span> Voice
+        </button>
+        <button class="header-tab" id="tabImages" onclick="switchTab('images')">
+          <span class="material-symbols-rounded" style="font-size: 18px;">image</span> Images
+        </button>
+      </div>
 
-<!-- CART DRAWER -->
-<div class="cart-overlay" id="cartOv" onclick="closeCartDrawer()"></div>
-<div class="cart-drawer" id="cartDrawer">
-  <div class="cart-hd"><h3>Your Order</h3><button class="close-btn" onclick="closeCartDrawer()"><i data-lucide="x"></i></button></div>
-  <div class="cart-body" id="cartBody"><div class="cart-empty"><i data-lucide="shopping-bag"></i><p>Your cart is empty</p><small>Ask me to browse restaurants!</small></div></div>
-  <div class="cart-footer" id="cartFooter" style="display:none">
-    <div class="cart-sum" id="cartSum"></div>
-    <button class="co-btn-main" id="checkoutBtn" disabled onclick="openCoDrawer()">Place Order</button>
+      <div class="voice-selector" id="voiceSelector" style="display: none;">
+        <span class="material-symbols-rounded" style="font-size: 16px; color: var(--qwen-primary);">record_voice_over</span>
+        <select id="voiceSelect" onchange="changeVoice(this.value)">
+          <option value="nova">Nova (Warm)</option>
+          <option value="echo" selected>Echo (Professional)</option>
+          <option value="aura">Aura (Friendly)</option>
+          <option value="onyx">Onyx (Authoritative)</option>
+        </select>
+      </div>
+
+      <button class="icon-btn" id="refreshBtn" onclick="resetChat()" title="New Chat">
+        <span class="material-symbols-rounded">refresh</span>
+      </button>
+      <button class="icon-btn" title="Settings">
+        <span class="material-symbols-rounded">settings</span>
+      </button>
+    </header>
+
+    <main class="main-content" id="mainScroll">
+      <div class="chat-wrapper" id="chatWrapper">
+
+        <div class="welcome-screen" id="welcomeScreen">
+          <div class="qwen-welcome-logo">
+            <span>Q</span>
+          </div>
+          <h1 class="brand-title">Qwen Support</h1>
+          <p class="brand-subtitle">Your intelligent multilingual assistant for customer support, powered by advanced AI.</p>
+          
+          <div class="suggestions-container" id="suggestionsContainer">
+            <div class="suggestion-chip" onclick="setPrompt('How do I set up multilingual support for Spanish and French?')">
+              <strong>🌍 Language Setup</strong>
+              Configure new languages
+            </div>
+            <div class="suggestion-chip" onclick="setPrompt('What\'s the best way to handle escalation to human agents?')">
+              <strong>⚡ Escalation Flow</strong>
+              Human handoff workflow
+            </div>
+            <div class="suggestion-chip" onclick="setPrompt('How can I integrate this with our existing Zendesk setup?')">
+              <strong>🔗 Integration</strong>
+              Connect your tools
+            </div>
+            <div class="suggestion-chip" onclick="setPrompt('Show me an example response for a refund request in German')">
+              <strong>💬 Example Response</strong>
+              See it in action
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-container" id="chatContainer"></div>
+      </div>
+    </main>
+
+    <footer class="bottom-section">
+      <div class="input-wrapper">
+        <div class="input-box" id="inputBoxContainer">
+          <input type="text" class="chat-input" id="userInput" placeholder="Ask Qwen anything about your support bot..." autocomplete="off" />
+          <button class="send-btn" id="sendBtn" disabled>
+            <span class="material-symbols-rounded">arrow_upward</span>
+          </button>
+        </div>
+        <div style="text-align: center; padding-top: 12px; font-size: 0.75rem; color: var(--text-muted);">
+          Qwen may generate inaccurate information. Verify critical details.
+        </div>
+      </div>
+    </footer>
   </div>
-  <!-- CHECKOUT INSIDE CART DRAWER -->
-  <div class="co-drawer" id="coDrawer">
-    <div class="co-hd"><button class="co-back" id="coBackBtn" onclick="coBack()"><i data-lucide="arrow-left"></i></button><span class="co-title" id="coTitle">Review Order</span><div class="co-pills"><div class="co-pill active" id="cp0"></div><div class="co-pill" id="cp1"></div><div class="co-pill" id="cp2"></div></div></div>
-    <div class="co-body" id="coBody"></div>
-    <div class="co-footer" id="coFooter"></div>
+
+  <div id="imageViewer" class="image-viewer">
+    <button class="close-viewer-btn" onclick="closeImageViewer()">
+      <span class="material-symbols-rounded">close</span>
+    </button>
+    <img id="viewerImage" src="" alt="Expanded View" />
   </div>
-</div>
 
-<!-- SIGN IN MODAL -->
-<div class="modal-ov" id="siOv" onclick="closeAuthModal()"></div>
-<div class="modal" id="siModal">
-  <div class="modal-hd"><h3>Sign in to 1BUSKET</h3><button class="modal-close" onclick="closeAuthModal()"><i data-lucide="x"></i></button></div>
-  <div class="modal-body"><p class="modal-txt">Sign in to save your cart, place orders, and track deliveries.</p><button class="g-btn" onclick="signInGoogle()"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="width:19px" alt="G"> Continue with Google</button></div>
-</div>
+  <script>
+    // --- CONFIGURATION ---
+    const CLOUDINARY_CLOUD_NAME = "dqkujefxj";
+    const CLOUDINARY_UPLOAD_PRESET = "banter_box";
+    const API_BASE = "https://api.x.ai/v1";
+    let XAI_API_KEY = "";
 
-<div id="toast">Message</div>
+    // --- STATE ---
+    let currentTab = 'chat';
+    let conversationHistory = [];
+    let vynixContext = null;
+    let contextInjected = false;
+    let voiceEnabled = false;
+    let currentVoice = 'echo';
+    let currentAudio = null;
+    let isSpeaking = false;
+    let audioCache = new Map();
 
-<!-- Remote Config for xAI key -->
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-remote-config-compat.js"></script>
-<script>
-firebase.initializeApp({apiKey:"AIzaSyBOyZ3As4GTuNvjemvPF_SpsC6m6vqtNhc",authDomain:"fire-b-a8878.firebaseapp.com",projectId:"fire-b-a8878",appId:"1:658673187627:web:6e4c29af661785f0afa36e"});
-const rc=firebase.remoteConfig();rc.settings.minimumFetchIntervalMillis=0;
-</script>
+    // --- ELEMENTS ---
+    const els = {
+      welcome: document.getElementById('welcomeScreen'),
+      chat: document.getElementById('chatContainer'),
+      input: document.getElementById('userInput'),
+      send: document.getElementById('sendBtn'),
+      scroll: document.getElementById('mainScroll'),
+      suggestions: document.getElementById('suggestionsContainer'),
+      viewer: document.getElementById('imageViewer'),
+      viewerImg: document.getElementById('viewerImage'),
+      tabChat: document.getElementById('tabChat'),
+      tabVoice: document.getElementById('tabVoice'),
+      tabImages: document.getElementById('tabImages'),
+      chatWrapper: document.getElementById('chatWrapper'),
+      backBtn: document.getElementById('backBtn'),
+      refreshBtn: document.getElementById('refreshBtn'),
+      voiceSelector: document.getElementById('voiceSelector'),
+      voiceSelect: document.getElementById('voiceSelect'),
+    };
 
-<!-- 1BUSKET Firebase Module -->
-<script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import{getDatabase,ref,onValue,set,push,get}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-import{getAuth,signInWithPopup,GoogleAuthProvider,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-const app=initializeApp({apiKey:"AIzaSyCh7Ute6LeSAxcNDEQwZg5m0cA4ujnLCfg",authDomain:"test-17881.firebaseapp.com",projectId:"test-17881",databaseURL:"https://test-17881-default-rtdb.firebaseio.com",storageBucket:"test-17881.firebasestorage.app",messagingSenderId:"1057428047643",appId:"1:1057428047643:web:f3801c0d933225a5cd35be"},'busket');
-const db=getDatabase(app),auth=getAuth(app),gp=new GoogleAuthProvider();
-
-window.BK={vendors:{},cart:{},orders:{},promos:{},user:null,uid:null,userLat:null,userLng:null,userAddr:null,deliveryCfg:{ratePerKm:10,minimumFee:15,maximumFee:120},expandedGroups:new Set(),coStep:0,coPayment:'cash',coAddr:null,menuVendor:null};
-
-onValue(ref(db,'deliveryFeeConfig'),s=>{if(s.val())Object.assign(BK.deliveryCfg,s.val());});
-onValue(ref(db,'vendors'),s=>{BK.vendors={};const d=s.val()||{};Object.entries(d).forEach(([k,v])=>{if(v.status==='active')BK.vendors[k]={...v,key:k,lat:v.latitude||v.lat||null,lng:v.longitude||v.lng||null,isOpen:v.manualStoreStatus!=='closed'&&v.isOpen!==false};});setStatus(`${Object.keys(BK.vendors).length} restaurants loaded`);});
-onValue(ref(db,'promotions'),s=>{BK.promos=s.val()||{};});
-
-onAuthStateChanged(auth,user=>{
-  BK.user=user;BK.uid=user?.uid||null;
-  refreshUserStrip();
-  if(user){
-    onValue(ref(db,`carts/${user.uid}`),s=>{BK.cart=s.exists()&&s.val()?.groups?s.val().groups:{};updateCartUI();});
-    onValue(ref(db,'orders'),s=>{BK.orders={};s.forEach(c=>{const o=c.val();if(o.userId===user.uid)BK.orders[c.key]={...o,id:c.key};});});
-  }else{BK.cart={};BK.orders={};updateCartUI();}
-});
-
-window.signInGoogle=async()=>{try{showToast('Signing in…');const r=await signInWithPopup(auth,gp);closeAuthModal();showToast(`Welcome, ${r.user.displayName}! 👋`);}catch{showToast('Sign in failed');}};
-window.doSignOut=async()=>{try{await signOut(auth);showToast('Signed out');}catch{}};
-window.handleAuthClick=()=>{if(BK.user){if(confirm('Sign out?'))doSignOut();}else openAuthModal();};
-window.openAuthModal=()=>{document.getElementById('siOv').classList.add('active');document.getElementById('siModal').classList.add('active');};
-window.closeAuthModal=()=>{document.getElementById('siOv').classList.remove('active');document.getElementById('siModal').classList.remove('active');};
-
-function refreshUserStrip(){
-  const s=document.getElementById('userStrip'),u=BK.user;
-  if(u){s.innerHTML=`${u.photoURL?`<img class="us-av" src="${u.photoURL}" alt="">`:`<div class="us-noav"><i data-lucide="user"></i></div>`}<div class="us-info"><div class="us-name">${u.displayName||'User'}</div><div class="us-email">${u.email||''}</div></div><i data-lucide="log-out" style="width:14px;height:14px;color:var(--dim);flex-shrink:0"></i>`;}
-  else{s.innerHTML=`<div class="us-noav"><i data-lucide="user"></i></div><div class="us-info"><div class="us-signin">Sign in to order</div></div><i data-lucide="chevron-right" style="width:14px;height:14px;color:var(--dim);flex-shrink:0"></i>`;}
-  lucide.createIcons();
-}
-
-async function saveCart(){if(!BK.uid)return;await set(ref(db,`carts/${BK.uid}`),{groups:JSON.parse(JSON.stringify(BK.cart)),updatedAt:Date.now()});}
-
-window.updateCartUI=()=>{
-  const cart=BK.cart||{};
-  const totalItems=Object.values(cart).reduce((s,g)=>s+(g.items||[]).reduce((ss,i)=>ss+(i.quantity||1),0),0);
-  const totalPrice=Object.values(cart).reduce((s,g)=>s+(g.items||[]).reduce((ss,i)=>ss+i.price*i.quantity,0)+parseFloat(g.deliveryFee||0),0);
-  const hb=document.getElementById('hBadge'),sb=document.getElementById('sbBadge');
-  if(hb){hb.style.display=totalItems>0?'inline':'none';hb.textContent=totalItems;}
-  if(sb){sb.style.display=totalItems>0?'inline':'none';sb.textContent=totalItems;}
-  const body=document.getElementById('cartBody'),footer=document.getElementById('cartFooter'),chkBtn=document.getElementById('checkoutBtn'),sum=document.getElementById('cartSum');
-  if(chkBtn)chkBtn.disabled=totalItems===0;
-  if(totalItems===0){body.innerHTML=`<div class="cart-empty"><i data-lucide="shopping-bag"></i><p>Your cart is empty</p><small>Ask me to browse restaurants!</small></div>`;if(footer)footer.style.display='none';lucide.createIcons();return;}
-  if(footer)footer.style.display='block';
-  const vc=Object.keys(cart).length;
-  let html=vc>1?`<div style="background:#fff8e1;border:1px solid #ffe082;border-radius:7px;padding:7px 10px;font-size:.7rem;font-weight:600;color:#7a5800;display:flex;gap:6px;align-items:flex-start;margin-bottom:3px"><i data-lucide="alert-triangle" style="width:11px;height:11px;flex-shrink:0;margin-top:1px;color:#f59e0b"></i><span>${vc} restaurants · ${vc} separate orders</span></div>`:'';
-  Object.entries(cart).forEach(([vid,g])=>{
-    const items=g.items||[],sub=items.reduce((s,i)=>s+i.price*i.quantity,0),fee=parseFloat(g.deliveryFee||0),total=sub+fee,cnt=items.reduce((s,i)=>s+(i.quantity||1),0);
-    const isExp=BK.expandedGroups.has(vid);
-    const vImgH=g.vendorImage?`<img class="vg-img" src="${g.vendorImage}" alt="">`:`<div class="vg-img" style="display:flex;align-items:center;justify-content:center;background:var(--bg)"><i data-lucide="store" style="width:14px;height:14px;color:var(--dim)"></i></div>`;
-    const itemsH=items.map((item,idx)=>{const imgH=item.imageURL?`<img class="ci-img" src="${item.imageURL}" alt="">`:`<div class="ci-img" style="display:flex;align-items:center;justify-content:center;background:var(--bg)"><i data-lucide="image" style="width:14px;height:14px;color:var(--border)"></i></div>`;const one=item.quantity===1;return`<div class="ci">${imgH}<div class="ci-info"><div class="ci-name">${item.name}</div><div class="ci-price">R${item.price.toFixed(2)} each</div></div><div class="qty"><button class="qty-btn" onclick="updateQty('${vid}',${idx},${item.quantity-1})"><i data-lucide="${one?'trash-2':'minus'}" style="width:10px;height:10px;${one?'color:var(--danger);':''}"></i></button><span class="qty-val">${item.quantity}</span><button class="qty-btn" onclick="updateQty('${vid}',${idx},${item.quantity+1})"><i data-lucide="plus" style="width:10px;height:10px"></i></button></div><div class="ci-total">R${(item.price*item.quantity).toFixed(2)}</div></div>`;}).join('');
-    html+=`<div class="vg ${isExp?'expanded':''}" id="vg-${vid}"><div class="vg-hd" onclick="toggleVG('${vid}')">${vImgH}<div class="vg-info"><div class="vg-name">${g.vendorName||'Restaurant'}</div><div class="vg-meta">${cnt} item${cnt!==1?'s':''} · R${total.toFixed(2)}</div></div><span class="vg-cnt">${cnt}</span><i data-lucide="chevron-down" class="vg-chev"></i></div><div class="vg-items">${itemsH}<div class="vg-sub"><div><div class="vg-sub-lbl">Subtotal</div>${fee>0?`<div class="vg-sub-lbl">+ R${fee.toFixed(2)} delivery</div>`:`<div class="vg-sub-lbl">Free delivery</div>`}</div><div class="vg-sub-val">R${total.toFixed(2)}</div></div></div></div>`;
-  });
-  body.innerHTML=html;
-  const sub=Object.values(cart).reduce((s,g)=>s+(g.items||[]).reduce((ss,i)=>ss+i.price*i.quantity,0),0),fees=Object.values(cart).reduce((s,g)=>s+parseFloat(g.deliveryFee||0),0);
-  sum.innerHTML=`<div class="csr"><span>Subtotal (${totalItems} items)</span><span>R ${sub.toFixed(2)}</span></div><div class="csr"><span>Delivery fee${vc>1?'s':''}</span><span>${fees>0?`R ${fees.toFixed(2)}`:'Free'}</span></div><div class="csr total"><span>Total</span><span>R ${totalPrice.toFixed(2)}</span></div>`;
-  lucide.createIcons();
-};
-
-window.toggleVG=vid=>{if(BK.expandedGroups.has(vid))BK.expandedGroups.delete(vid);else BK.expandedGroups.add(vid);const el=document.getElementById(`vg-${vid}`);if(el)el.classList.toggle('expanded',BK.expandedGroups.has(vid));lucide.createIcons();};
-
-window.updateQty=async(vid,idx,qty)=>{if(!BK.cart[vid])return;if(qty<1){BK.cart[vid].items.splice(idx,1);if(!BK.cart[vid].items.length){delete BK.cart[vid];BK.expandedGroups.delete(vid);}}else BK.cart[vid].items[idx].quantity=qty;updateCartUI();await saveCart();};
-
-window.addToCart=async(item,vendor)=>{
-  if(!BK.user){openAuthModal();return;}
-  const vid=vendor.key;
-  let fee=parseFloat(vendor.deliveryFee||0);
-  if(vendor.lat&&vendor.lng&&BK.userLat&&BK.userLng){const d=hvs(BK.userLat,BK.userLng,vendor.lat,vendor.lng),cfg=BK.deliveryCfg;fee=Math.max(cfg.minimumFee,Math.min(cfg.maximumFee,d*cfg.ratePerKm));}
-  if(!BK.cart[vid])BK.cart[vid]={vendorId:vid,vendorName:vendor.name,vendorImage:vendor.imageURL||'',deliveryFee:fee,items:[]};
-  const ex=BK.cart[vid].items.findIndex(i=>i.name===item.name);
-  if(ex>=0)BK.cart[vid].items[ex].quantity++;
-  else BK.cart[vid].items.push({name:item.name,price:parseFloat(item.price)||0,quantity:1,imageURL:item.imageURL||item.image||'',prepTime:item.prepTime||0});
-  BK.expandedGroups.add(vid);updateCartUI();await saveCart();showToast(`${item.name} added ✓`);
-};
-
-window.openCartDrawer=()=>{if(Object.keys(BK.cart).length===1)BK.expandedGroups.add(Object.keys(BK.cart)[0]);document.getElementById('cartDrawer').classList.add('open');document.getElementById('cartOv').classList.add('open');document.body.style.overflow='hidden';updateCartUI();};
-window.closeCartDrawer=()=>{document.getElementById('cartDrawer').classList.remove('open');document.getElementById('cartOv').classList.remove('open');document.getElementById('coDrawer').classList.remove('open');document.body.style.overflow='';};
-
-// MENU DRAWER
-window.openMenuDrawer=async vid=>{
-  const v=BK.vendors[vid];if(!v)return;BK.menuVendor=v;
-  document.getElementById('mdImg').src=v.imageURL||'';
-  document.getElementById('mdName').textContent=v.name;
-  const cats=(v.shopCategories||v.categories||[v.cuisine||'Various']).join(' · ');
-  document.getElementById('mdMeta').textContent=`${cats} · ${v.isOpen?'Open':'Closed'} · ${v.deliveryTime||'20-35'} min`;
-  document.getElementById('menuBody').innerHTML=`<div class="menu-empty"><i data-lucide="loader-2" style="animation:spin 1s linear infinite;display:block;margin:0 auto 8px;width:28px;height:28px"></i><p>Loading menu…</p></div>`;
-  document.getElementById('menuOv').classList.add('open');document.getElementById('menuDrawer').classList.add('open');document.body.style.overflow='hidden';lucide.createIcons();
-  try{
-    const snap=await get(ref(db,`vendors/${vid}/menu`));
-    if(!snap.exists()){document.getElementById('menuBody').innerHTML=`<div class="menu-empty"><p>Menu not available yet</p></div>`;lucide.createIcons();return;}
-    renderMenu(snap.val(),v);
-  }catch{document.getElementById('menuBody').innerHTML=`<div class="menu-empty"><p>Failed to load menu</p></div>`;}
-};
-window.closeMenuDrawer=()=>{document.getElementById('menuOv').classList.remove('open');document.getElementById('menuDrawer').classList.remove('open');if(!document.getElementById('cartDrawer').classList.contains('open'))document.body.style.overflow='';};
-
-function renderMenu(data,vendor){
-  const cats=Array.isArray(data)?data:Object.values(data);
-  let html='';
-  cats.forEach(cat=>{
-    if(!cat)return;
-    const items=Array.isArray(cat.items)?cat.items:cat.items?Object.values(cat.items):[];
-    if(!items.length)return;
-    html+=`<div class="mcat">${cat.name||'Items'}</div>`;
-    items.forEach(item=>{
-      if(!item?.name)return;
-      const avail=item.available!==false&&item.isAvailable!==false;
-      const imgH=(item.imageURL||item.image)?`<img class="mitem-img" src="${item.imageURL||item.image}" alt="" onerror="this.outerHTML='<div class=mitem-noimg><i data-lucide=image></i></div>'">`:`<div class="mitem-noimg"><i data-lucide="image"></i></div>`;
-      const vendorData=JSON.stringify({key:vendor.key,name:vendor.name,imageURL:vendor.imageURL||'',deliveryFee:vendor.deliveryFee||0,lat:vendor.lat||null,lng:vendor.lng||null}).replace(/'/g,'&#39;');
-      const itemData=JSON.stringify({name:item.name,price:parseFloat(item.price||0),imageURL:item.imageURL||item.image||'',prepTime:item.prepTime||0}).replace(/'/g,'&#39;');
-      html+=`<div class="mitem" style="${avail?'':'opacity:.45'}">${imgH}<div class="mitem-info"><div class="mitem-name">${item.name}</div>${item.description?`<div class="mitem-desc">${item.description}</div>`:''}<div class="mitem-price">R${parseFloat(item.price||0).toFixed(2)}</div></div>${avail?`<button class="add-btn" onclick='addToCart(JSON.parse(this.dataset.item),JSON.parse(this.dataset.vendor))' data-item='${itemData}' data-vendor='${vendorData}'><i data-lucide="plus"></i></button>`:''}</div>`;
+    // Enable send button when input has content
+    els.input.addEventListener('input', () => {
+      els.send.disabled = els.input.value.trim() === '';
     });
-  });
-  document.getElementById('menuBody').innerHTML=html||`<div class="menu-empty"><p>No items found</p></div>`;
-  lucide.createIcons();
-}
 
-// CHECKOUT
-window.openCoDrawer=()=>{if(!BK.user){openAuthModal();return;}BK.coStep=0;BK.coPayment='cash';BK.coAddr=null;renderCoStep();document.getElementById('coDrawer').classList.add('open');lucide.createIcons();};
-window.coBack=()=>{if(BK.coStep===0){document.getElementById('coDrawer').classList.remove('open');return;}if(BK.coStep===2)return;BK.coStep--;renderCoStep();lucide.createIcons();};
+    // --- FIREBASE INIT ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyBOyZ3As4GTuNvjemvPF_SpsC6m6vqtNhc",
+      authDomain: "fire-b-a8878.firebaseapp.com",
+      projectId: "fire-b-a8878",
+      databaseURL: "https://fire-b-a8878-default-rtdb.firebaseio.com",
+      appId: "1:658673187627:web:6e4c29af661785f0afa36e"
+    };
 
-function coSetPills(){for(let i=0;i<3;i++){const p=document.getElementById(`cp${i}`);if(!p)return;p.className='co-pill';if(i<BK.coStep)p.classList.add('done');else if(i===BK.coStep)p.classList.add('active');}}
+    // Safe Firebase initialization
+    if (typeof firebase !== 'undefined') {
+      firebase.initializeApp(firebaseConfig);
+      const remoteConfig = firebase.remoteConfig();
+      remoteConfig.settings.minimumFetchIntervalMillis = 0;
 
-function renderCoStep(){
-  const titles=['Review Order','Payment & Delivery','Order Confirmed!'];
-  document.getElementById('coTitle').textContent=titles[BK.coStep];
-  coSetPills();
-  document.getElementById('coBackBtn').style.visibility=BK.coStep===2?'hidden':'visible';
-  const body=document.getElementById('coBody'),footer=document.getElementById('coFooter');
-  if(BK.coStep===0)renderCoReview(body,footer);
-  else if(BK.coStep===1)renderCoPayment(body,footer);
-  else renderCoSuccess(body,footer);
-}
-
-function renderCoReview(body,footer){
-  const cart=BK.cart,sub=Object.values(cart).reduce((s,g)=>s+(g.items||[]).reduce((ss,i)=>ss+i.price*i.quantity,0),0),fees=Object.values(cart).reduce((s,g)=>s+parseFloat(g.deliveryFee||0),0),total=sub+fees;
-  let vbs='';
-  Object.entries(cart).forEach(([vid,g])=>{
-    const gs=(g.items||[]).reduce((s,i)=>s+i.price*i.quantity,0),fee=parseFloat(g.deliveryFee||0);
-    const iH=g.vendorImage?`<img src="${g.vendorImage}" style="width:14px;height:14px;border-radius:3px;object-fit:cover">`:'';
-    vbs+=`<div class="co-vb"><div class="co-vb-lbl">${iH}<span>${g.vendorName||'Restaurant'}</span></div>`;
-    (g.items||[]).forEach(item=>{const ii=item.imageURL?`<img class="co-oi-img" src="${item.imageURL}" alt="">`:`<div class="co-oi-img" style="display:flex;align-items:center;justify-content:center;background:var(--bg)"></div>`;vbs+=`<div class="co-oi">${ii}<span class="co-oi-name">${item.name}</span><span class="co-oi-qty">×${item.quantity}</span><span class="co-oi-price">R${(item.price*item.quantity).toFixed(2)}</span></div>`;});
-    vbs+=`<div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--dim);padding:4px 0 2px"><span>Subtotal</span><span>R${gs.toFixed(2)}</span></div><div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--dim);padding-bottom:3px"><span>Delivery</span><span>${fee>0?`R${fee.toFixed(2)}`:'Free'}</span></div></div>`;
-  });
-  body.innerHTML=`<div class="co-card"><div class="co-card-hd"><div class="co-card-ico"><i data-lucide="shopping-bag"></i></div><span class="co-card-lbl">Order Summary</span><span class="co-card-edit" onclick="coBack()">Edit</span></div><div class="co-card-body">${vbs}</div></div><div class="co-card"><div class="co-card-hd"><div class="co-card-ico"><i data-lucide="receipt"></i></div><span class="co-card-lbl">Price Breakdown</span></div><div class="co-card-body"><div class="co-pr"><span>Subtotal</span><span>R${sub.toFixed(2)}</span></div><div class="co-pr"><span>Delivery fees</span><span>${fees>0?`R ${fees.toFixed(2)}`:'Free'}</span></div><div class="co-pr total"><span>Total</span><span>R${total.toFixed(2)}</span></div></div></div>`;
-  footer.innerHTML=`<button class="co-confirm" onclick="coNext()"><i data-lucide="arrow-right"></i> Continue to Payment</button>`;
-}
-window.coNext=()=>{BK.coStep=1;renderCoStep();lucide.createIcons();};
-
-function renderCoPayment(body,footer){
-  const cart=BK.cart,sub=Object.values(cart).reduce((s,g)=>s+(g.items||[]).reduce((ss,i)=>ss+i.price*i.quantity,0),0),fees=Object.values(cart).reduce((s,g)=>s+parseFloat(g.deliveryFee||0),0),total=sub+fees;
-  const defAddr=BK.coAddr||BK.userAddr||'';
-  const pays=[{id:'cash',icon:'banknote',name:'Cash on Delivery',sub:'Pay when your order arrives'},{id:'card',icon:'credit-card',name:'Card on Delivery',sub:'Swipe or tap at the door'},{id:'wallet',icon:'smartphone',name:'Digital Wallet',sub:'SnapScan, Ozow & more'}];
-  body.innerHTML=`<div class="co-card"><div class="co-card-hd"><div class="co-card-ico"><i data-lucide="map-pin"></i></div><span class="co-card-lbl">Delivery Address</span><span class="co-card-edit" id="addrToggle">Change</span></div><div class="co-card-body"><div class="co-addr-row"><div class="co-addr-ico"><i data-lucide="map-pin"></i></div><div><div class="co-addr-main" id="coAddrMain">${defAddr||'Enter address below'}</div><div class="co-addr-sub">Delivery to this address</div></div></div><input type="text" class="co-addr-inp" id="coAddrInp" placeholder="Enter delivery address…" value="${defAddr}" oninput="BK.coAddr=this.value;const m=document.getElementById('coAddrMain');if(m)m.textContent=this.value||'Enter address below'"></div></div>
-  <div class="co-card"><div class="co-card-hd"><div class="co-card-ico"><i data-lucide="credit-card"></i></div><span class="co-card-lbl">Payment Method</span></div><div class="co-card-body"><div class="co-pay-opts">${pays.map(p=>`<div class="co-po ${BK.coPayment===p.id?'sel':''}" onclick="selPay('${p.id}')"><div class="co-po-ico"><i data-lucide="${p.icon}"></i></div><div class="co-po-info"><div class="co-po-name">${p.name}</div><div class="co-po-sub">${p.sub}</div></div><div class="co-po-chk"></div></div>`).join('')}</div></div></div>
-  <div class="co-card"><div class="co-card-hd"><div class="co-card-ico"><i data-lucide="receipt"></i></div><span class="co-card-lbl">Total</span></div><div class="co-card-body"><div class="co-pr"><span>Subtotal</span><span>R${sub.toFixed(2)}</span></div><div class="co-pr"><span>Delivery</span><span>${fees>0?`R ${fees.toFixed(2)}`:'Free'}</span></div><div class="co-pr total"><span>Total</span><span>R${total.toFixed(2)}</span></div></div></div>`;
-  footer.innerHTML=`<button class="co-confirm" id="coPlaceBtn" onclick="handleCheckout()"><i data-lucide="check-circle"></i> Place Order · R${total.toFixed(2)}</button>`;
-  document.getElementById('addrToggle').addEventListener('click',()=>{const inp=document.getElementById('coAddrInp');inp.style.display=inp.style.display==='block'?'none':'block';if(inp.style.display==='block')inp.focus();});
-  if(!defAddr){const inp=document.getElementById('coAddrInp');if(inp)inp.style.display='block';}
-  lucide.createIcons();
-}
-
-window.selPay=id=>{BK.coPayment=id;document.querySelectorAll('.co-po').forEach(el=>el.classList.toggle('sel',el.getAttribute('onclick').includes(`'${id}'`)));lucide.createIcons();};
-
-function genOrderNum(){return`VYX-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2,5).toUpperCase()}`;}
-function calcPrep(){const a=Object.values(BK.cart).flatMap(g=>g.items||[]);return a.length?Math.ceil(a.reduce((s,i)=>s+(i.prepTime||0),0)/a.length):0;}
-
-window.handleCheckout=async()=>{
-  if(!BK.user){openAuthModal();return;}
-  const addr=BK.coAddr||BK.userAddr||'';
-  if(!addr){showToast('Please enter a delivery address');const inp=document.getElementById('coAddrInp');if(inp){inp.style.display='block';inp.focus();}return;}
-  const btn=document.getElementById('coPlaceBtn');
-  if(btn){btn.disabled=true;btn.innerHTML='<i data-lucide="loader-2" style="animation:spin 1s linear infinite;width:15px;height:15px"></i> Placing order…';lucide.createIcons();}
-  try{
-    const cartSnap=JSON.parse(JSON.stringify(BK.cart));
-    await Promise.all(Object.entries(cartSnap).map(async([vid,g])=>{
-      const sub=(g.items||[]).reduce((s,i)=>s+i.price*i.quantity,0),fee=parseFloat(g.deliveryFee||0);
-      const orderData={userId:BK.uid,vendorId:vid,vendorKey:vid,vendorName:g.vendorName||'',vendorImage:g.vendorImage||'',customerName:BK.user.displayName||BK.user.email?.split('@')[0]||'Customer',userEmail:BK.user.email||'',orderNumber:genOrderNum(),items:g.items,subtotal:sub,deliveryFee:fee,total:sub+fee,paymentMethod:BK.coPayment,deliveryAddress:addr,deliveryLat:BK.userLat,deliveryLng:BK.userLng,status:'pending',createdAt:Date.now(),updatedAt:Date.now(),estimatedPrepTime:calcPrep()};
-      const nr=push(ref(db,'orders'));
-      return Promise.all([set(nr,orderData),set(ref(db,`vendors/${vid}/orders/${nr.key}`),orderData)]);
-    }));
-    BK.cart={};BK.expandedGroups.clear();
-    await set(ref(db,`carts/${BK.uid}`),{groups:{},updatedAt:Date.now()});
-    updateCartUI();BK.coStep=2;renderCoStep();lucide.createIcons();showToast('🎉 Order placed!');
-  }catch(e){console.error(e);showToast('Order failed. Try again.');if(btn){btn.disabled=false;btn.innerHTML='<i data-lucide="check-circle"></i> Place Order';lucide.createIcons();}}
-};
-
-function renderCoSuccess(body,footer){
-  body.innerHTML=`<div class="co-success"><div class="co-success-ring"><i data-lucide="check"></i></div><div class="co-success-title">Order Confirmed! 🎉</div><div class="co-success-sub">Your order has been placed successfully.<br>The restaurant is preparing your food now.</div></div>`;
-  footer.innerHTML=`<button class="co-done" onclick="closeDone()">Done</button>`;lucide.createIcons();
-}
-window.closeDone=()=>{document.getElementById('coDrawer').classList.remove('open');closeCartDrawer();};
-
-function hvs(la1,lo1,la2,lo2){const R=6371,dL=(la2-la1)*Math.PI/180,dLo=(lo2-lo1)*Math.PI/180,a=Math.sin(dL/2)**2+Math.cos(la1*Math.PI/180)*Math.cos(la2*Math.PI/180)*Math.sin(dLo/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));}
-window.hvs=hvs;
-
-function setStatus(m){const e=document.getElementById('statusText');if(e)e.textContent=m;}
-let toastT;
-window.showToast=m=>{const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2800);};
-
-if(navigator.geolocation)navigator.geolocation.getCurrentPosition(pos=>{BK.userLat=pos.coords.latitude;BK.userLng=pos.coords.longitude;BK.userAddr='Your current location';},()=>{},{enableHighAccuracy:false,timeout:8000});
-lucide.createIcons();
-</script>
-
-<!-- AI LOGIC -->
-<script>
-const API_BASE="https://api.x.ai/v1";
-let XAI_KEY="",currentTab='chat',convHistory=[],voiceEnabled=false;
-let currentVoice='ara',currentAudio=null,audioCache=new Map();
-
-const els={welcome:document.getElementById('welcomeScreen'),chat:document.getElementById('chatContainer'),input:document.getElementById('userInput'),send:document.getElementById('sendBtn'),scroll:document.getElementById('mainScroll')};
-
-(async()=>{try{await rc.fetchAndActivate();XAI_KEY=rc.getValue('xai_api_key').asString();}catch(e){console.error('key',e);}})();
-
-// VOICE
-window.changeVoice=v=>{currentVoice=v;['sbVSel','hVSS'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=v;});stopSpeaking();};
-function cln4sp(t){return t.replace(/```[\s\S]*?```/g,' Code block. ').replace(/`([^`]+)`/g,'$1').replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1').replace(/https?:\/\/\S+/g,' link ').replace(/\n/g,' ').replace(/\s+/g,' ').trim();}
-async function speak(text,msgId){
-  if(!XAI_KEY)return;stopSpeaking();const clean=cln4sp(text);if(!clean)return;
-  const ck=`${currentVoice}:${clean}`;if(audioCache.has(ck)){playAudio(audioCache.get(ck),msgId);return;}
-  updSpk(msgId,true,true);
-  try{const res=await fetch(`${API_BASE}/tts`,{method:'POST',headers:{'Authorization':`Bearer ${XAI_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({text:clean,voice_id:currentVoice,language:'en'})});if(!res.ok)throw new Error(res.status);const url=URL.createObjectURL(await res.blob());audioCache.set(ck,url);playAudio(url,msgId);}
-  catch{updSpk(msgId,false,false);fbTTS(clean,msgId);}
-}
-function playAudio(url,msgId){currentAudio=new Audio(url);currentAudio.onplay=()=>updSpk(msgId,true,false);currentAudio.onended=()=>{currentAudio=null;updSpk(msgId,false,false);};currentAudio.onerror=()=>{currentAudio=null;updSpk(msgId,false,false);};currentAudio.play();}
-function stopSpeaking(){if(currentAudio){currentAudio.pause();currentAudio=null;}}
-function fbTTS(t,msgId){if(!('speechSynthesis'in window))return;const u=new SpeechSynthesisUtterance(t);const voices=speechSynthesis.getVoices();u.voice=voices.find(v=>v.lang.startsWith('en'))||voices[0];u.onstart=()=>updSpk(msgId,true,false);u.onend=()=>updSpk(msgId,false,false);speechSynthesis.speak(u);}
-function updSpk(msgId,sp,ld){const btn=document.querySelector(`[data-msg-id="${msgId}"] .speak-btn`);if(!btn)return;if(ld){btn.innerHTML='<i data-lucide="hourglass" style="width:11px;height:11px"></i>';btn.classList.add('speaking');}else if(sp){btn.innerHTML='<i data-lucide="square" style="width:11px;height:11px"></i>';btn.classList.add('speaking');}else{btn.innerHTML='<i data-lucide="volume-2" style="width:11px;height:11px"></i>';btn.classList.remove('speaking');}lucide.createIcons();}
-window.toggleSpeak=(text,msgId)=>{const btn=document.querySelector(`[data-msg-id="${msgId}"] .speak-btn`);if(btn&&btn.classList.contains('speaking')){stopSpeaking();updSpk(msgId,false,false);}else speak(text,msgId);};
-
-// SYSTEM PROMPT
-function buildSys(){
-  const bk=window.BK||{};
-  const vendors=bk.vendors||{},cart=bk.cart||{},orders=bk.orders||{},promos=bk.promos||{};
-  const uLat=bk.userLat,uLng=bk.userLng;
-  const vList=Object.values(vendors).map(v=>{
-    const cats=(v.shopCategories||v.categories||[]).join(', ')||v.cuisine||'Various';
-    let dist='';if(v.lat&&v.lng&&uLat&&uLng){const d=hvJS(uLat,uLng,v.lat,v.lng),cfg=bk.deliveryCfg||{ratePerKm:10,minimumFee:15,maximumFee:120};const fee=Math.max(cfg.minimumFee,Math.min(cfg.maximumFee,d*cfg.ratePerKm));dist=`${d.toFixed(1)}km · R${fee.toFixed(0)} delivery`;}
-    return `- "${v.name}" | ${cats} | ⭐${v.rating||'N/A'} | ${v.deliveryTime||'20-35'}min | ${v.isOpen?'OPEN':'CLOSED'} | ${dist||'distance unknown'}`;
-  }).join('\n');
-  const cartStr=Object.entries(cart).map(([vid,g])=>{const sub=(g.items||[]).reduce((s,i)=>s+i.price*i.quantity,0),fee=parseFloat(g.deliveryFee||0);return `  ${g.vendorName}: ${(g.items||[]).map(i=>`${i.name}×${i.quantity}@R${i.price}`).join(', ')} | Sub R${sub.toFixed(2)} + R${fee.toFixed(2)} delivery = R${(sub+fee).toFixed(2)}`;}).join('\n')||'  Empty';
-  const cartTotal=Object.values(cart).reduce((s,g)=>s+(g.items||[]).reduce((ss,i)=>ss+i.price*i.quantity,0)+parseFloat(g.deliveryFee||0),0);
-  const cartCount=Object.values(cart).reduce((s,g)=>s+(g.items||[]).reduce((ss,i)=>ss+(i.quantity||1),0),0);
-  const ordersStr=Object.values(orders).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)).slice(0,5).map(o=>{const sl={pending:'Pending',confirmed:'Confirmed',preparing:'Preparing',out_for_delivery:'Out for Delivery',delivered:'Delivered',cancelled:'Cancelled'};return`  #${o.orderNumber||'—'} from "${o.vendorName}" | ${sl[o.status]||o.status} | R${(o.total||0).toFixed(2)} | ${new Date(o.createdAt||Date.now()).toLocaleDateString('en-ZA')}`;}).join('\n')||'  No orders yet';
-  const promoStr=Object.values(promos).map(p=>`  ${p.title}: ${p.sub||p.badge||''}`).join('\n')||'  None';
-  const u=bk.user;
-  return `You are Ona AI, the helpful food ordering assistant for 1BUSKET — a South African food & delivery platform. You help customers find restaurants, browse menus, manage their cart, and track orders.
-
-TONE: Warm, friendly, concise. Like a knowledgeable local friend.
-
-${u?`CUSTOMER: ${u.displayName||''} (${u.email||''})`:'CUSTOMER: Not signed in — remind them to sign in to order'}
-${uLat?`LOCATION: ${uLat.toFixed(4)}, ${uLng.toFixed(4)}`:'LOCATION: Not available'}
-
-LIVE RESTAURANTS (${Object.keys(vendors).length} active):
-${vList||'Loading…'}
-
-CART (${cartCount} items · R${cartTotal.toFixed(2)} total):
-${cartStr}
-
-RECENT ORDERS:
-${ordersStr}
-
-PROMOTIONS:
-${promoStr}
-
-IMPORTANT RULES:
-- NEVER show raw IDs like -OoZ0xxx. Only use restaurant names.
-- When customer asks to browse or order from a restaurant, the UI will show "Browse Menu" buttons — they click those to open the menu without leaving this page.
-- When customer asks about their cart, the cart drawer will open — no need to redirect.
-- Checkout happens inline in the cart drawer — customer clicks "Place Order".
-- Delivery fees: R10/km, min R15, max R120.
-- Everything works without leaving this page.
-${currentTab==='voice'?'\nVOICE MODE: Short, conversational replies only.':''}`;
-}
-
-function hvJS(la1,lo1,la2,lo2){const R=6371,dL=(la2-la1)*Math.PI/180,dLo=(lo2-lo1)*Math.PI/180,a=Math.sin(dL/2)**2+Math.cos(la1*Math.PI/180)*Math.cos(la2*Math.PI/180)*Math.sin(dLo/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));}
-
-// UTILS
-function esc(t){if(!t)return'';const d=document.createElement('div');d.textContent=t;return d.innerHTML;}
-function fmt(text){
-  const blocks=[];let t=text.replace(/```(\w+)?\n([\s\S]*?)```/g,(m,l,c)=>{blocks.push(c);return`%%CB${blocks.length-1}%%`;}).replace(/```([\s\S]*?)```/g,(m,c)=>{blocks.push(c);return`%%CB${blocks.length-1}%%`;});
-  let f=esc(t);f=f.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>').replace(/\n/g,'<br>');
-  blocks.forEach((c,i)=>{const id='cb'+Date.now()+i;f=f.replace(`%%CB${i}%%`,`<div style="position:relative;margin:9px 0;border-radius:8px;overflow:hidden;background:#1A1A1A;border:1px solid #333"><button style="position:absolute;top:6px;right:6px;background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);padding:4px 8px;border-radius:5px;font-size:.68rem;cursor:pointer;font-family:inherit" onclick="navigator.clipboard.writeText(document.getElementById('${id}').textContent)">Copy</button><div id="${id}" style="color:#eaeaea;padding:32px 12px 12px;font-family:monospace;font-size:.84rem;overflow-x:auto;white-space:pre">${esc(c.trim())}</div></div>`);});
-  return f;
-}
-
-// CHAT
-function activateChat(){els.welcome.style.display='none';els.chat.style.display='flex';}
-window.setPrompt=t=>{els.input.value=t;handleSend();};
-window.resetChat=()=>{stopSpeaking();convHistory=[];location.reload();};
-
-async function handleSend(){
-  const prompt=els.input.value.trim();if(!prompt||!XAI_KEY)return;
-  activateChat();convHistory.push({role:'user',content:prompt});
-  els.chat.innerHTML+=`<div class="msg-row user"><div class="bubble user">${esc(prompt)}</div></div>`;
-  const lid='ld'+Date.now();
-  els.chat.innerHTML+=`<div class="msg-row ai" id="${lid}"><div class="ai-wrap"><div class="ai-av"><i data-lucide="sparkles" style="width:13px;height:13px;color:white"></i></div><div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span class="thinktxt">Thinking…</span></div></div></div>`;
-  els.input.value='';els.scroll.scrollTop=els.scroll.scrollHeight;lucide.createIcons();
-  try{await handleChatReq(prompt,lid);}
-  catch(err){document.getElementById(lid)?.remove();els.chat.innerHTML+=`<div class="msg-row ai"><div class="ai-wrap"><div class="ai-av"><i data-lucide="sparkles" style="width:13px;height:13px;color:white"></i></div><div class="bubble ai" style="color:#d32f2f">Something went wrong: ${esc(err.message)}</div></div></div>`;}
-  els.scroll.scrollTop=els.scroll.scrollHeight;
-}
-
-async function handleChatReq(prompt,lid){
-  const messages=[{role:'system',content:buildSys()},...convHistory.map(m=>({role:m.role,content:m.content}))];
-  const res=await fetch(`${API_BASE}/chat/completions`,{method:'POST',headers:{'Authorization':`Bearer ${XAI_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({model:'grok-4-1-fast-non-reasoning',messages,stream:false})});
-  if(!res.ok)throw new Error(await res.text());
-  const data=await res.json(),reply=data.choices[0].message.content;
-  convHistory.push({role:'assistant',content:reply});
-  document.getElementById(lid)?.remove();
-
-  const msgId='msg'+Date.now();
-  const pl=prompt.toLowerCase();
-  const isShopQ=/restaurant|shop|food|eat|nearby|open|deliver|closest|find|show|list|available|menu|browse/i.test(pl);
-  const isCartQ=/\bcart\b|bag|checkout|total|what.*in|see.*cart|my.*cart|view.*cart/i.test(pl);
-  const isOrderQ=/\border\b|track|status|recent|history|delivered|pending|where.*order|my.*order/i.test(pl);
-
-  let extraHTML='';
-
-  if(isShopQ&&!isCartQ){
-    const vendors=Object.values(window.BK?.vendors||{});
-    const uLat=window.BK?.userLat,uLng=window.BK?.userLng;
-    let relevant=vendors.filter(v=>v.isOpen);
-    const kwds=['pizza','burger','sushi','chicken','healthy','fast food','indian','chinese','italian','seafood','african','bakery','coffee','dessert','halaal','grocery','alcohol'];
-    const mk=kwds.find(k=>pl.includes(k));
-    if(mk)relevant=relevant.filter(v=>(v.shopCategories||v.categories||[v.cuisine||'']).some(c=>c.toLowerCase().includes(mk)||mk.includes(c.toLowerCase())));
-    if(uLat&&uLng)relevant=relevant.map(v=>({...v,dist:v.lat&&v.lng?hvJS(uLat,uLng,v.lat,v.lng):999})).sort((a,b)=>a.dist-b.dist);
-    relevant=relevant.slice(0,4);
-    if(relevant.length){
-      const cfg=window.BK?.deliveryCfg||{ratePerKm:10,minimumFee:15,maximumFee:120};
-      extraHTML=`<div class="shop-cards">${relevant.map(v=>{
-        const cats=(v.shopCategories||v.categories||[]).join(' · ')||v.cuisine||'Various';
-        let distTxt='',feeTxt=v.deliveryFee?`R${v.deliveryFee} delivery`:'Fee varies';
-        if(v.dist&&v.dist<999){let fee=v.dist*cfg.ratePerKm;fee=Math.max(cfg.minimumFee,Math.min(cfg.maximumFee,fee));distTxt=`${v.dist.toFixed(1)}km`;feeTxt=`R${fee.toFixed(0)} delivery`;}
-        return `<div class="sc"><img class="sc-img" src="${v.imageURL||'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600'}" alt="${esc(v.name)}" onerror="this.src='https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600'"><div class="sc-body"><div class="sc-name">${esc(v.name)}</div><div class="sc-meta"><span class="sc-rating">⭐ ${v.rating||'4.5'}</span><span class="sc-badge">${v.deliveryTime||'20-35'} min</span>${distTxt?`<span>${distTxt}</span>`:''}<span>${feeTxt}</span><span class="${v.isOpen?'sc-open':'sc-closed'}">${v.isOpen?'● Open':'● Closed'}</span></div><div style="font-size:.71rem;color:var(--dim);margin-top:3px">${esc(cats)}</div></div><div class="sc-footer"><span style="font-size:.73rem;color:var(--dim)">Min R${v.minOrder||50}</span><button class="menu-btn" onclick="openMenuDrawer('${v.key}')">Browse Menu</button></div></div>`;
-      }).join('')}</div>`;
+      async function loadKey() {
+        try {
+          await remoteConfig.fetchAndActivate();
+          XAI_API_KEY = remoteConfig.getValue('xai_api_key').asString();
+        } catch (e) { 
+          console.warn("Using fallback mode - API key not loaded"); 
+        }
+      }
+      loadKey();
+    } else {
+      console.warn("Firebase not available - running in demo mode");
+      XAI_API_KEY = "demo_key";
     }
-  }
 
-  if(isCartQ)openCartDrawer();
-
-  if(isOrderQ&&!isCartQ){
-    const bkOrders=window.BK?.orders||{};
-    const sorted=Object.values(bkOrders).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)).slice(0,3);
-    if(sorted.length){
-      const sl={pending:'Pending',confirmed:'Confirmed',preparing:'Preparing',out_for_delivery:'Out for Delivery',delivered:'Delivered',cancelled:'Cancelled'};
-      const sc={pending:'pending',confirmed:'confirmed',preparing:'preparing',out_for_delivery:'out_for_delivery',delivered:'delivered',cancelled:'cancelled'};
-      extraHTML=sorted.map(o=>{
-        const items=(o.items||[]).slice(0,3).map(i=>`<div class="oi-row"><span>${esc(i.name)} ×${i.quantity||1}</span><span>R${((i.price||0)*(i.quantity||1)).toFixed(2)}</span></div>`).join('');
-        return `<div class="ocard"><div class="ocard-hd"><div class="ocard-title">📦 ${esc(o.vendorName||'Restaurant')}</div><span class="ostatus ${sc[o.status]||'pending'}">${sl[o.status]||o.status}</span></div><div style="font-size:.7rem;color:var(--dim);margin-bottom:7px">${new Date(o.createdAt||Date.now()).toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'})}</div>${items}<div class="ototal"><span>Total</span><span style="color:var(--orange)">R${(o.total||0).toFixed(2)}</span></div></div>`;
-      }).join('');
+    // --- VOICE / TEXT TO SPEECH ---
+    function changeVoice(voiceId) {
+      currentVoice = voiceId;
+      stopSpeaking();
     }
-  }
 
-  els.chat.innerHTML+=`<div class="msg-row ai" data-msg-id="${msgId}"><div class="ai-wrap"><div class="ai-av"><i data-lucide="sparkles" style="width:13px;height:13px;color:white"></i></div><div style="flex:1;min-width:0"><div class="bubble ai">${fmt(reply)}<button class="speak-btn" onclick="toggleSpeak('${esc(reply.replace(/'/g,"\\'")).slice(0,300)}','${msgId}')" title="Read aloud"><i data-lucide="volume-2" style="width:11px;height:11px"></i></button></div>${extraHTML}</div></div></div>`;
-  lucide.createIcons();
-  if(voiceEnabled)setTimeout(()=>speak(reply,msgId),300);
-}
+    function cleanTextForSpeech(text) {
+      return text
+        .replace(/```[\s\S]*?```/g, ' Code block omitted. ')
+        .replace(/`([^`]+)`/g, '$1')
+        .replace(/\*\*(.*?)\*\*/g, '$1')
+        .replace(/\*(.*?)\*/g, '$1')
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1')
+        .replace(/https?:\/\/\S+/g, ' link ')
+        .replace(/\n/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
 
-window.switchTab=tab=>{
-  currentTab=tab;voiceEnabled=(tab==='voice');
-  ['tabChat','tabVoice'].forEach(id=>document.getElementById(id).classList.remove('active'));
-  document.getElementById('hVSel').style.display='none';
-  if(tab==='chat'){document.getElementById('tabChat').classList.add('active');els.input.placeholder='Ask about restaurants, cart, orders…';}
-  else{document.getElementById('tabVoice').classList.add('active');els.input.placeholder="Ask anything — I'll speak the reply…";document.getElementById('hVSel').style.display='flex';}
-};
+    async function speakWithGrok(text, messageId) {
+      if (!XAI_API_KEY || XAI_API_KEY === "demo_key") {
+        fallbackBrowserTTS(cleanTextForSpeech(text), messageId);
+        return;
+      }
 
-els.send.onclick=handleSend;
-els.input.onkeypress=e=>{if(e.key==='Enter')handleSend();};
-</script>
+      stopSpeaking();
+      const cleanText = cleanTextForSpeech(text);
+      if (!cleanText) return;
+
+      const cacheKey = `${currentVoice}:${cleanText}`;
+      if (audioCache.has(cacheKey)) {
+        playAudio(audioCache.get(cacheKey), messageId);
+        return;
+      }
+
+      updateSpeakButton(messageId, true, true);
+
+      try {
+        // Demo mode simulation
+        if (XAI_API_KEY === "demo_key") {
+          setTimeout(() => {
+            fallbackBrowserTTS(cleanText, messageId);
+          }, 800);
+          return;
+        }
+        
+        const response = await fetch(`${API_BASE}/tts`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${XAI_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            text: cleanText,
+            voice_id: currentVoice,
+            language: 'en',
+          }),
+        });
+
+        if (!response.ok) throw new Error(`TTS API error: ${response.status}`);
+        const audioBlob = await response.blob();
+        const audioUrl = URL.createObjectURL(audioBlob);
+        audioCache.set(cacheKey, audioUrl);
+        playAudio(audioUrl, messageId);
+
+      } catch (error) {
+        console.warn('TTS fallback triggered:', error);
+        updateSpeakButton(messageId, false, false);
+        fallbackBrowserTTS(cleanText, messageId);
+      }
+    }
+
+    function playAudio(audioUrl, messageId) {
+      currentAudio = new Audio(audioUrl);
+      currentAudio.onplay = () => {
+        isSpeaking = true;
+        updateSpeakButton(messageId, true, false);
+      };
+      currentAudio.onended = () => {
+        isSpeaking = false;
+        currentAudio = null;
+        updateSpeakButton(messageId, false, false);
+      };
+      currentAudio.onerror = () => {
+        isSpeaking = false;
+        currentAudio = null;
+        updateSpeakButton(messageId, false, false);
+      };
+      currentAudio.play();
+    }
+
+    function stopSpeaking() {
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio = null;
+      }
+      isSpeaking = false;
+    }
+
+    function fallbackBrowserTTS(text, messageId) {
+      if (!('speechSynthesis' in window)) return;
+      
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.95;
+      utterance.pitch = 1;
+      
+      const voices = window.speechSynthesis.getVoices();
+      const voice = voices.find(v => v.lang.startsWith('en') && v.name.includes('Google')) || 
+                   voices.find(v => v.lang.startsWith('en')) || 
+                   voices[0];
+      if (voice) utterance.voice = voice;
+      
+      utterance.onstart = () => {
+        isSpeaking = true;
+        updateSpeakButton(messageId, true, false);
+      };
+      utterance.onend = () => {
+        isSpeaking = false;
+        updateSpeakButton(messageId, false, false);
+      };
+      
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function updateSpeakButton(messageId, speaking, loading) {
+      const btn = document.querySelector(`[data-msg-id="${messageId}"] .speak-btn`);
+      if (!btn) return;
+      
+      if (loading) {
+        btn.innerHTML = '<span class="material-symbols-rounded" style="font-size:16px;">hourglass_empty</span>';
+        btn.classList.add('speaking');
+      } else if (speaking) {
+        btn.innerHTML = '<span class="material-symbols-rounded" style="font-size:16px;">stop</span>';
+        btn.classList.add('speaking');
+      } else {
+        btn.innerHTML = '<span class="material-symbols-rounded" style="font-size:16px;">volume_up</span>';
+        btn.classList.remove('speaking');
+      }
+    }
+
+    function toggleSpeak(text, messageId) {
+      const btn = document.querySelector(`[data-msg-id="${messageId}"] .speak-btn`);
+      const isCurrentlySpeaking = btn && btn.classList.contains('speaking');
+      
+      if (isCurrentlySpeaking) {
+        stopSpeaking();
+        updateSpeakButton(messageId, false, false);
+      } else {
+        speakWithGrok(text, messageId);
+      }
+    }
+
+    // ── CONTEXT LOADING ──
+    function loadVynixContext() {
+      try {
+        const raw = sessionStorage.getItem('vynix_ai_context');
+        if (!raw) return;
+        vynixContext = JSON.parse(raw);
+        sessionStorage.removeItem('vynix_ai_context');
+        showBackButton();
+      } catch (e) {
+        console.warn('Context load skipped', e);
+      }
+    }
+
+    function showBackButton() {
+      els.backBtn.style.display = 'flex';
+      els.refreshBtn.style.display = 'none';
+    }
+
+    function goBackToVynix() {
+      window.location.href = 'index.html';
+    }
+
+    function buildSystemPrompt() {
+      let base = "You are Qwen, an expert multilingual customer support AI assistant. You are professional, empathetic, and efficient. You excel at: resolving customer issues, providing accurate information, de-escalating tense situations, and knowing when to escalate to human agents. Always maintain brand voice consistency.";
+
+      if (currentTab === 'voice') {
+        base = "You are Qwen, optimized for voice-based customer support. Keep responses concise (under 3 sentences when possible), conversational, and easy to understand when spoken. Use natural pauses and clear language. Avoid complex formatting, code, or long lists.";
+      }
+
+      if (vynixContext) {
+        base += `\n\nACTIVE CONTEXT: User is discussing a social media post. Author: "${vynixContext.author || 'Unknown'}". Content: "${vynixContext.text || '(Image post)'}". Continue the conversation naturally.`;
+      }
+      return base;
+    }
+
+    async function autoAnalysePost() {
+      if (!vynixContext) return;
+
+      els.welcome.style.display = 'none';
+      els.chat.style.display = 'flex';
+
+      const thumbSrc = vynixContext.mediaUrl && vynixContext.mediaType !== 'video'
+        ? vynixContext.mediaUrl
+        : `https://ui-avatars.com/api/?name=${encodeURIComponent(vynixContext.author || 'Q')}&background=6366F1&color=fff&bold=true`;
+      const previewText = vynixContext.text
+        ? (vynixContext.text.length > 140 ? vynixContext.text.slice(0, 140) + '…' : vynixContext.text)
+        : '(Image post)';
+
+      els.chat.innerHTML += `
+        <div class="message-row ai">
+          <div class="ctx-msg-card">
+            <img class="ctx-msg-img" src="${thumbSrc}" onerror="this.src='https://ui-avatars.com/api/?name=Q&background=6366F1&color=fff&bold=true'" alt="">
+            <div class="ctx-msg-body">
+              <div class="ctx-msg-label">
+                <span>POST CONTEXT</span>
+              </div>
+              <div class="ctx-author">${escapeHtml(vynixContext.author || 'Unknown')}</div>
+              <div class="ctx-msg-text">${escapeHtml(previewText)}</div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      const loaderId = 'loader-auto-' + Date.now();
+      els.chat.innerHTML += `
+        <div class="message-row ai" id="${loaderId}">
+          <div class="message-content">
+            <div class="ai-avatar"><span>Q</span></div>
+            <div class="loader">
+              <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+              <span class="thinking-text">Analyzing context…</span>
+            </div>
+          </div>
+        </div>
+      `;
+      els.scroll.scrollTop = els.scroll.scrollHeight;
+
+      const analysisPrompt = `You're reviewing a social media post for customer support context. Post by ${vynixContext.author || 'a user'}: "${vynixContext.text || '(Image post)'}". Provide a brief, professional assessment: 1) What's the core issue or sentiment? 2) What support action might be needed? 3) One concise follow-up question to engage the user. Keep it under 3 sentences total.`;
+
+      try {
+        // Demo response if no API key
+        if (!XAI_API_KEY || XAI_API_KEY === "demo_key") {
+          setTimeout(() => {
+            document.getElementById(loaderId)?.remove();
+            const reply = "I see this post mentions a support concern. Let me help you craft an empathetic, solution-focused response. What specific aspect would you like to address first: the technical issue, timeline expectations, or escalation path?";
+            
+            conversationHistory.push({ role: 'user', content: analysisPrompt });
+            conversationHistory.push({ role: 'assistant', content: reply });
+            contextInjected = true;
+
+            const msgId = 'msg-' + Date.now();
+            els.chat.innerHTML += `
+              <div class="message-row ai" data-msg-id="${msgId}">
+                <div class="message-content">
+                  <div class="ai-avatar"><span>Q</span></div>
+                  <div class="msg-bubble ai">
+                    ${formatMessage(reply)}
+                    <button class="speak-btn" onclick="toggleSpeak('${escapeAttr(reply.replace(/'/g, "\\'"))}', '${msgId}')" title="Read aloud">
+                      <span class="material-symbols-rounded" style="font-size:16px;">volume_up</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `;
+            if (voiceEnabled) setTimeout(() => speakWithGrok(reply, msgId), 400);
+            els.scroll.scrollTop = els.scroll.scrollHeight;
+          }, 1200);
+          return;
+        }
+
+        const res = await fetch(`${API_BASE}/chat/completions`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${XAI_API_KEY}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: "grok-4-1-fast-non-reasoning",
+            messages: [
+              { role: "system", content: buildSystemPrompt() },
+              { role: "user", content: analysisPrompt }
+            ],
+            stream: false
+          })
+        });
+
+        if (!res.ok) throw new Error(await res.text());
+        const data = await res.json();
+        const reply = data.choices[0].message.content;
+
+        conversationHistory.push({ role: 'user', content: analysisPrompt });
+        conversationHistory.push({ role: 'assistant', content: reply });
+        contextInjected = true;
+
+        document.getElementById(loaderId)?.remove();
+        const msgId = 'msg-' + Date.now();
+        els.chat.innerHTML += `
+          <div class="message-row ai" data-msg-id="${msgId}">
+            <div class="message-content">
+              <div class="ai-avatar"><span>Q</span></div>
+              <div class="msg-bubble ai">
+                ${formatMessage(reply)}
+                <button class="speak-btn" onclick="toggleSpeak('${escapeAttr(reply.replace(/'/g, "\\'"))}', '${msgId}')" title="Read aloud">
+                  <span class="material-symbols-rounded" style="font-size:16px;">volume_up</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        if (voiceEnabled) setTimeout(() => speakWithGrok(reply, msgId), 400);
+      } catch (err) {
+        document.getElementById(loaderId)?.remove();
+        els.chat.innerHTML += `
+          <div class="message-row ai">
+            <div class="message-content">
+              <div class="ai-avatar"><span>Q</span></div>
+              <div class="msg-bubble ai" style="color:#dc2626;">Connection issue. Please try again or check your API configuration.</div>
+            </div>
+          </div>
+        `;
+      }
+      els.scroll.scrollTop = els.scroll.scrollHeight;
+    }
+
+    // --- TAB SWITCHING ---
+    function switchTab(tab) {
+      currentTab = tab;
+      voiceEnabled = (tab === 'voice');
+      
+      els.tabChat.classList.remove('active');
+      els.tabVoice.classList.remove('active');
+      els.tabImages.classList.remove('active');
+
+      if (tab === 'chat') {
+        els.tabChat.classList.add('active');
+        els.input.placeholder = vynixContext ? "Ask about this post…" : "How can I help with your support bot?";
+        els.voiceSelector.style.display = 'none';
+        updateSuggestions('chat');
+      } else if (tab === 'voice') {
+        els.tabVoice.classList.add('active');
+        els.input.placeholder = vynixContext ? "Ask (voice replies)…" : "Speak or type your question…";
+        els.voiceSelector.style.display = 'flex';
+        updateSuggestions('voice');
+        if (els.chat.style.display === 'flex') showVoiceIndicator();
+      } else {
+        els.tabImages.classList.add('active');
+        els.input.placeholder = vynixContext ? "Describe an image…" : "Describe the image you'd like to generate…";
+        els.voiceSelector.style.display = 'none';
+        updateSuggestions('images');
+      }
+      
+      if (conversationHistory.length === 0) {
+        els.welcome.style.display = 'flex';
+        els.chat.style.display = 'none';
+      }
+    }
+
+    function showVoiceIndicator() {
+      const existing = document.querySelector('.voice-indicator');
+      if (existing) existing.remove();
+      
+      const indicator = document.createElement('div');
+      indicator.className = 'voice-indicator';
+      indicator.innerHTML = `
+        <span class="material-symbols-rounded">mic</span>
+        Voice mode active • Responses will be spoken
+      `;
+      els.chat.insertBefore(indicator, els.chat.firstChild);
+    }
+
+    function updateSuggestions(type) {
+      if (vynixContext && (type === 'chat' || type === 'voice')) {
+        const hasText = vynixContext.text && vynixContext.text.trim().length > 0;
+        els.suggestions.innerHTML = `
+          ${hasText ? `<div class="suggestion-chip" onclick="setPrompt('Summarize the key concerns in this post')"><strong>📋 Summarize</strong><br>Key points</div>` : ''}
+          ${hasText ? `<div class="suggestion-chip" onclick="setPrompt('What\\'s the sentiment and urgency level?')"><strong>🎯 Analyze</strong><br>Sentiment check</div>` : ''}
+          <div class="suggestion-chip" onclick="setPrompt('Draft a professional, empathetic response to this post')"><strong>✍️ Draft Reply</strong><br>Craft response</div>
+          <div class="suggestion-chip" onclick="setPrompt('Should this be escalated to a human agent? Why or why not?')"><strong>⚠️ Escalation Check</strong><br>Decision support</div>
+        `;
+        return;
+      }
+
+      if (type === 'chat' || type === 'voice') {
+        els.suggestions.innerHTML = `
+          <div class="suggestion-chip" onclick="setPrompt('What are the key components of a multilingual support workflow?')"><strong>🌍 Setup Guide</strong><br>Language configuration</div>
+          <div class="suggestion-chip" onclick="setPrompt('How do I implement sentiment-based escalation rules?')"><strong>⚡ Smart Escalation</strong><br>Automation rules</div>
+          <div class="suggestion-chip" onclick="setPrompt('Show me a sample response template for refund requests')"><strong>📝 Response Templates</strong><br>Best practices</div>
+          <div class="suggestion-chip" onclick="setPrompt('How can I measure customer satisfaction with AI responses?')"><strong>📊 Analytics</strong><br>Performance tracking</div>
+        `;
+      } else if (type === 'images') {
+        els.suggestions.innerHTML = `
+          <div class="suggestion-chip" onclick="setPrompt('Professional customer support agent avatar, diverse, friendly, modern office background')"><strong>👤 Agent Avatar</strong><br>Team imagery</div>
+          <div class="suggestion-chip" onclick="setPrompt('Clean dashboard UI showing multilingual support metrics, charts, global map')"><strong>📈 Analytics Dashboard</strong><br>UI mockup</div>
+          <div class="suggestion-chip" onclick="setPrompt('Minimalist icon set for support actions: chat, voice, escalate, resolve')"><strong>🎨 Icon Set</strong><br>UI assets</div>
+          <div class="suggestion-chip" onclick="setPrompt('Abstract background with connected global nodes, purple/blue gradient, tech aesthetic')"><strong>✨ Background</strong><br>Brand asset</div>
+        `;
+      }
+    }
+
+    // --- CHAT FUNCTIONS ---
+    function resetChat() {
+      stopSpeaking();
+      conversationHistory = [];
+      vynixContext = null;
+      contextInjected = false;
+      voiceEnabled = false;
+      audioCache.clear();
+      try { sessionStorage.removeItem('vynix_ai_context'); } catch {}
+      
+      // Reset UI
+      els.welcome.style.display = 'flex';
+      els.chat.style.display = 'none';
+      els.chat.innerHTML = '';
+      els.input.value = '';
+      els.send.disabled = true;
+      
+      // Reset tabs
+      switchTab('chat');
+      
+      // Reload context if present
+      loadVynixContext();
+      if (vynixContext) {
+        setTimeout(autoAnalysePost, 300);
+      }
+    }
+
+    function activateChat() {
+      els.welcome.style.display = 'none';
+      els.chat.style.display = 'flex';
+      if (voiceEnabled && !document.querySelector('.voice-indicator')) {
+        showVoiceIndicator();
+      }
+    }
+
+    function setPrompt(t) { 
+      els.input.value = t; 
+      els.send.disabled = false;
+      handleSend(); 
+    }
+
+    function openImageViewer(url) {
+      els.viewerImg.src = url;
+      els.viewer.style.display = 'flex';
+      setTimeout(() => { els.viewer.style.opacity = '1'; }, 10);
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeImageViewer() {
+      els.viewer.style.opacity = '0';
+      setTimeout(() => { 
+        els.viewer.style.display = 'none'; 
+        els.viewerImg.src = ''; 
+        document.body.style.overflow = '';
+      }, 300);
+    }
+
+    async function uploadToCloudinary(imageUrl) {
+      if (CLOUDINARY_CLOUD_NAME === "YOUR_CLOUD_NAME") return imageUrl;
+      
+      const url = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
+      const formData = new FormData();
+      formData.append('file', imageUrl);
+      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+      
+      try {
+        const response = await fetch(url, { method: 'POST', body: formData });
+        if (!response.ok) throw new Error("Upload failed");
+        const data = await response.json();
+        return data.secure_url;
+      } catch {
+        return imageUrl; // Fallback to original
+      }
+    }
+
+    // --- MESSAGE HANDLING ---
+    async function handleSend() {
+      const prompt = els.input.value.trim();
+      if (!prompt) return;
+
+      activateChat();
+
+      // Add user message
+      conversationHistory.push({ role: 'user', content: prompt });
+      els.chat.innerHTML += `
+        <div class="message-row user">
+          <div class="msg-bubble user">${escapeHtml(prompt)}</div>
+        </div>
+      `;
+
+      const loaderId = 'loader-' + Date.now();
+      const loaderText = currentTab === 'voice' ? 'Preparing voice response…' : 
+                        (currentTab === 'images' ? 'Generating image…' : 'Thinking…');
+      
+      els.chat.innerHTML += `
+        <div class="message-row ai" id="${loaderId}">
+          <div class="message-content">
+            <div class="ai-avatar"><span>Q</span></div>
+            <div class="loader">
+              <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+              <span class="thinking-text">${loaderText}</span>
+            </div>
+          </div>
+        </div>
+      `;
+
+      els.input.value = '';
+      els.send.disabled = true;
+      els.scroll.scrollTop = els.scroll.scrollHeight;
+
+      try {
+        if (currentTab === 'chat' || currentTab === 'voice') {
+          await handleChatRequest(prompt, loaderId);
+        } else {
+          await handleImageRequest(prompt, loaderId);
+        }
+      } catch (err) {
+        document.getElementById(loaderId)?.remove();
+        els.chat.innerHTML += `
+          <div class="message-row ai">
+            <div class="message-content">
+              <div class="ai-avatar"><span>Q</span></div>
+              <div class="msg-bubble ai" style="color: #dc2626;">I encountered an issue. Please try again or check your connection.</div>
+            </div>
+          </div>
+        `;
+        console.error('Request error:', err);
+      }
+
+      els.scroll.scrollTop = els.scroll.scrollHeight;
+    }
+
+    async function handleChatRequest(prompt, loaderId) {
+      // Demo mode response
+      if (!XAI_API_KEY || XAI_API_KEY === "demo_key") {
+        setTimeout(() => {
+          document.getElementById(loaderId)?.remove();
+          
+          const demoReplies = {
+            'multilingual': "For multilingual support, I recommend: 1) Enable language detection on incoming messages, 2) Use a translation layer for knowledge base queries, 3) Maintain response templates in each supported language. Would you like me to draft a Spanish response template as an example?",
+            'escalation': "Smart escalation works best with: sentiment thresholds (negative score < -0.7), keyword triggers ('cancel', 'complaint', 'manager'), and confidence scoring. I can help you implement a rule-based router that flags high-priority cases. What's your current escalation workflow?",
+            'default': "Great question! For customer support bots, I recommend focusing on: clear intent recognition, context-aware responses, and seamless human handoff. What specific aspect would you like to explore first: response quality, multilingual handling, or escalation logic?"
+          };
+          
+          const key = Object.keys(demoReplies).find(k => prompt.toLowerCase().includes(k)) || 'default';
+          const reply = demoReplies[key];
+          
+          conversationHistory.push({ role: 'assistant', content: reply });
+          
+          const msgId = 'msg-' + Date.now();
+          els.chat.innerHTML += `
+            <div class="message-row ai" data-msg-id="${msgId}">
+              <div class="message-content" style="width: 100%;">
+                <div class="ai-avatar"><span>Q</span></div>
+                <div class="msg-bubble ai" style="width: 100%; max-width: 100%;">
+                  ${formatMessage(reply)}
+                  <button class="speak-btn" onclick="toggleSpeak('${escapeAttr(reply.replace(/'/g, "\\'"))}', '${msgId}')" title="Read aloud">
+                    <span class="material-symbols-rounded" style="font-size:16px;">volume_up</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+          
+          if (voiceEnabled) setTimeout(() => speakWithGrok(reply, msgId), 300);
+          els.scroll.scrollTop = els.scroll.scrollHeight;
+        }, 1000);
+        return;
+      }
+
+      const messages = [
+        { role: "system", content: buildSystemPrompt() },
+        ...conversationHistory.map(msg => ({ role: msg.role, content: msg.content }))
+      ];
+
+      const res = await fetch(`${API_BASE}/chat/completions`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${XAI_API_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          model: "grok-4-1-fast-non-reasoning", 
+          messages, 
+          stream: false,
+          temperature: 0.3,
+          max_tokens: 500
+        })
+      });
+
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      const reply = data.choices[0].message.content;
+      conversationHistory.push({ role: 'assistant', content: reply });
+
+      document.getElementById(loaderId)?.remove();
+      
+      let finalHTML = formatMessage(reply);
+      const msgId = 'msg-' + Date.now();
+      
+      els.chat.innerHTML += `
+        <div class="message-row ai" data-msg-id="${msgId}">
+          <div class="message-content" style="width: 100%;">
+            <div class="ai-avatar"><span>Q</span></div>
+            <div class="msg-bubble ai" style="width: 100%; max-width: 100%;">
+              ${finalHTML}
+              <button class="speak-btn" onclick="toggleSpeak('${escapeAttr(reply.replace(/'/g, "\\'"))}', '${msgId}')" title="Read aloud">
+                <span class="material-symbols-rounded" style="font-size:16px;">volume_up</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      if (voiceEnabled) setTimeout(() => speakWithGrok(reply, msgId), 300);
+    }
+
+    async function handleImageRequest(prompt, loaderId) {
+      // Demo image response
+      if (!XAI_API_KEY || XAI_API_KEY === "demo_key") {
+        setTimeout(() => {
+          document.getElementById(loaderId)?.remove();
+          
+          const demoImageUrl = "https://images.unsplash.com/photo-1551654898-7c5d6a8a8f0e?auto=format&fit=crop&w=800&q=80";
+          
+          els.chat.innerHTML += `
+            <div class="message-row ai">
+              <div class="message-content">
+                <div class="ai-avatar"><span>Q</span></div>
+                <div style="display:flex; flex-direction:column; align-items:flex-start; width:100%;">
+                  <div class="msg-bubble ai">Here's a concept based on your description:</div>
+                  <div class="img-wrapper" onclick="openImageViewer('${demoImageUrl}')">
+                    <img src="${demoImageUrl}" class="generated-img" alt="Generated concept">
+                    <div class="watermark">
+                      <span class="material-symbols-rounded" style="font-size:14px;">auto_awesome</span> Qwen Concept
+                    </div>
+                  </div>
+                  <div class="action-row">
+                    <button class="action-btn" onclick="editPrompt('${encodeURIComponent(prompt)}')">
+                      <span class="material-symbols-rounded" style="font-size: 16px;">edit</span> Refine Prompt
+                    </button>
+                    <button class="action-btn" onclick="downloadImage('${demoImageUrl}')">
+                      <span class="material-symbols-rounded" style="font-size: 16px;">download</span> Save Image
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+          conversationHistory.push({ role: 'assistant', content: `[Generated concept: ${prompt}]` });
+          els.scroll.scrollTop = els.scroll.scrollHeight;
+        }, 1500);
+        return;
+      }
+
+      const res = await fetch(`${API_BASE}/images/generations`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${XAI_API_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          model: "grok-imagine-image", 
+          prompt,
+          size: "1024x1024"
+        })
+      });
+
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+
+      if (data.data && data.data[0].url) {
+        let sourceUrl = data.data[0].url;
+        let finalDisplayUrl = sourceUrl;
+
+        if (CLOUDINARY_CLOUD_NAME !== "YOUR_CLOUD_NAME") {
+          try { finalDisplayUrl = await uploadToCloudinary(sourceUrl); } catch {}
+        }
+
+        document.getElementById(loaderId)?.remove();
+        const encodedPrompt = encodeURIComponent(prompt);
+
+        els.chat.innerHTML += `
+          <div class="message-row ai">
+            <div class="message-content">
+              <div class="ai-avatar"><span>Q</span></div>
+              <div style="display:flex; flex-direction:column; align-items:flex-start; width:100%;">
+                <div class="msg-bubble ai">Here's your generated image:</div>
+                <div class="img-wrapper" onclick="openImageViewer('${finalDisplayUrl}')">
+                  <img src="${finalDisplayUrl}" class="generated-img" alt="AI generated">
+                  <div class="watermark">
+                    <span class="material-symbols-rounded" style="font-size:14px;">auto_awesome</span> Qwen
+                  </div>
+                </div>
+                <div class="action-row">
+                  <button class="action-btn" onclick="editPrompt('${encodedPrompt}')">
+                    <span class="material-symbols-rounded" style="font-size: 16px;">edit</span> Refine Prompt
+                  </button>
+                  <button class="action-btn" onclick="downloadImage('${finalDisplayUrl}')">
+                    <span class="material-symbols-rounded" style="font-size: 16px;">download</span> Save Image
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        conversationHistory.push({ role: 'assistant', content: `[Generated image: ${prompt}]` });
+      }
+    }
+
+    // --- UTILITIES ---
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function escapeAttr(text) {
+      if (!text) return '';
+      return text.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;').slice(0, 120);
+    }
+
+    function formatMessage(text) {
+      // Handle code blocks first
+      const codeBlocks = [];
+      let tempText = text.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
+        codeBlocks.push({ lang: lang || 'text', code: code.trim() });
+        return `%%%CODE_${codeBlocks.length - 1}%%%`;
+      });
+      
+      // Escape HTML
+      let formatted = escapeHtml(tempText);
+      
+      // Format inline elements
+      formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
+      formatted = formatted.replace(/\n/g, '<br>');
+      formatted = formatted.replace(/`(.*?)`/g, '<code style="background:#F1F5F9;padding:2px 6px;border-radius:4px;font-family:monospace;color:#475569;font-size:0.95em;">$1</code>');
+      
+      // Restore code blocks
+      codeBlocks.forEach((block, index) => {
+        const blockId = 'code-' + Date.now() + '-' + index;
+        const html = `
+          <div class="code-container">
+            <div class="code-header">
+              <span>${block.lang}</span>
+              <button class="copy-btn" onclick="copyCode('${blockId}', this)">
+                <span class="material-symbols-rounded" style="font-size:14px;">content_copy</span> Copy
+              </button>
+            </div>
+            <div class="code-block" id="${blockId}">${escapeHtml(block.code)}</div>
+          </div>`;
+        formatted = formatted.replace(`%%%CODE_${index}%%%`, html);
+      });
+
+      return formatted;
+    }
+
+    function copyCode(elementId, btnElement) {
+      const codeElement = document.getElementById(elementId);
+      if (!codeElement) return;
+      
+      const textToCopy = codeElement.textContent;
+      
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        const originalHTML = btnElement.innerHTML;
+        btnElement.innerHTML = '<span class="material-symbols-rounded" style="font-size:14px;">check</span> Copied';
+        btnElement.classList.add('copied');
+        setTimeout(() => { 
+          btnElement.innerHTML = originalHTML;
+          btnElement.classList.remove('copied');
+        }, 2000);
+      }).catch(err => {
+        console.warn("Copy failed:", err);
+      });
+    }
+
+    function editPrompt(encodedPrompt) {
+      const promptText = decodeURIComponent(encodedPrompt);
+      if (currentTab !== 'images') switchTab('images');
+      els.input.value = promptText;
+      els.input.focus();
+      els.send.disabled = false;
+    }
+
+    async function downloadImage(url) {
+      try {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = 'qwen-generated.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(downloadUrl);
+      } catch {
+        window.open(url, '_blank');
+      }
+    }
+
+    // --- EVENT LISTENERS ---
+    els.send.onclick = handleSend;
+    els.input.onkeypress = e => { 
+      if (e.key === 'Enter' && !e.shiftKey) { 
+        e.preventDefault(); 
+        handleSend(); 
+      }
+    };
+    
+    // Close image viewer on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && els.viewer.style.display === 'flex') {
+        closeImageViewer();
+      }
+    });
+
+    // --- INIT ---
+    window.addEventListener('load', () => {
+      // Load voices for speech synthesis
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.onvoiceschanged = () => {
+          // Voices loaded
+        };
+      }
+      
+      loadVynixContext();
+      
+      if (vynixContext) {
+        els.input.placeholder = "Reply or ask more about this post…";
+        setTimeout(autoAnalysePost, 400);
+      }
+      
+      // Enable send button if input has content on load
+      els.send.disabled = els.input.value.trim() === '';
+    });
+  </script>
 </body>
 </html>
